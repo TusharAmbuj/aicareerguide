@@ -4595,3 +4595,327 @@ body {
     }
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Roadmap mobile stability                                                   */
+/* -------------------------------------------------------------------------- */
+@layer components {
+
+  .roadmap-detail-shell,
+  .roadmap-detail-main,
+  .roadmap-map,
+  .roadmap-phase,
+  .roadmap-phase-header,
+  .roadmap-node-grid,
+  .roadmap-node,
+  .roadmap-toolbar,
+  .roadmap-progress-card,
+  .roadmap-modal-panel {
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .roadmap-detail-main {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .roadmap-map {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .roadmap-phase {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .roadmap-node-grid {
+    width: calc(100% - 66px);
+    max-width: calc(100% - 66px);
+  }
+
+  .roadmap-node {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .roadmap-node-title,
+  .roadmap-node-short,
+  .roadmap-node-action,
+  .roadmap-node-tags {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .roadmap-node-title,
+  .roadmap-node-short {
+    overflow-wrap: anywhere;
+  }
+
+  .roadmap-node-tags {
+    overflow: hidden;
+  }
+
+  .roadmap-toolbar>div,
+  .roadmap-view-controls,
+  .roadmap-secondary-controls {
+    min-width: 0;
+  }
+
+  .roadmap-view-btn,
+  #phase-jump,
+  #focus-toggle {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  @media (max-width: 767px) {
+    .roadmap-detail-shell {
+      width: 100%;
+      max-width: 100%;
+      padding-inline: .875rem;
+    }
+
+    .roadmap-detail-hero {
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .roadmap-phase-header {
+      margin-left: 50px;
+      width: calc(100% - 50px);
+      max-width: calc(100% - 50px);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .roadmap-node-grid {
+      margin-left: 50px;
+      width: calc(100% - 50px);
+      max-width: calc(100% - 50px);
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .roadmap-node {
+      min-height: 0;
+      padding: 16px;
+      border-radius: 16px;
+    }
+
+    .roadmap-node-complete {
+      right: 11px;
+      top: 11px;
+      width: 24px;
+      height: 24px;
+    }
+
+    .roadmap-node-title {
+      padding-right: 28px;
+      font-size: 1rem;
+      line-height: 1.3;
+    }
+
+    .roadmap-node-tags {
+      gap: 5px;
+      margin-top: 11px;
+    }
+
+    .roadmap-node-tags span {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .roadmap-node-action {
+      margin-top: 12px;
+    }
+
+    .roadmap-phase-connector {
+      margin-left: 50px;
+      height: 30px;
+    }
+
+    .roadmap-toolbar {
+      z-index: 15;
+    }
+
+    .roadmap-view-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      width: 100%;
+      gap: 8px;
+    }
+
+    .roadmap-view-controls>span {
+      grid-column: 1 / -1;
+    }
+
+    .roadmap-view-controls .roadmap-view-btn {
+      width: 100%;
+      min-height: 44px;
+      padding-inline: .7rem;
+    }
+
+    .roadmap-secondary-controls {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      width: 100%;
+      gap: 8px;
+    }
+
+    #phase-jump,
+    #focus-toggle {
+      width: 100%;
+      min-height: 44px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .roadmap-detail-shell {
+      padding-inline: .625rem;
+    }
+
+    .roadmap-detail-hero {
+      padding: 1rem;
+      border-radius: 20px;
+    }
+
+    .roadmap-detail-hero h1 {
+      font-size: clamp(2rem, 10vw, 2.75rem);
+      line-height: 1.05;
+      overflow-wrap: anywhere;
+    }
+
+    .roadmap-detail-hero p {
+      line-height: 1.65;
+    }
+
+    .roadmap-detail-hero .button-primary,
+    .roadmap-detail-hero .button-secondary {
+      width: 100%;
+    }
+
+    .roadmap-progress-card {
+      padding: 1rem;
+    }
+
+    .roadmap-progress-ring {
+      flex: 0 0 auto;
+      width: 56px;
+      height: 56px;
+      padding: 5px;
+    }
+
+    .roadmap-progress-ring::before {
+      width: 44px;
+      height: 44px;
+    }
+
+    .roadmap-phase-header {
+      margin-left: 42px;
+      width: calc(100% - 42px);
+      max-width: calc(100% - 42px);
+    }
+
+    .roadmap-phase-marker {
+      width: 30px;
+    }
+
+    .roadmap-phase-marker span {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      font-size: .65rem;
+    }
+
+    .roadmap-phase::before {
+      left: 14px;
+      top: 30px;
+    }
+
+    .roadmap-node-grid {
+      margin-left: 42px;
+      width: calc(100% - 42px);
+      max-width: calc(100% - 42px);
+    }
+
+    .roadmap-phase-connector {
+      margin-left: 42px;
+      height: 26px;
+    }
+
+    .roadmap-node {
+      padding: 14px;
+      border-radius: 14px;
+    }
+
+    .roadmap-node-kicker {
+      font-size: .62rem;
+    }
+
+    .roadmap-node-title {
+      font-size: .98rem;
+    }
+
+    .roadmap-node-short {
+      font-size: .76rem;
+    }
+
+    .roadmap-node-tags span {
+      font-size: .62rem;
+      padding: 2px 7px;
+    }
+
+    .roadmap-modal {
+      padding: .5rem;
+      align-items: flex-end;
+    }
+
+    .roadmap-modal-panel {
+      width: 100%;
+      max-width: 100%;
+      max-height: 90dvh;
+      padding: 1rem;
+      border-radius: 18px 18px 12px 12px;
+    }
+
+    .roadmap-modal-panel .button-primary,
+    .roadmap-modal-panel .button-secondary {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .roadmap-view-controls {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .roadmap-view-controls>span,
+    .roadmap-view-controls .roadmap-view-btn {
+      grid-column: auto;
+    }
+
+    .roadmap-phase-header {
+      margin-left: 38px;
+      width: calc(100% - 38px);
+      max-width: calc(100% - 38px);
+    }
+
+    .roadmap-node-grid {
+      margin-left: 38px;
+      width: calc(100% - 38px);
+      max-width: calc(100% - 38px);
+    }
+
+    .roadmap-phase-connector {
+      margin-left: 38px;
+    }
+  }
+}
