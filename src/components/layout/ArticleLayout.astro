@@ -121,7 +121,8 @@ const breadcrumbItems = [
                                     "en-US",
                                     { month: "short", year: "numeric" },
                                 )
-                            }</span>
+                            }</span
+                        >
                     </div>{
                         (updatedDate || lastReviewed) && (
                             <div class="article-review-line">
@@ -255,7 +256,7 @@ const breadcrumbItems = [
             }
             <div class="article-content-layout article-reading-layout">
                 <aside
-                    class="article-sidebar"
+                    class="article-sidebar hidden lg:block"
                     aria-label="Article navigation and context"
                 >
                     <div class="article-sidebar-inner">
@@ -272,7 +273,8 @@ const breadcrumbItems = [
                                 <span>{difficulty}</span><span
                                     >{readingTime} min read</span
                                 ><span>{category}</span><span
-                                    >{contentType}</span>
+                                    >{contentType}</span
+                                >
                             </div>
                         </div>{
                             prerequisites.length > 0 && (
