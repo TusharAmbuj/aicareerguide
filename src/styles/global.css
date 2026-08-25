@@ -116,15 +116,9 @@
   }
 
   .button-primary {
-    display: inline-flex;
-    min-height: 44px;
-    align-items: center;
-    justify-content: center;
-    border-radius: .6rem;
-    background: var(--color-accent);
     color: #fff;
-    padding: .65rem 1rem;
-    font-weight: 700;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
   }
 
   .button-primary:hover {
@@ -1028,7 +1022,8 @@ html.dark .astro-code span {
 
   .blog-filter-btn.active {
     background: var(--color-accent);
-    color: #fff
+    color: #fff;
+    border: 1px solid var(--color-accent);
   }
 
   .blog-hero-image {
@@ -4546,6 +4541,54 @@ body {
     #phase-jump,
     #focus-toggle {
       width: 100%;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .roadmap-detail-shell {
+      padding-inline: .75rem;
+    }
+
+    .roadmap-detail-hero {
+      padding: 1rem;
+      border-radius: 1.25rem;
+    }
+
+    .roadmap-node-grid,
+    .roadmap-phase-header {
+      margin-left: 38px;
+    }
+
+    .roadmap-node {
+      min-height: 0;
+      padding: 1rem;
+      border-radius: 1rem;
+    }
+
+    .roadmap-node-title {
+      font-size: 1rem;
+    }
+
+    .roadmap-node-short {
+      font-size: .78rem;
+    }
+
+    .roadmap-phase-header h2 {
+      font-size: 1.35rem;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .roadmap-modal {
+      padding: .6rem;
+      align-items: flex-end;
+    }
+
+    .roadmap-modal-panel {
+      width: 100%;
+      max-height: 88dvh;
+      border-radius: 1.25rem 1.25rem .9rem .9rem;
+      padding: 1rem;
     }
   }
 }
