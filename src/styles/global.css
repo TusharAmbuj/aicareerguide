@@ -578,13 +578,16 @@ html.dark .astro-code span {
   }
 
   .roadmap-progress-ring {
+    position: relative;
     width: 64px;
     height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: conic-gradient(var(--color-accent) 0deg, var(--color-accent) 0deg, var(--color-border) 0deg);
+    background: conic-gradient(var(--color-accent) 0deg,
+        var(--color-accent) 0deg,
+        var(--color-border) 0deg);
     font-size: .7rem;
     font-weight: 900;
     text-align: center;
