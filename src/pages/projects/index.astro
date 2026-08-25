@@ -1,0 +1,83 @@
+---
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import CollectionHero from '@/components/common/CollectionHero.astro';
+import { getCollection } from 'astro:content';
+const projects = (await getCollection('projects', ({ data }) => !data.draft && data.status === 'published')).sort((a,b)=>b.data.pubDate.getTime()-a.data.pubDate.getTime());
+const categories = ['All', ...Array.from(new Set(projects.map(p=>p.data.category)))];
+const difficulties = ['All','Beginner','Intermediate','Advanced'];
+const technologies = Array.from(new Set(projects.flatMap(p=>p.data.techStack))).sort();
+const featured = projects.filter(p=>p.data.featured).slice(0,2);
+const totalSkills = new Set(projects.flatMap(p=>p.data.skills)).size;
+---
+<BaseLayout title="AI & Software Projects | Build Your Portfolio" description="Practical AI, machine learning, LLM, and software projects with architecture, deployment, evaluation, and portfolio guidance.">
+  <div class="projects-modern-page">
+    <div class="content-container">
+      <CollectionHero
+        eyebrow="Build · Ship · Prove"
+        title="Projects that turn learning into evidence."
+        description="Choose a focused build, learn the underlying systems, ship a working implementation, and leave with something you can explain in an interview."
+        stats={[
+          { value: String(projects.length), label: 'Projects', detail: 'Published build plans' },
+          { value: String(totalSkills), label: 'Skills', detail: 'Practiced across projects' },
+          { value: 'Portfolio', label: 'Outcome', detail: 'Evidence you can explain' },
+        ]}
+        actions={[
+          { label: 'View AI Engineer path →', href: '/careers/ai-engineer/' },
+          { label: 'Browse all projects', href: '/projects/', kind: 'secondary' },
+        ]}
+      />
+
+      {featured.length > 0 && <section class="projects-feature-section">
+        <div class="section-head-row"><div><p class="section-kicker">Featured builds</p><h2 class="section-title">Start with one meaningful system.</h2></div><a class="section-inline-link" href="#project-library">Browse all projects ↓</a></div>
+        <div class="projects-modern-feature-grid">
+          {featured.map((project, index) => <a href={`/projects/${project.id}/`} class:list={["projects-modern-feature-card", index===0 && "primary"]}>
+            <div class="card-topline"><span class="pill">{project.data.category}</span><span>{project.data.difficulty}</span></div>
+            <h3>{project.data.title}</h3>
+            <p>{project.data.description}</p>
+            <div class="chip-row">{project.data.techStack.slice(0,5).map(t=><span class="tag">{t}</span>)}</div>
+            <div class="card-footer"><span>{project.data.timeToBuild} · {project.data.resumeValue} portfolio value</span><strong>Open blueprint →</strong></div>
+          </a>)}
+        </div>
+      </section>}
+
+      <section id="project-library" class="projects-library-modern">
+        <div class="library-toolbar">
+          <div><p class="section-kicker">Project library</p><h2 class="section-title">Choose by role, skill, and level.</h2><p class="section-copy">Every project is a complete engineering brief—not a one-line idea.</p></div>
+          <div class="projects-search-modern"><label class="sr-only" for="project-search">Search projects</label><input id="project-search" type="search" placeholder="Search projects, skills, stack…" autocomplete="off"/><button id="project-clear" type="button">Clear</button></div>
+        </div>
+        <div class="projects-filter-modern">
+          <div><span>Track</span><div>{categories.map((value,i)=><button type="button" class:list={["filter-btn-modern",i===0&&"active-filter"]} data-filter="category" data-value={value} aria-pressed={i===0}>{value}</button>)}</div></div>
+          <div><span>Level</span><div>{difficulties.map((value,i)=><button type="button" class:list={["filter-btn-modern",i===0&&"active-filter"]} data-filter="difficulty" data-value={value} aria-pressed={i===0}>{value}</button>)}</div></div>
+          <div><span>Technology</span><div class="filter-overflow">{technologies.map(value=><button type="button" class="filter-btn-modern" data-filter="technology" data-value={value} aria-pressed={false}>{value}</button>)}</div></div>
+        </div>
+        <div class="library-count-row"><span id="projects-count">{projects.length} projects</span><span>Open a card for the full build plan.</span></div>
+        <div id="projects-grid-modern" class="projects-modern-grid">
+          {projects.map((project,index)=><a href={`/projects/${project.id}/`} class="project-modern-card" data-category={project.data.category} data-difficulty={project.data.difficulty} data-technology={project.data.techStack.join('|')} data-search={`${project.data.title} ${project.data.description} ${project.data.techStack.join(' ')} ${project.data.skills.join(' ')}`.toLowerCase()}>
+            <div class="project-card-index">{String(index+1).padStart(2,'0')}</div>
+            <div class="project-card-body">
+              <div class="card-topline"><span class="pill">{project.data.category}</span><span>{project.data.difficulty}</span><span>{project.data.timeToBuild}</span></div>
+              <h3>{project.data.title}</h3>
+              <p>{project.data.description}</p>
+              <div class="chip-row">{project.data.techStack.slice(0,5).map(t=><span class="tag">{t}</span>)}</div>
+              <div class="card-footer"><span>{project.data.skills.length} skills · {project.data.resumeValue} portfolio value</span><strong>View project →</strong></div>
+            </div>
+          </a>)}
+        </div>
+        <div id="projects-empty-modern" class="empty-state hidden"><strong>No projects match your filters.</strong><p>Reset a filter or search for another skill or technology.</p></div>
+      </section>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('astro:page-load',()=>{
+      const buttons=[...document.querySelectorAll<HTMLButtonElement>('[data-filter]')],cards=[...document.querySelectorAll<HTMLElement>('#projects-grid-modern > a')],search=document.getElementById('project-search') as HTMLInputElement|null,clear=document.getElementById('project-clear'),count=document.getElementById('projects-count'),empty=document.getElementById('projects-empty-modern');
+      const state:{category:string;difficulty:string;technology:string}={category:'All',difficulty:'All',technology:'All'};
+      const apply=()=>{const q=(search?.value||'').trim().toLowerCase();let n=0;cards.forEach(card=>{const show=(state.category==='All'||card.dataset.category===state.category)&&(state.difficulty==='All'||card.dataset.difficulty===state.difficulty)&&(state.technology==='All'||(card.dataset.technology||'').split('|').includes(state.technology))&&(!q||(card.dataset.search||'').includes(q));card.hidden=!show;if(show)n++});if(count)count.textContent=`${n} project${n===1?'':'s'}`;empty?.classList.toggle('hidden',n>0);buttons.forEach(b=>{const active=(state[b.dataset.filter as 'category'|'difficulty'|'technology']||'All')===b.dataset.value;b.classList.toggle('active-filter',active);b.setAttribute('aria-pressed',String(active));});};
+      buttons.forEach(btn=>btn.addEventListener('click',()=>{const key=btn.dataset.filter as 'category'|'difficulty'|'technology';if(key)state[key]=btn.dataset.value||'All';apply()}));search?.addEventListener('input',apply);clear?.addEventListener('click',()=>{if(search)search.value='';state.category='All';state.difficulty='All';state.technology='All';apply()});apply();
+    });
+  </script>
+  <style>
+    .projects-modern-page{padding:24px 0 70px}.projects-modern-hero{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:1.5rem;align-items:stretch;padding:1.65rem 1.7rem}.projects-modern-hero h1{margin-top:.75rem;max-width:15ch;font-size:clamp(2.9rem,6vw,5rem);line-height:.95;letter-spacing:-.06em;font-weight:950}.projects-modern-hero p{margin-top:.9rem;max-width:64ch;font-size:1rem;line-height:1.7;color:var(--color-text-secondary)}.hero-actions{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.05rem}.project-hero-metrics{display:grid;gap:.55rem}.project-hero-metrics>div{padding:.9rem;border:1px solid var(--color-border);border-radius:.9rem;background:color-mix(in srgb,var(--color-bg) 78%,transparent);display:flex;justify-content:space-between;gap:.7rem;align-items:end}.project-hero-metrics strong{font-size:1.25rem;font-weight:950;letter-spacing:-.04em}.project-hero-metrics span{text-align:right;font-size:.65rem;color:var(--color-text-muted);max-width:110px}.projects-feature-section{padding-top:1.7rem}.section-head-row{display:flex;justify-content:space-between;align-items:end;gap:1rem}.section-inline-link{font-size:.75rem;color:var(--color-accent);font-weight:850;text-decoration:none}.projects-modern-feature-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:.7rem;margin-top:.85rem}.projects-modern-feature-card{display:flex;flex-direction:column;min-height:230px;padding:1.15rem;border:1px solid var(--color-border);border-radius:1.15rem;background:var(--color-bg);text-decoration:none;color:inherit;transition:.18s}.projects-modern-feature-card:hover,.project-modern-card:hover{border-color:color-mix(in srgb,var(--color-accent) 34%,var(--color-border));transform:translateY(-2px);box-shadow:0 18px 45px rgba(15,23,42,.06)}.projects-modern-feature-card.primary{background:linear-gradient(145deg,color-mix(in srgb,var(--color-accent) 7%,var(--color-bg)),var(--color-bg))}.projects-modern-feature-card h3{margin-top:.8rem;font-size:1.55rem;line-height:1.1;letter-spacing:-.035em;font-weight:950}.projects-modern-feature-card p{margin-top:.4rem;font-size:.82rem;line-height:1.6;color:var(--color-text-secondary)}.card-topline{display:flex;gap:.45rem;flex-wrap:wrap;align-items:center;font-size:.65rem;color:var(--color-text-muted)}.chip-row{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:auto;padding-top:1rem}.card-footer{display:flex;justify-content:space-between;gap:.7rem;border-top:1px solid var(--color-border);margin-top:.8rem;padding-top:.7rem;font-size:.66rem;color:var(--color-text-muted)}.card-footer strong{color:var(--color-accent)}.projects-library-modern{padding-top:2rem}.library-toolbar{display:flex;justify-content:space-between;align-items:end;gap:1rem}.projects-search-modern{display:flex;min-width:330px;border:1px solid var(--color-border);border-radius:.8rem;background:var(--color-bg-secondary);padding:.22rem}.projects-search-modern input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--color-text-primary);padding:.55rem .65rem;font-size:.76rem}.projects-search-modern button{border:1px solid var(--color-border);border-radius:.55rem;background:var(--color-bg);padding:.42rem .6rem;font-size:.68rem;font-weight:900;color:var(--color-text-secondary)}.projects-filter-modern{display:grid;gap:.55rem;margin-top:1rem;padding:.75rem;border:1px solid var(--color-border);border-radius:1rem;background:var(--color-bg-secondary)}.projects-filter-modern>div{display:flex;gap:.6rem;align-items:flex-start}.projects-filter-modern>div>span{width:70px;flex:0 0 70px;padding-top:.43rem;font-size:.62rem;font-weight:950;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted)}.projects-filter-modern>div>div{display:flex;flex-wrap:wrap;gap:.3rem}.filter-overflow{max-height:70px;overflow:auto}.filter-btn-modern{padding:.4rem .58rem;border:1px solid transparent;border-radius:.55rem;font-size:.68rem;font-weight:850;color:var(--color-text-secondary)}.filter-btn-modern:hover{background:var(--color-bg);border-color:var(--color-border)}.filter-btn-modern.active-filter{background:var(--color-accent);color:#fff}.library-count-row{display:flex;justify-content:space-between;gap:1rem;margin:.85rem 0 .35rem;font-size:.68rem;color:var(--color-text-muted)}.library-count-row span:first-child{font-weight:950;color:var(--color-text-primary)}.projects-modern-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem}.project-modern-card{display:flex;gap:.75rem;min-height:265px;padding:1rem;border:1px solid var(--color-border);border-radius:1.1rem;background:var(--color-bg);text-decoration:none;color:inherit;transition:.18s}.project-modern-card[hidden]{display:none}.project-card-index{padding-top:.15rem;font:900 .68rem/1 var(--font-mono,monospace);color:var(--color-text-muted)}.project-card-body{min-width:0;display:flex;flex-direction:column;flex:1}.project-modern-card h3{margin-top:.8rem;font-size:1.08rem;line-height:1.2;letter-spacing:-.025em;font-weight:950}.project-modern-card p{margin-top:.32rem;font-size:.75rem;line-height:1.58;color:var(--color-text-secondary)}.project-modern-card .chip-row{padding-top:.75rem}.project-modern-card .card-footer{margin-top:auto}.empty-state{margin-top:.8rem}.hidden{display:none}
+    @media(max-width:980px){.projects-modern-hero{grid-template-columns:1fr}.project-hero-metrics{grid-template-columns:repeat(3,1fr)}.projects-modern-feature-grid{grid-template-columns:1fr}.projects-modern-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.library-toolbar{align-items:stretch;flex-direction:column}.projects-search-modern{min-width:0;width:100%}}
+    @media(max-width:640px){.projects-modern-page{padding-top:14px}.projects-modern-hero{padding:1.25rem;border-radius:1.4rem}.projects-modern-hero h1{font-size:clamp(2.55rem,12vw,3.7rem)}.project-hero-metrics{grid-template-columns:1fr}.projects-modern-grid{grid-template-columns:1fr}.project-modern-card{min-height:230px}.projects-filter-modern>div{display:block}.projects-filter-modern>div>span{display:block;width:auto;padding-top:0;margin-bottom:.28rem}.library-count-row{align-items:flex-start}.section-head-row{align-items:flex-start;flex-direction:column}}
+  </style>
+</BaseLayout>

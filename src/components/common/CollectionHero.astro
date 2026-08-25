@@ -1,0 +1,59 @@
+---
+interface Stat {
+  value: string;
+  label: string;
+  detail?: string;
+}
+interface Action {
+  label: string;
+  href: string;
+  kind?: "primary" | "secondary";
+}
+interface Props {
+  eyebrow: string;
+  title: string;
+  description: string;
+  stats: Stat[];
+  actions?: Action[];
+}
+const { eyebrow, title, description, stats, actions = [] } = Astro.props;
+---
+
+<section class="collection-hero" aria-labelledby="collection-hero-title">
+  <div class="collection-hero-inner content-container">
+    <div class="collection-hero-copy">
+      <span class="eyebrow">{eyebrow}</span>
+      <h1 id="collection-hero-title">{title}</h1>
+      <p>{description}</p>
+      {
+        actions.length > 0 && (
+          <div class="collection-hero-actions">
+            {actions.map((action) => (
+              <a
+                href={action.href}
+                class={
+                  action.kind === "secondary"
+                    ? "button-secondary"
+                    : "button-primary"
+                }
+              >
+                {action.label}
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </div>
+    <div class="collection-hero-stats" aria-label="Section overview">
+      {
+        stats.slice(0, 3).map((stat) => (
+          <div class="collection-hero-stat">
+            <strong>{stat.value}</strong>
+            <span>{stat.label}</span>
+            {stat.detail && <small>{stat.detail}</small>}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

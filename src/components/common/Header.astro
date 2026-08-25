@@ -1,0 +1,171 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+import Search from "@/components/Search.astro";
+import { Search as SearchIcon, Menu, X } from "@lucide/astro";
+
+const nav = [
+  { label: "AI", href: "/ai/" },
+  { label: "Roadmaps", href: "/careers/" },
+  { label: "Projects", href: "/projects/" },
+  { label: "Tools", href: "/tools/" },
+  { label: "Resources", href: "/resources/" },
+  { label: "News", href: "/news/" },
+  { label: "Blog", href: "/blog/" },
+];
+
+const active = (href: string) => {
+  const pathname = Astro.url.pathname.replace(/\/+$/, "") || "/";
+  const target = href.replace(/\/+$/, "") || "/";
+  return (
+    pathname === target || (target !== "/" && pathname.startsWith(`${target}/`))
+  );
+};
+---
+
+<header class="site-header sticky top-0 z-50">
+  <div class="content-container site-header-inner">
+    <a href="/" class="brand shrink-0" aria-label="AI Career Guide home">
+      <img src="/logo.webp" alt="" width="36" height="36" class="brand-mark" />
+      <span class="min-w-0">
+        <span class="brand-name">AI Career Guide</span>
+        <span class="brand-subtitle hidden xl:block"
+          >Learn · Build · Career</span
+        >
+      </span>
+    </a>
+
+    <nav
+      aria-label="Primary"
+      class="hidden xl:flex min-w-0 flex-1 items-center justify-center gap-1"
+    >
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            aria-current={active(item.href) ? "page" : undefined}
+            class:list={["nav-link", active(item.href) && "nav-link-active"]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="header-actions shrink-0">
+      <div class="hidden xl:block">
+        <Search instance="desktop" />
+      </div>
+      <a href="/search/" class="header-icon-btn xl:hidden" aria-label="Search">
+        <SearchIcon class="h-5 w-5" aria-hidden="true" />
+      </a>
+      <ThemeToggle />
+      <button
+        id="mobile-menu-btn"
+        class="header-icon-btn xl:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        aria-label="Open menu"
+        type="button"
+      >
+        <Menu id="mobile-menu-open" class="h-5 w-5" aria-hidden="true" />
+        <X id="mobile-menu-close" class="hidden h-5 w-5" aria-hidden="true" />
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-nav" class="mobile-nav hidden xl:hidden">
+    <div class="content-container mobile-nav-panel">
+      <div class="mobile-search-wrap">
+        <Search instance="mobile" />
+      </div>
+      <nav aria-label="Mobile" class="grid gap-1">
+        {
+          nav.map((item) => (
+            <a
+              href={item.href}
+              aria-current={active(item.href) ? "page" : undefined}
+              class:list={[
+                "mobile-nav-link",
+                active(item.href) && "mobile-nav-link-active",
+              ]}
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  const initHeader = () => {
+    const button = document.getElementById(
+      "mobile-menu-btn",
+    ) as HTMLButtonElement | null;
+    const nav = document.getElementById("mobile-nav");
+    const openIcon = document.getElementById("mobile-menu-open");
+    const closeIcon = document.getElementById("mobile-menu-close");
+    if (!button || !nav || button.dataset.ready === "true") return;
+    button.dataset.ready = "true";
+    let lastFocused: HTMLElement | null = null;
+
+    const setOpen = (open: boolean) => {
+      nav.classList.toggle("hidden", !open);
+      button.setAttribute("aria-expanded", String(open));
+      button.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      openIcon?.classList.toggle("hidden", open);
+      closeIcon?.classList.toggle("hidden", !open);
+      document.body.classList.toggle("mobile-menu-open", open);
+    };
+
+    const closeMenu = () => {
+      setOpen(false);
+      lastFocused?.focus({ preventScroll: true });
+      lastFocused = null;
+    };
+
+    const openMenu = () => {
+      lastFocused =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
+      setOpen(true);
+      requestAnimationFrame(() =>
+        nav
+          .querySelector<HTMLElement>("input, a, button")
+          ?.focus({ preventScroll: true }),
+      );
+    };
+
+    button.addEventListener("click", () => {
+      if (button.getAttribute("aria-expanded") === "true") closeMenu();
+      else openMenu();
+    });
+
+    nav
+      .querySelectorAll("a")
+      .forEach((link) => link.addEventListener("click", closeMenu));
+
+    const onKey = (event: KeyboardEvent) => {
+      if (
+        event.key === "Escape" &&
+        button.getAttribute("aria-expanded") === "true"
+      )
+        closeMenu();
+    };
+    document.addEventListener("keydown", onKey);
+
+    const onResize = () => {
+      if (
+        window.innerWidth >= 1280 &&
+        button.getAttribute("aria-expanded") === "true"
+      )
+        closeMenu();
+    };
+    window.addEventListener("resize", onResize, { passive: true });
+  };
+
+  document.addEventListener("astro:page-load", initHeader);
+  initHeader();
+</script>

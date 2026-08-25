@@ -1,0 +1,40 @@
+---
+import { getAuthorProfile } from "@/data/authors";
+export interface Props {
+  author: string;
+  bio?: string;
+}
+const { author, bio } = Astro.props;
+const profile = getAuthorProfile(author);
+---
+
+<div
+  class="mt-16 pt-8 border-t border-[var(--color-border)] flex flex-col sm:flex-row items-start gap-6"
+>
+  <div class="flex-shrink-0">
+    <div
+      class="w-16 h-16 rounded-full bg-[var(--color-accent)] flex items-center justify-center text-white font-bold text-2xl shadow-sm"
+    >
+      {author.charAt(0)}
+    </div>
+  </div>
+  <div class="flex-1">
+    <p
+      class="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]"
+    >
+      Written by
+    </p>
+    <h3 class="mt-1 text-lg font-bold text-[var(--color-text-primary)]">
+      <a href={profile.url} class="hover:text-[var(--color-accent)]"
+        >{author}</a>
+    </h3>
+    <p class="mt-2 text-sm text-[var(--color-text-secondary)] leading-relaxed">
+      {bio || profile.bio}
+    </p>
+    <a
+      href={profile.url}
+      class="mt-3 inline-block text-sm font-semibold text-[var(--color-accent)] hover:underline"
+      >View author profile →</a
+    >
+  </div>
+</div>

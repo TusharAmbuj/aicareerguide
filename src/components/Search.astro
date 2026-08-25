@@ -1,0 +1,283 @@
+---
+import { Search as SearchIcon, Loader2 } from "@lucide/astro";
+
+export interface Props {
+  instance?: string;
+}
+
+const { instance = "default" } = Astro.props;
+const slug = instance.replace(/[^a-zA-Z0-9_-]/g, "-");
+const inputId = `search-input-${slug}`;
+const containerId = `search-container-${slug}`;
+const resultsId = `search-results-${slug}`;
+const loadingId = `search-loading-${slug}`;
+---
+
+<div class="relative" id={containerId} data-search-instance={slug}>
+  <div class="relative flex items-center">
+    <SearchIcon
+      class="absolute left-3 w-4 h-4 text-[var(--color-text-muted)] pointer-events-none"
+      aria-hidden="true"
+    />
+    <input
+      type="search"
+      id={inputId}
+      placeholder="Search... (Ctrl+K)"
+      class="w-64 pl-9 pr-8 py-2 min-h-11 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] text-sm"
+      aria-label="Search site"
+      autocomplete="off"
+      aria-expanded="false"
+      aria-controls={resultsId}
+      role="combobox"
+      aria-autocomplete="list"
+    />
+    <Loader2
+      id={loadingId}
+      data-search-loading="true"
+      class="absolute right-3 w-4 h-4 text-[var(--color-text-muted)] animate-spin hidden"
+      aria-hidden="true"
+    />
+  </div>
+
+  <div
+    id={resultsId}
+    class="absolute right-0 mt-2 w-[min(24rem,calc(100vw-2rem))] max-h-[60vh] overflow-y-auto bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl shadow-xl hidden z-[70]"
+    role="listbox"
+    aria-label="Search results"
+  >
+  </div>
+</div>
+
+<script>
+  type SearchFactory = typeof import("@/lib/search").createSearch;
+  let createSearch: SearchFactory | null = null;
+  let fuse: ReturnType<SearchFactory> | null = null;
+  let isLoading = false;
+  let activeIndex = -1;
+  let searchIndexPromise: Promise<void> | null = null;
+  const SELECTOR = "[data-search-instance]";
+
+  const escapeHtml = (unsafe: string) =>
+    (unsafe || "")
+      .toString()
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  async function loadIndex(loadingEl: Element | null) {
+    if (fuse) return;
+    if (searchIndexPromise) return searchIndexPromise;
+
+    isLoading = true;
+    loadingEl?.classList.remove("hidden");
+    searchIndexPromise = (async () => {
+      try {
+        const [{ createSearch: factory }, res] = await Promise.all([
+          import("@/lib/search"),
+          fetch("/search-index.json", {
+            headers: { Accept: "application/json" },
+          }),
+        ]);
+        createSearch = factory;
+        if (!res.ok)
+          throw new Error(`Search index request failed: ${res.status}`);
+        const data = await res.json();
+        fuse = createSearch?.(Array.isArray(data) ? data : []) ?? null;
+      } catch (error) {
+        console.error("Failed to load search index:", error);
+        searchIndexPromise = null;
+        createSearch = null;
+      } finally {
+        isLoading = false;
+        loadingEl?.classList.add("hidden");
+      }
+    })();
+
+    return searchIndexPromise;
+  }
+
+  function getSearchElements(container: HTMLElement) {
+    const input = container.querySelector(
+      'input[type="search"]',
+    ) as HTMLInputElement | null;
+    const resultsEl = container.querySelector(
+      '[role="listbox"]',
+    ) as HTMLElement | null;
+    const loadingEl = container.querySelector<HTMLElement>(
+      "[data-search-loading]",
+    );
+    return { input, resultsEl, loadingEl };
+  }
+
+  function hideResults(input: HTMLInputElement, resultsEl: HTMLElement) {
+    resultsEl.classList.add("hidden");
+    input.setAttribute("aria-expanded", "false");
+    input.removeAttribute("aria-activedescendant");
+  }
+
+  function showResults(input: HTMLInputElement, resultsEl: HTMLElement) {
+    resultsEl.classList.remove("hidden");
+    input.setAttribute("aria-expanded", "true");
+  }
+
+  function initSearch(container: HTMLElement) {
+    if (container.dataset.ready === "true") return;
+    const { input, resultsEl, loadingEl } = getSearchElements(container);
+    if (!input || !resultsEl) return;
+    container.dataset.ready = "true";
+
+    const render = (
+      results: ReturnType<NonNullable<typeof fuse>["search"]>,
+    ) => {
+      activeIndex = -1;
+      if (!results.length) {
+        resultsEl.innerHTML =
+          '<div class="p-4 text-sm text-center text-[var(--color-text-muted)]">No results found.</div>';
+      } else {
+        resultsEl.innerHTML = `<ul class="divide-y divide-[var(--color-border)]">${results
+          .slice(0, 8)
+          .map(({ item }, index) => {
+            const safeTitle = escapeHtml(item.title);
+            const safeCategory = escapeHtml(item.category);
+            const destination = item.externalUrl || item.url;
+            const isExternal = Boolean(item.externalUrl);
+            const safeUrl = escapeHtml(destination);
+            const safeType = escapeHtml(item.type || item.category);
+            const tags = item.tags?.length
+              ? `<span class="opacity-50">•</span><span>${escapeHtml(item.tags.slice(0, 2).join(", "))}</span>`
+              : "";
+            const resultId = `${container.id}-result-${index}`;
+            return `<li><a id="${resultId}" href="${safeUrl}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ""} role="option" class="block p-4 hover:bg-[var(--color-bg-secondary)] focus:bg-[var(--color-bg-secondary)] focus:outline-none" aria-selected="false"><div class="text-sm font-bold text-[var(--color-text-primary)] truncate">${safeTitle}</div><div class="text-xs text-[var(--color-text-muted)] mt-1 flex items-center gap-1.5 truncate"><span class="text-[var(--color-accent)] font-semibold uppercase tracking-wider">${safeType}</span><span class="opacity-50">•</span><span>${safeCategory}</span>${tags}</div></a></li>`;
+          })
+          .join("")}</ul>`;
+      }
+      showResults(input, resultsEl);
+    };
+
+    const onInput = async () => {
+      await loadIndex(loadingEl);
+      const query = input.value.trim();
+      if (!query) {
+        hideResults(input, resultsEl);
+        return;
+      }
+      if (fuse) render(fuse.search(query));
+    };
+
+    input.addEventListener("focus", () => loadIndex(loadingEl));
+    input.addEventListener("input", onInput);
+    input.addEventListener("keydown", (event) => {
+      const options = [
+        ...resultsEl.querySelectorAll<HTMLElement>('[role="option"]'),
+      ];
+      if (event.key === "ArrowDown" && options.length) {
+        event.preventDefault();
+        activeIndex = Math.min(activeIndex + 1, options.length - 1);
+      } else if (event.key === "ArrowUp" && options.length) {
+        event.preventDefault();
+        activeIndex = Math.max(activeIndex - 1, 0);
+      } else if (event.key === "Escape") {
+        hideResults(input, resultsEl);
+        return;
+      } else if (event.key === "Enter" && input.value.trim()) {
+        event.preventDefault();
+        const active = activeIndex >= 0 ? options[activeIndex] : null;
+        if (active) {
+          active.click();
+          return;
+        }
+        window.location.assign(
+          `/search/?q=${encodeURIComponent(input.value.trim())}`,
+        );
+        return;
+      } else {
+        return;
+      }
+      options.forEach((option, index) =>
+        option.setAttribute("aria-selected", String(index === activeIndex)),
+      );
+      const active = options[activeIndex];
+      if (active) {
+        input.setAttribute("aria-activedescendant", active.id);
+        active.scrollIntoView({ block: "nearest" });
+      } else {
+        input.removeAttribute("aria-activedescendant");
+      }
+    });
+  }
+
+  function initAllSearches() {
+    document.querySelectorAll<HTMLElement>(SELECTOR).forEach(initSearch);
+  }
+
+  function focusSearch() {
+    const visible = [
+      ...document.querySelectorAll<HTMLElement>(SELECTOR),
+    ].filter((el) => {
+      const style = window.getComputedStyle(el);
+      return style.visibility !== "hidden" && el.getClientRects().length > 0;
+    });
+
+    let target = visible[0]?.querySelector<HTMLInputElement>(
+      'input[type="search"]',
+    );
+    if (target) {
+      target.focus({ preventScroll: true });
+      target.select();
+      return;
+    }
+
+    const menuButton = document.getElementById(
+      "mobile-menu-btn",
+    ) as HTMLButtonElement | null;
+    if (menuButton && menuButton.getAttribute("aria-expanded") !== "true") {
+      menuButton.click();
+      requestAnimationFrame(() => {
+        target = document.querySelector<HTMLElement>(
+          '[data-search-instance="mobile"] input[type="search"]',
+        );
+        if (target && target.getClientRects().length > 0) {
+          target.focus({ preventScroll: true });
+          target.select();
+        }
+      });
+    }
+  }
+
+  document.addEventListener("keydown", (event: KeyboardEvent) => {
+    const target = event.target as HTMLElement | null;
+    const isTypingTarget =
+      !!target &&
+      (target.matches("input, textarea, select") || target.isContentEditable);
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      event.key.toLowerCase() === "k" &&
+      !isTypingTarget
+    ) {
+      event.preventDefault();
+      focusSearch();
+      return;
+    }
+    if (event.key !== "Escape") return;
+    document.querySelectorAll<HTMLElement>(SELECTOR).forEach((container) => {
+      const { input, resultsEl } = getSearchElements(container);
+      if (input && resultsEl && !resultsEl.classList.contains("hidden")) {
+        hideResults(input, resultsEl);
+      }
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    const target = event.target as Node | null;
+    document.querySelectorAll<HTMLElement>(SELECTOR).forEach((container) => {
+      const { input, resultsEl } = getSearchElements(container);
+      if (input && resultsEl && target && !container.contains(target))
+        hideResults(input, resultsEl);
+    });
+  });
+
+  document.addEventListener("astro:page-load", initAllSearches);
+  initAllSearches();
+</script>

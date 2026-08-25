@@ -1,0 +1,211 @@
+---
+import Header from "@/components/common/Header.astro";
+import Footer from "@/components/common/Footer.astro";
+import SEO from "@/components/seo/SEO.astro";
+import "@/styles/global.css";
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+  article?: boolean;
+  pubDate?: Date;
+  author?: string;
+  updatedDate?: Date;
+  articleType?: "BlogPosting" | "TechArticle";
+  authorType?: "Organization" | "Person";
+  authorUrl?: string;
+  breadcrumbs?: { label: string; url: string }[];
+  imageAlt?: string;
+  noindex?: boolean;
+}
+const props = Astro.props;
+const { article = false } = props;
+---
+
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0F172A" />
+
+    <script is:inline>
+      (() => {
+        const MEASUREMENT_ID = "G-Q91ESRJBBL";
+        let started = false;
+        let lastTrackedPath = "";
+
+        const trackPageView = () => {
+          const path =
+            window.location.pathname +
+            window.location.search +
+            window.location.hash;
+          if (!started || path === lastTrackedPath || !window.gtag) return;
+          lastTrackedPath = path;
+          window.gtag("event", "page_view", {
+            page_title: document.title,
+            page_location: window.location.href,
+            page_path: path,
+          });
+        };
+
+        const startAnalytics = () => {
+          if (started) {
+            trackPageView();
+            return;
+          }
+          started = true;
+          const s = document.createElement("script");
+          s.async = true;
+          s.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
+          document.head.appendChild(s);
+          window.dataLayer = window.dataLayer || [];
+          window.gtag =
+            window.gtag ||
+            function () {
+              window.dataLayer.push(arguments);
+            };
+          window.gtag("js", new Date());
+          window.gtag("config", MEASUREMENT_ID, { send_page_view: false });
+          trackPageView();
+        };
+
+        document.addEventListener("astro:page-load", trackPageView);
+        const idle =
+          window.requestIdleCallback || ((cb) => window.setTimeout(cb, 10000));
+        const begin = () => startAnalytics();
+        ["pointerdown", "keydown", "touchstart"].forEach((event) =>
+          window.addEventListener(event, begin, { once: true, passive: true }),
+        );
+        idle(startAnalytics, { timeout: 10000 });
+      })();
+    </script>
+
+    <meta charset="UTF-8" /><meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    /><meta name="theme-color" content="#0F172A" />
+
+    <script is:inline>
+      (() => {
+        const getTheme = () => {
+          const stored = localStorage.getItem("theme");
+          if (stored === "dark" || stored === "light") return stored;
+          return window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+        };
+        const applyTheme = (theme = getTheme()) => {
+          document.documentElement.classList.toggle("dark", theme === "dark");
+          document.documentElement.style.colorScheme = theme;
+          document
+            .querySelector('meta[name="theme-color"]')
+            ?.setAttribute("content", theme === "dark" ? "#0B1120" : "#FFFFFF");
+        };
+        applyTheme();
+        document.addEventListener("astro:page-load", () => applyTheme());
+        const media = window.matchMedia("(prefers-color-scheme: dark)");
+        media.addEventListener?.("change", () => {
+          if (!localStorage.getItem("theme")) applyTheme();
+        });
+      })();
+    </script>
+
+    <link rel="icon" type="image/png" href="/favicon.png" /><link
+      rel="apple-touch-icon"
+      href="/favicon.png"
+    /><SEO {...props} /></head
+  >
+  <body
+    class="min-h-full overflow-x-clip bg-[var(--color-bg)] text-[var(--color-text-primary)]"
+    data-page-type={article ? "article" : "site"}
+  >
+    {
+      article && (
+        <div
+          id="reading-progress"
+          class="fixed left-0 top-0 z-[60] h-0.5 w-0 bg-[var(--color-accent)]"
+          aria-hidden="true"
+        />
+      )
+    }
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    <Header />
+    <main id="main-content" class="min-h-[60vh]"><slot /></main>
+    <Footer />
+    <script>
+      function setupCodeBlocks() {
+        if (!document.querySelector(".prose pre:not([data-code-ready])"))
+          return;
+        document
+          .querySelectorAll<HTMLPreElement>(".prose pre:not([data-code-ready])")
+          .forEach((pre) => {
+            pre.dataset.codeReady = "true";
+            const wrapper = document.createElement("div");
+            wrapper.className = "code-wrapper";
+            pre.parentNode?.insertBefore(wrapper, pre);
+            wrapper.appendChild(pre);
+            const header = document.createElement("div");
+            header.className = "code-header";
+            const lang = (
+              pre
+                .querySelector("code")
+                ?.className.match(/language-([\w-]+)/)?.[1] || "code"
+            ).toUpperCase();
+            header.innerHTML = `<span>${lang}</span>`;
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.textContent = "Copy";
+            btn.setAttribute("aria-label", "Copy code");
+            btn.addEventListener("click", async () => {
+              try {
+                await navigator.clipboard.writeText(
+                  pre.querySelector("code")?.textContent ||
+                    pre.textContent ||
+                    "",
+                );
+                btn.textContent = "Copied";
+                setTimeout(() => (btn.textContent = "Copy"), 1600);
+              } catch {
+                btn.textContent = "Copy failed";
+                setTimeout(() => (btn.textContent = "Copy"), 1600);
+              }
+            });
+            header.appendChild(btn);
+            wrapper.insertBefore(header, pre);
+          });
+      }
+      const updateProgress = () => {
+        const el = document.getElementById("reading-progress");
+        if (!el) return;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        el.style.width = `${max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0}%`;
+      };
+      let progressFrame = 0;
+      let progressListenersBound = false;
+      const requestProgressUpdate = () => {
+        if (progressFrame) return;
+        progressFrame = requestAnimationFrame(() => {
+          progressFrame = 0;
+          updateProgress();
+        });
+      };
+      const bindPagePerformance = () => {
+        setupCodeBlocks();
+        if (!progressListenersBound) {
+          progressListenersBound = true;
+          window.addEventListener("scroll", requestProgressUpdate, {
+            passive: true,
+          });
+          window.addEventListener("resize", requestProgressUpdate, {
+            passive: true,
+          });
+        }
+        if (document.body.dataset.pageType === "article") updateProgress();
+      };
+      document.addEventListener("astro:page-load", bindPagePerformance);
+      bindPagePerformance();
+    </script></body
+  >
+</html>

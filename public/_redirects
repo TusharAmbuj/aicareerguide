@@ -1,0 +1,11 @@
+# Legacy Career Tools routes from the previous site
+/tools/career/* /careers/:splat 301
+/tools/career /careers/ 301
+
+# Canonical trailing-slash normalization for legacy collection roots
+/blog /blog/ 301
+/ai /ai/ 301
+/careers /careers/ 301
+/projects /projects/ 301
+/tools /tools/ 301
+/resources /resources/ 301

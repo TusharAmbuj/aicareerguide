@@ -1,0 +1,384 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import { Image } from "astro:assets";
+import TableOfContents from "@/components/TableOfContents.astro";
+import RelatedPosts from "@/components/RelatedPosts.astro";
+import AuthorBox from "@/components/AuthorBox.astro";
+import ShareButtons from "@/components/ShareButtons.astro";
+import Breadcrumbs from "@/components/seo/Breadcrumbs.astro";
+import { getAuthorProfile } from "@/data/authors";
+export interface Props {
+    title: string;
+    description: string;
+    pubDate: Date;
+    updatedDate?: Date;
+    lastReviewed?: Date;
+    sources?: { title: string; url: string }[];
+    author: string;
+    category: string;
+    contentType?: string;
+    tags?: string[];
+    topics?: string[];
+    difficulty?: "Beginner" | "Intermediate" | "Advanced";
+    prerequisites?: string[];
+    nextSteps?: string[];
+    keyTakeaways?: string[];
+    image?: any;
+    imageAlt?: string;
+    imageCaption?: string;
+    readingTime?: string;
+    headings: { depth: number; slug: string; text: string }[];
+    relatedPosts?: any[];
+    canonical?: string;
+    articleType?: "BlogPosting" | "TechArticle";
+    authorType?: "Organization" | "Person";
+    previousPost?: any;
+    nextPost?: any;
+}
+const {
+    title,
+    description,
+    pubDate,
+    updatedDate,
+    lastReviewed,
+    sources = [],
+    author,
+    category,
+    contentType = "guide",
+    tags = [],
+    topics = [],
+    difficulty = "Intermediate",
+    prerequisites = [],
+    nextSteps = [],
+    keyTakeaways = [],
+    image,
+    imageAlt,
+    imageCaption,
+    readingTime = "8",
+    headings = [],
+    relatedPosts = [],
+    canonical,
+    previousPost,
+    nextPost,
+    articleType = "BlogPosting",
+    authorType = "Organization",
+} = Astro.props;
+const authorProfile = getAuthorProfile(author);
+const breadcrumbItems = [
+    { label: "Home", url: "/" },
+    { label: "Blog", url: "/blog" },
+    { label: category, url: `/blog/?category=${encodeURIComponent(category)}` },
+    { label: title, url: Astro.url.pathname },
+];
+---
+
+<BaseLayout
+    title={title}
+    description={description}
+    image={image?.src}
+    imageAlt={imageAlt}
+    canonical={canonical || Astro.url.pathname}
+    article
+    pubDate={pubDate}
+    author={author}
+    updatedDate={updatedDate}
+    articleType={articleType}
+    authorType={authorType}
+    authorUrl={authorProfile.url}
+    articleSection={category}
+    keywords={[...topics, ...tags]}
+    breadcrumbs={breadcrumbItems}
+>
+    <article class="article-page">
+        <div class="article-shell">
+            <Breadcrumbs items={breadcrumbItems} /><header
+                class="article-header"
+            >
+                <div class="article-header-copy">
+                    <div class="article-meta-top">
+                        <span class="pill">{category}</span><span
+                            class="article-type-badge">{contentType}</span
+                        ><span class="article-type-badge">{difficulty}</span>
+                    </div><h1>{title}</h1><p class="article-dek">
+                        {description}
+                    </p><div class="article-byline">
+                        <a href={authorProfile.url} class="article-author"
+                            >{author}</a
+                        ><span aria-hidden="true">·</span><time
+                            datetime={pubDate.toISOString()}
+                            >{
+                                pubDate.toLocaleDateString("en-US", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                })
+                            }</time
+                        ><span aria-hidden="true">·</span><span
+                            >{readingTime} min read</span
+                        ><span aria-hidden="true">·</span><span
+                            >{
+                                (updatedDate || pubDate).toLocaleDateString(
+                                    "en-US",
+                                    { month: "short", year: "numeric" },
+                                )
+                            }</span>
+                    </div>{
+                        (updatedDate || lastReviewed) && (
+                            <div class="article-review-line">
+                                {updatedDate && (
+                                    <span>
+                                        Updated{" "}
+                                        {updatedDate.toLocaleDateString(
+                                            "en-US",
+                                            {
+                                                year: "numeric",
+                                                month: "short",
+                                                day: "numeric",
+                                            },
+                                        )}
+                                    </span>
+                                )}
+                                {lastReviewed && (
+                                    <span>
+                                        Editorially reviewed{" "}
+                                        {lastReviewed.toLocaleDateString(
+                                            "en-US",
+                                            {
+                                                year: "numeric",
+                                                month: "short",
+                                                day: "numeric",
+                                            },
+                                        )}
+                                    </span>
+                                )}
+                            </div>
+                        )
+                    }<div class="mt-5">
+                        <ShareButtons url={Astro.url.href} title={title} />
+                    </div>
+                </div>{
+                    image && (
+                        <figure class="article-hero-media">
+                            <Image
+                                src={image}
+                                alt={imageAlt || `Illustration for ${title}`}
+                                width={1200}
+                                height={630}
+                                widths={[640, 960, 1200]}
+                                sizes="(min-width:1024px) 470px,100vw"
+                                quality={84}
+                                loading="eager"
+                                fetchpriority="high"
+                                decoding="async"
+                                class="w-full h-full object-cover"
+                            />
+                            {imageCaption && (
+                                <figcaption>{imageCaption}</figcaption>
+                            )}
+                        </figure>
+                    )
+                }
+            </header>
+            {
+                keyTakeaways.length > 0 && (
+                    <section class="takeaways-card">
+                        <>
+                            <div>
+                                <>
+                                    <p class="section-kicker">At a glance</p>
+                                    <h2>Key takeaways</h2>
+                                </>
+                            </div>
+                            <ul>
+                                {keyTakeaways.map((x) => (
+                                    <li>
+                                        <span>✓</span>
+                                        <span>{x}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </>
+                    </section>
+                )
+            }
+            {
+                headings.length > 0 && (
+                    <div class="mobile-toc-card">
+                        <details open>
+                            <>
+                                <summary>
+                                    On this page{" "}
+                                    <span>
+                                        {
+                                            headings.filter(
+                                                (h) =>
+                                                    h.depth === 2 ||
+                                                    h.depth === 3,
+                                            ).length
+                                        }{" "}
+                                        sections
+                                    </span>
+                                </summary>
+                                <div class="mt-4">
+                                    <TableOfContents headings={headings} />
+                                </div>
+                            </>
+                        </details>
+                    </div>
+                )
+            }
+            {
+                (prerequisites.length > 0 || nextSteps.length > 0) && (
+                    <div class="article-context-grid">
+                        {prerequisites.length > 0 && (
+                            <section class="article-context-card">
+                                <p class="context-label">Prerequisites</p>
+                                <ul>
+                                    {prerequisites.map((x) => (
+                                        <li>{x}</li>
+                                    ))}
+                                </ul>
+                            </section>
+                        )}
+                        {nextSteps.length > 0 && (
+                            <section class="article-context-card">
+                                <p class="context-label">Recommended next</p>
+                                <ul>
+                                    {nextSteps.map((x) => (
+                                        <li>{x}</li>
+                                    ))}
+                                </ul>
+                            </section>
+                        )}
+                    </div>
+                )
+            }
+            <div class="article-content-layout article-reading-layout">
+                <aside
+                    class="article-sidebar"
+                    aria-label="Article navigation and context"
+                >
+                    <div class="article-sidebar-inner">
+                        <div class="article-sidebar-section">
+                            <div class="article-sidebar-label">
+                                Navigate
+                            </div><TableOfContents headings={headings} />
+                        </div><div class="article-sidebar-divider"></div><div
+                            class="article-sidebar-section"
+                        >
+                            <p class="context-label">Article details</p><div
+                                class="sidebar-details"
+                            >
+                                <span>{difficulty}</span><span
+                                    >{readingTime} min read</span
+                                ><span>{category}</span><span
+                                    >{contentType}</span>
+                            </div>
+                        </div>{
+                            prerequisites.length > 0 && (
+                                <div class="article-sidebar-section">
+                                    <>
+                                        <p class="context-label">
+                                            Prerequisites
+                                        </p>
+                                        <ul class="sidebar-list">
+                                            {prerequisites.map((x) => (
+                                                <li>{x}</li>
+                                            ))}
+                                        </ul>
+                                    </>
+                                </div>
+                            )
+                        }{
+                            nextSteps.length > 0 && (
+                                <div class="article-sidebar-section">
+                                    <>
+                                        <p class="context-label">Next</p>
+                                        <ul class="sidebar-list">
+                                            {nextSteps.slice(0, 4).map((x) => (
+                                                <li>{x}</li>
+                                            ))}
+                                        </ul>
+                                    </>
+                                </div>
+                            )
+                        }
+                    </div>
+                </aside><div class="article-prose prose"><slot /></div>
+            </div>
+            <footer class="article-footer">
+                {
+                    topics.length > 0 && (
+                        <div class="article-taxonomy">
+                            <span class="context-label">Topics</span>
+                            {topics.map((x) => (
+                                <span class="tag">{x}</span>
+                            ))}
+                        </div>
+                    )
+                }{
+                    tags.length > 0 && (
+                        <div class="article-taxonomy">
+                            <span class="context-label">Tags</span>
+                            {tags.map((x) => (
+                                <span class="tag">#{x}</span>
+                            ))}
+                        </div>
+                    )
+                }{
+                    sources.length > 0 && (
+                        <section class="sources-card">
+                            <>
+                                <h2>Sources & references</h2>
+                                <ul>
+                                    {sources.map((source) => (
+                                        <li>
+                                            <a
+                                                href={source.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                {source.title}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
+                        </section>
+                    )
+                }{
+                    (previousPost || nextPost) && (
+                        <nav
+                            class="article-next-nav"
+                            aria-label="Article navigation"
+                        >
+                            {previousPost ? (
+                                <a href={`/blog/${previousPost.id}/`}>
+                                    <span>← Previous article</span>
+                                    <strong>{previousPost.data.title}</strong>
+                                </a>
+                            ) : (
+                                <span />
+                            )}
+                            {nextPost ? (
+                                <a
+                                    href={`/blog/${nextPost.id}/`}
+                                    class="text-right"
+                                >
+                                    <span>Next article →</span>
+                                    <strong>{nextPost.data.title}</strong>
+                                </a>
+                            ) : (
+                                <span />
+                            )}
+                        </nav>
+                    )
+                }<AuthorBox author={author} />{
+                    relatedPosts.length > 0 && (
+                        <RelatedPosts posts={relatedPosts} />
+                    )
+                }
+            </footer>
+        </div>
+    </article></BaseLayout
+>

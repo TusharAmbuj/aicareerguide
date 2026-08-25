@@ -1,0 +1,202 @@
+---
+export interface Props {
+    title?: string;
+    description?: string;
+    image?: string;
+    canonical?: string;
+    article?: boolean;
+    articleType?: "BlogPosting" | "TechArticle";
+    pubDate?: Date;
+    author?: string;
+    updatedDate?: Date;
+    authorType?: "Organization" | "Person";
+    authorUrl?: string;
+    articleSection?: string;
+    keywords?: string[];
+    breadcrumbs?: { label: string; url: string }[];
+    imageAlt?: string;
+    noindex?: boolean;
+}
+const {
+    title,
+    description,
+    image = "/images/og-default.jpg",
+    canonical,
+    article = false,
+    articleType = "BlogPosting",
+    pubDate,
+    author = "AI Career Guide",
+    updatedDate,
+    authorType = "Organization",
+    authorUrl,
+    articleSection,
+    keywords = [],
+    breadcrumbs = [],
+    imageAlt,
+    noindex = false,
+} = Astro.props;
+const siteTitle = "AI Career Guide";
+const siteUrl = Astro.site?.href || "https://aicareerguide.xyz/";
+const fullTitle = title
+    ? title.endsWith(siteTitle)
+        ? title
+        : `${title} | ${siteTitle}`
+    : `${siteTitle} | Practical AI, Technology & Career Guidance`;
+const desc =
+    description ||
+    "Practical AI, technology, project, and career guidance for people building their future in tech.";
+const canonicalURL = new URL(canonical || Astro.url.pathname, siteUrl).href;
+const imageURL = new URL(image, siteUrl).href;
+const authorURL = new URL(authorUrl || "/authors/ai-career-guide/", siteUrl)
+    .href;
+const articleSchema = article
+    ? {
+          "@context": "https://schema.org",
+          "@type": articleType,
+          headline: title,
+          description: desc,
+          image: imageURL,
+          datePublished: pubDate?.toISOString(),
+          dateModified: (updatedDate || pubDate)?.toISOString(),
+          author: { "@type": authorType, name: author, url: authorURL },
+          publisher: {
+              "@type": "Organization",
+              name: siteTitle,
+              url: siteUrl,
+              logo: {
+                  "@type": "ImageObject",
+                  url: new URL("/logo.webp", siteUrl).href,
+              },
+          },
+          mainEntityOfPage: { "@type": "WebPage", "@id": canonicalURL },
+          articleSection,
+          keywords: keywords.length ? keywords : undefined,
+          inLanguage: "en",
+      }
+    : null;
+const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${siteUrl}#website`,
+    name: siteTitle,
+    url: siteUrl,
+    description: desc,
+    inLanguage: "en",
+    potentialAction: {
+        "@type": "SearchAction",
+        target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${siteUrl}search/?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+    },
+};
+const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${siteUrl}#organization`,
+    name: siteTitle,
+    url: siteUrl,
+    logo: {
+        "@type": "ImageObject",
+        url: new URL("/logo.webp", siteUrl).href,
+        width: 128,
+        height: 128,
+    },
+    description: "Practical AI, technology, project, and career guidance.",
+};
+const webpageSchema = {
+    "@context": "https://schema.org",
+    "@type": article ? "Article" : "WebPage",
+    "@id": canonicalURL + "#webpage",
+    url: canonicalURL,
+    name: fullTitle,
+    description: desc,
+    inLanguage: "en",
+};
+const robots = noindex
+    ? "noindex,follow,max-image-preview:large"
+    : "index,follow,max-image-preview:large";
+---
+
+<title>{fullTitle}</title><meta name="description" content={desc} /><meta
+    name="author"
+    content={author}
+/><meta name="referrer" content="strict-origin-when-cross-origin" /><meta
+    name="robots"
+    content={robots}
+/><link rel="canonical" href={canonicalURL} /><link
+    rel="alternate"
+    type="application/rss+xml"
+    title="AI Career Guide RSS"
+    href="/rss.xml"
+/><meta property="og:locale" content="en_US" /><meta
+    property="og:type"
+    content={article ? "article" : "website"}
+/><meta property="og:url" content={canonicalURL} /><meta
+    property="og:title"
+    content={fullTitle}
+/><meta property="og:description" content={desc} /><meta
+    property="og:image"
+    content={imageURL}
+/><meta property="og:image:width" content="1200" /><meta
+    property="og:image:height"
+    content="630"
+/><meta property="og:image:alt" content={imageAlt || title || siteTitle} /><meta
+    property="og:site_name"
+    content={siteTitle}
+/><meta name="twitter:card" content="summary_large_image" /><meta
+    name="twitter:title"
+    content={fullTitle}
+/><meta name="twitter:description" content={desc} /><meta
+    name="twitter:image"
+    content={imageURL}
+/><meta name="twitter:image:alt" content={imageAlt || title || siteTitle} />{
+    article && pubDate && (
+        <meta
+            property="article:published_time"
+            content={pubDate.toISOString()}
+        />
+    )
+}
+{
+    article && updatedDate && (
+        <meta
+            property="article:modified_time"
+            content={updatedDate.toISOString()}
+        />
+    )
+}
+{
+    articleSchema && (
+        <script
+            type="application/ld+json"
+            set:html={JSON.stringify(articleSchema)}
+        />
+    )
+}<script
+    type="application/ld+json"
+    set:html={JSON.stringify(websiteSchema)}
+/><script
+    type="application/ld+json"
+    set:html={JSON.stringify(webpageSchema)}
+/><script
+    type="application/ld+json"
+    set:html={JSON.stringify(organizationSchema)}
+/>{
+    breadcrumbs.length > 0 && (
+        <script
+            type="application/ld+json"
+            set:html={JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                itemListElement: breadcrumbs.map((item, index) => ({
+                    "@type": "ListItem",
+                    position: index + 1,
+                    name: item.label,
+                    item: new URL(item.url, siteUrl).href,
+                })),
+            })}
+        />
+    )
+}

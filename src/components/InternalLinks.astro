@@ -1,0 +1,40 @@
+---
+export interface LinkItem {
+  href: string;
+  label: string;
+  description: string;
+  type?: string;
+}
+export interface Props {
+  title?: string;
+  links: LinkItem[];
+}
+const { title = "Keep building from here", links = [] } = Astro.props;
+const visible = links.filter(Boolean).slice(0, 6);
+---
+
+{
+  visible.length > 0 && (
+    <section class="internal-links-card" aria-labelledby="internal-links-title">
+      <div class="internal-links-head">
+        <div>
+          <p class="section-kicker">Continue the path</p>
+          <h2 id="internal-links-title">{title}</h2>
+        </div>
+        <span class="internal-links-count">{visible.length} links</span>
+      </div>
+      <div class="internal-links-grid">
+        {visible.map((link) => (
+          <a href={link.href} class="internal-link-card">
+            <div class="internal-link-topline">
+              {link.type && <span class="internal-link-type">{link.type}</span>}
+              <span aria-hidden="true">↗</span>
+            </div>
+            <h3>{link.label}</h3>
+            <p>{link.description}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+  )
+}

@@ -1,0 +1,169 @@
+---
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+import {getCollection , render} from 'astro:content';
+import { getRoadmapVisual } from '@/data/roadmaps';
+
+export async function getStaticPaths() {
+  const roadmaps = await getCollection('roadmaps', ({ data }) => !data.draft && data.status === 'published');
+  return roadmaps.map((roadmap) => ({ params: { slug: roadmap.id }, props: { roadmap } }));
+}
+
+const { roadmap } = Astro.props;
+const visual = getRoadmapVisual(roadmap.id);
+if (!visual) throw new Error(`Missing visual roadmap definition for ${roadmap.id}`);
+const { Content } = await render(roadmap);
+const breadcrumbs = [{ label: 'Home', url: '/' }, { label: 'Roadmaps', url: '/careers' }, { label: roadmap.data.title, url: `/careers/${roadmap.id}` }];
+const allNodes = visual?.phases.flatMap((phase) => phase.nodes) ?? [];
+---
+<BaseLayout title={`${roadmap.data.title} | AI Career Guide`} description={roadmap.data.description} image={roadmap.data.image} breadcrumbs={breadcrumbs}>
+  <div class="roadmap-detail-shell max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <section class="roadmap-detail-hero mt-5 rounded-3xl border border-[var(--color-border)] bg-[radial-gradient(circle_at_95%_5%,rgba(99,102,241,.16),transparent_28%),var(--color-bg-secondary)] p-6 sm:p-8 lg:p-10">
+      <div class="grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
+        <div>
+          <div class="flex flex-wrap gap-2"><span class="pill">{roadmap.data.category}</span><span class="pill">{roadmap.data.difficulty}</span><span class="pill">{roadmap.data.estimatedTime}</span><span class="pill">{visual?.phases.length ?? 0} phases</span><span class="pill">{allNodes.length} checkpoints</span></div>
+          <h1 class="mt-5 text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight">{roadmap.data.title.replace(' Roadmap','')}</h1>
+          <p class="mt-4 max-w-3xl text-lg sm:text-xl leading-8 text-[var(--color-text-secondary)]">{visual?.tagline ?? roadmap.data.description}</p>
+          <p class="mt-3 max-w-3xl text-sm sm:text-base leading-7 text-[var(--color-text-muted)]"><strong class="text-[var(--color-text-primary)]">Outcome:</strong> {visual?.outcome ?? roadmap.data.description}</p>
+          <div class="mt-6 flex flex-wrap gap-3"><button id="continue-btn" type="button" class="button-primary">Continue roadmap →</button><button id="reset-progress" type="button" class="button-secondary">Reset progress</button><a href="/projects/" class="button-secondary">Build with projects</a></div>
+        </div>
+        <div class="roadmap-progress-card rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] p-5 sm:p-6">
+          <div class="flex items-center justify-between gap-4"><div><p class="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Your progress</p><p class="mt-1 text-3xl font-black" id="progress-percent">0%</p></div><div class="roadmap-progress-ring"><span id="progress-count">0 / {allNodes.length}</span></div></div>
+          <div class="mt-5 h-2 overflow-hidden rounded-full bg-[var(--color-border)]"><div id="progress-bar" class="h-full rounded-full bg-[var(--color-accent)] transition-all" style="width:0%"></div></div>
+          <p class="mt-3 text-sm text-[var(--color-text-secondary)]" id="progress-message">Start with Phase 01. Your progress is saved on this device.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="mt-8 grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)_280px]">
+      <aside class="hidden lg:block"><div class="roadmap-sticky-panel rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] p-4"><p class="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">On this roadmap</p><nav id="phase-nav" class="mt-3 space-y-1">{visual?.phases.map((phase, index) => <a href={`#${phase.id}`} class="phase-nav-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-[var(--color-bg-secondary)]"><span>{phase.number}</span><span class="min-w-0"><strong class="block truncate">{phase.title}</strong><small class="block truncate text-[var(--color-text-muted)]">{phase.nodes.length} checkpoints</small></span></a>)}</nav><div class="mt-5 border-t border-[var(--color-border)] pt-4"><a href="#guide" class="text-sm font-semibold text-[var(--color-accent)]">Read the detailed guide ↓</a></div></div></aside>
+
+      <div class="roadmap-detail-main">
+        <div class="roadmap-toolbar rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] p-3 sm:p-4">
+          <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div class="flex flex-wrap items-center gap-2"><span class="text-sm font-semibold">View</span><button type="button" class="roadmap-view-btn active-filter rounded-lg border px-3 py-2 text-sm" data-view="all">All topics</button><button type="button" class="roadmap-view-btn rounded-lg border px-3 py-2 text-sm" data-view="core">Core only</button><button type="button" class="roadmap-view-btn rounded-lg border px-3 py-2 text-sm" data-view="project">Projects</button><button type="button" class="roadmap-view-btn rounded-lg border px-3 py-2 text-sm" data-view="career">Career</button></div>
+            <div class="flex flex-wrap items-center gap-2"><label for="phase-jump" class="sr-only">Jump to phase</label><select id="phase-jump" class="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm"><option value="">Jump to phase…</option>{visual?.phases.map((phase) => <option value={phase.id}>{phase.number} · {phase.title}</option>)}</select><button type="button" id="focus-toggle" class="rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm">Focus mode</button></div>
+          </div>
+        </div>
+
+        <section class="roadmap-map mt-6" aria-label={`${roadmap.data.title} visual roadmap`}>
+          {visual?.phases.map((phase, index) => <article id={phase.id} class="roadmap-phase" data-phase-index={index}>
+            <div class="roadmap-phase-marker"><span>{phase.number}</span></div>
+            <div class="roadmap-phase-header"><div><p class="text-xs font-bold uppercase tracking-wider text-[var(--color-accent)]">Phase {phase.number}</p><h2 class="mt-1 text-2xl sm:text-3xl font-black">{phase.title}</h2><p class="mt-1 text-sm text-[var(--color-text-muted)]">{phase.subtitle}</p></div><div class="hidden sm:block max-w-sm text-right"><p class="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Goal</p><p class="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">{phase.goal}</p></div></div>
+            <div class="roadmap-node-grid">
+              {phase.nodes.map((node, nodeIndex) => <button type="button" class:list={["roadmap-node", node.type === 'project' && 'is-project', node.type === 'career' && 'is-career', node.type === 'optional' && 'is-optional']} data-node-id={node.id} data-node-type={node.type ?? 'core'} data-node-title={node.title} data-node-description={node.description} data-node-tags={JSON.stringify(node.tags ?? [])} data-node-links={JSON.stringify(node.links ?? [])} data-node-prereqs={JSON.stringify(node.prerequisites ?? [])}>
+                <span class="roadmap-node-kicker">{node.type === 'project' ? 'Build' : node.type === 'career' ? 'Career' : node.type === 'optional' ? 'Optional' : `Checkpoint ${String(nodeIndex + 1).padStart(2,'0')}`}</span>
+                <span class="roadmap-node-title">{node.title}</span>
+                {node.short && <span class="roadmap-node-short">{node.short}</span>}
+                {node.tags && <span class="roadmap-node-tags">{node.tags.slice(0,3).map((tag) => <span>{tag}</span>)}</span>}
+                <span class="roadmap-node-action">Open details ↗</span>
+                <span class="roadmap-node-complete" aria-hidden="true">✓</span>
+              </button>)}
+            </div>
+            {index < (visual?.phases.length ?? 0) - 1 && <div class="roadmap-phase-connector" aria-hidden="true"><span></span></div>}
+          </article>)}
+        </section>
+
+        <section id="guide" class="mt-14 rounded-3xl border border-[var(--color-border)] bg-[var(--color-bg)] p-6 sm:p-8">
+          <div class="flex flex-col gap-3 border-b border-[var(--color-border)] pb-5 sm:flex-row sm:items-end sm:justify-between"><div><p class="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Detailed guide</p><h2 class="mt-1 text-2xl sm:text-3xl font-black">How to use this roadmap</h2></div><p class="max-w-lg text-sm leading-6 text-[var(--color-text-secondary)]">Use the visual map to navigate. The written guide below explains the reasoning behind the sequence.</p></div>
+          <div class="mt-8 prose prose-lg max-w-article text-[var(--color-text-secondary)] prose-headings:text-[var(--color-text-primary)] prose-headings:font-bold prose-a:text-[var(--color-accent)] prose-a:no-underline hover:prose-a:underline prose-strong:text-[var(--color-text-primary)]"><Content /></div>
+        </section>
+      </div>
+
+      <aside class="hidden xl:block"><div class="roadmap-sticky-panel space-y-4">
+        <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] p-5"><p class="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Core skills</p><div class="mt-3 flex flex-wrap gap-2">{roadmap.data.skills.slice(0, 18).map((skill) => <span class="tag">{skill}</span>)}</div></div>
+        <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-5"><p class="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Build alongside it</p><p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">Don't wait until the final phase. Build a project after every major skill cluster.</p><a href="/projects/" class="mt-4 inline-flex text-sm font-bold text-[var(--color-accent)]">Browse projects →</a></div>
+        <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] p-5"><p class="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Ready to build?</p><p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">Turn the next roadmap checkpoints into a portfolio project.</p><a href="/projects/" class="mt-4 inline-flex text-sm font-bold text-[var(--color-accent)]">Explore projects →</a></div>
+      </div></aside>
+    </div>
+  </div>
+
+  <div id="roadmap-modal" class="roadmap-modal hidden" role="dialog" aria-modal="true" aria-labelledby="roadmap-modal-title">
+    <div class="roadmap-modal-backdrop" data-close-modal></div>
+    <div class="roadmap-modal-panel">
+      <div class="flex items-start justify-between gap-4"><div><p id="roadmap-modal-kicker" class="text-xs font-bold uppercase tracking-wider text-[var(--color-accent)]">Checkpoint</p><h2 id="roadmap-modal-title" class="mt-1 text-2xl sm:text-3xl font-black">Topic</h2></div><button type="button" id="roadmap-modal-close" class="min-h-11 min-w-11 rounded-xl border border-[var(--color-border)] text-xl" aria-label="Close">×</button></div>
+      <p id="roadmap-modal-description" class="mt-4 text-base leading-7 text-[var(--color-text-secondary)]"></p>
+      <div id="roadmap-modal-tags" class="mt-5 flex flex-wrap gap-2"></div>
+      <div id="roadmap-modal-prereqs" class="mt-5"></div>
+      <div id="roadmap-modal-links" class="mt-6 grid gap-2 sm:grid-cols-2"></div>
+      <div class="mt-7 flex flex-wrap gap-3"><button type="button" id="roadmap-complete-btn" class="button-primary">Mark complete</button><button type="button" class="button-secondary" data-close-modal>Back to roadmap</button></div>
+    </div>
+  </div>
+
+  <script define:vars={{ slug: roadmap.id }}>
+    document.addEventListener('astro:page-load', () => {
+      const root = document.querySelector('.roadmap-detail-shell');
+      if (!root || root.dataset.ready === 'true') return;
+      root.dataset.ready = 'true';
+      const storageKey = `aicareerguide:roadmap:${slug}`;
+      const nodes = Array.from(document.querySelectorAll('.roadmap-node'));
+      const modal = document.getElementById('roadmap-modal');
+      const modalTitle = document.getElementById('roadmap-modal-title');
+      const modalKicker = document.getElementById('roadmap-modal-kicker');
+      const modalDescription = document.getElementById('roadmap-modal-description');
+      const modalTags = document.getElementById('roadmap-modal-tags');
+      const modalLinks = document.getElementById('roadmap-modal-links');
+      const modalPrereqs = document.getElementById('roadmap-modal-prereqs');
+      const completeBtn = document.getElementById('roadmap-complete-btn');
+      const progressBar = document.getElementById('progress-bar');
+      const progressPercent = document.getElementById('progress-percent');
+      const progressCount = document.getElementById('progress-count');
+      const progressMessage = document.getElementById('progress-message');
+      let completed = new Set<string>(); try { completed = new Set<string>(JSON.parse(localStorage.getItem(storageKey) || '[]')); } catch { localStorage.removeItem(storageKey); }
+      let activeNode: HTMLElement | null = null;
+
+      const save = () => localStorage.setItem(storageKey, JSON.stringify([...completed]));
+      const updateProgress = () => {
+        nodes.forEach((node) => node.classList.toggle('is-complete', completed.has(node.dataset.nodeId || '')));
+        const total = nodes.length || 1;
+        const count = [...completed].filter((id) => nodes.some((node) => node.dataset.nodeId === id)).length;
+        const pct = Math.round((count / total) * 100);
+        if (progressBar) progressBar.style.width = `${pct}%`;
+        if (progressPercent) progressPercent.textContent = `${pct}%`;
+        if (progressCount) progressCount.textContent = `${count} / ${nodes.length}`;
+        if (progressMessage) progressMessage.textContent = pct === 100 ? 'Roadmap complete. Keep building and revisiting the weak spots.' : pct > 0 ? 'Good progress. Continue with the next incomplete checkpoint.' : 'Start with Phase 01. Your progress is saved on this device.';
+      };
+      const closeModal = () => { modal?.classList.add('hidden'); document.body.classList.remove('roadmap-modal-open'); activeNode = null; };
+      const openNode = (node: HTMLElement) => {
+        activeNode = node;
+        const title = node.dataset.nodeTitle || 'Checkpoint';
+        const description = node.dataset.nodeDescription || '';
+        const tags = JSON.parse(node.dataset.nodeTags || '[]') as string[];
+        const links = JSON.parse(node.dataset.nodeLinks || '[]') as { label: string; href: string }[];
+        const prereqs = JSON.parse(node.dataset.nodePrereqs || '[]') as string[];
+        if (modalTitle) modalTitle.textContent = title;
+        if (modalKicker) modalKicker.textContent = node.dataset.nodeType === 'project' ? 'Build checkpoint' : node.dataset.nodeType === 'career' ? 'Career checkpoint' : node.dataset.nodeType === 'optional' ? 'Optional branch' : 'Roadmap checkpoint';
+        if (modalDescription) modalDescription.textContent = description;
+        if (modalTags) modalTags.innerHTML = tags.map((tag) => `<span class="tag">${tag}</span>`).join('');
+        if (modalPrereqs) modalPrereqs.innerHTML = prereqs.length ? `<div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-4"><p class="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Prerequisites</p><ul class="mt-2 space-y-1 text-sm text-[var(--color-text-secondary)]">${prereqs.map((item) => `<li>• ${item}</li>`).join('')}</ul></div>` : '';
+        if (modalLinks) modalLinks.innerHTML = links.map((link) => `<a class="button-secondary" href="${link.href}">${link.label} →</a>`).join('');
+        if (completeBtn) completeBtn.textContent = completed.has(node.dataset.nodeId || '') ? 'Mark incomplete' : 'Mark complete';
+        modal?.classList.remove('hidden');
+        document.body.classList.add('roadmap-modal-open');
+        requestAnimationFrame(() => document.getElementById('roadmap-modal-close')?.focus());
+      };
+      nodes.forEach((node) => node.addEventListener('click', () => openNode(node)));
+      document.querySelectorAll('[data-close-modal]').forEach((el) => el.addEventListener('click', closeModal));
+      document.getElementById('roadmap-modal-close')?.addEventListener('click', closeModal);
+      completeBtn?.addEventListener('click', () => { if (!activeNode) return; const id = activeNode.dataset.nodeId || ''; completed.has(id) ? completed.delete(id) : completed.add(id); save(); updateProgress(); openNode(activeNode); });
+      document.getElementById('reset-progress')?.addEventListener('click', () => { completed = new Set(); save(); updateProgress(); });
+      document.getElementById('continue-btn')?.addEventListener('click', () => { const next = nodes.find((node) => !completed.has(node.dataset.nodeId || '')); next?.scrollIntoView({ behavior: 'smooth', block: 'center' }); next?.focus(); });
+
+      document.querySelectorAll<HTMLButtonElement>('.roadmap-view-btn').forEach((button) => button.addEventListener('click', () => {
+        document.querySelectorAll('.roadmap-view-btn').forEach((b) => b.classList.remove('active-filter')); button.classList.add('active-filter');
+        const view = button.dataset.view || 'all';
+        nodes.forEach((node) => node.classList.toggle('roadmap-node-hidden', view !== 'all' && node.dataset.nodeType !== view));
+      }));
+
+      document.getElementById('focus-toggle')?.addEventListener('click', (event) => {
+        const btn = event.currentTarget as HTMLButtonElement;
+        root.classList.toggle('focus-mode'); btn.classList.toggle('active-filter');
+      });
+      document.getElementById('phase-jump')?.addEventListener('change', (event) => { const value = (event.target as HTMLSelectElement).value; if (value) document.getElementById(value)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !modal?.classList.contains('hidden')) closeModal(); });
+      updateProgress();
+    });
+  </script>
+</BaseLayout>

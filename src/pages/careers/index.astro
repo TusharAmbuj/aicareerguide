@@ -1,0 +1,73 @@
+---
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import CollectionHero from '@/components/common/CollectionHero.astro';
+import { getCollection } from 'astro:content';
+const roadmaps = (await getCollection('roadmaps', ({ data }) => !data.draft && data.status === 'published')).sort((a,b) => Number(b.data.featured) - Number(a.data.featured));
+const primary = roadmaps.filter((r) => r.data.category === 'Engineering');
+const career = roadmaps.filter((r) => r.data.category === 'Career');
+const algorithms = roadmaps.filter((r) => r.data.category === 'Algorithms');
+const featured = roadmaps.find((r) => r.data.featured) || roadmaps[0];
+const roadmapMeta = (slug) => ({
+  'ai-engineer': { accent: 'AI Systems', icon: 'AI', tone: 'violet', description: 'Software engineering + ML + LLMs + production systems.' },
+  'ml-engineer': { accent: 'Machine Learning', icon: 'ML', tone: 'blue', description: 'From statistics and modeling to reliable production ML.' },
+  'software-engineer': { accent: 'Software Engineering', icon: 'SE', tone: 'emerald', description: 'Programming, DSA, backend, systems, and shipping.' },
+  'dsa-mastery': { accent: 'Algorithms', icon: 'DSA', tone: 'amber', description: 'Pattern recognition, data structures, algorithms, and practice.' },
+  'internships': { accent: 'Career', icon: 'JOB', tone: 'rose', description: 'Build proof of work and convert applications into interviews.' },
+  'interviews': { accent: 'Interview', icon: 'INT', tone: 'cyan', description: 'Coding, technical depth, systems, and communication.' },
+})[slug] || { accent: 'Roadmap', icon: 'MAP', tone: 'violet', description: 'A structured path from fundamentals to practical outcomes.' };
+---
+<BaseLayout title="AI & Technology Roadmaps" description="Modern, visual roadmaps for AI engineering, machine learning, software engineering, DSA, internships, and technical interviews.">
+  <div class="roadmaps-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+    <CollectionHero
+      eyebrow="Learn · Build · Prove"
+      title="Roadmaps that feel like a path, not a document."
+      description="Follow a visual sequence of skills, checkpoints, projects, and career outcomes. Open any node to see what to learn, why it matters, and where to go next."
+      stats={[
+        { value: String(roadmaps.length), label: 'Roadmaps', detail: 'Role, skill & career paths' },
+        { value: '35+', label: 'Core topics', detail: 'Across engineering & AI' },
+        { value: 'Local', label: 'Progress', detail: 'No account required' },
+      ]}
+      actions={[
+        { label: 'Start AI Engineer roadmap →', href: '/careers/ai-engineer/' },
+        { label: 'Explore projects', href: '/projects/', kind: 'secondary' },
+      ]}
+    />
+
+    {featured && <section class="mt-10">
+      <div class="flex items-end justify-between gap-4"><div><p class="text-sm font-bold uppercase tracking-wider text-[var(--color-accent)]">Featured path</p><h2 class="mt-1 text-2xl sm:text-3xl font-black">Start here</h2></div><a href={`/careers/${featured.id}/`} class="text-sm font-semibold text-[var(--color-accent)]">Open roadmap →</a></div>
+      <a href={`/careers/${featured.id}/`} class="mt-5 block rounded-3xl border border-[var(--color-border)] bg-[var(--color-bg)] p-6 sm:p-8 shadow-[0_18px_60px_rgba(15,23,42,.06)] hover:-translate-y-0.5 hover:border-[var(--color-accent)] transition">
+        <div class="grid gap-8 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
+          <div><div class="flex flex-wrap gap-2"><span class="pill">{featured.data.category}</span><span class="pill">{featured.data.difficulty}</span><span class="pill">{featured.data.estimatedTime}</span></div><h3 class="mt-5 text-3xl sm:text-4xl font-black">{featured.data.title}</h3><p class="mt-4 max-w-2xl text-base sm:text-lg leading-8 text-[var(--color-text-secondary)]">{featured.data.description}</p><div class="mt-6 flex flex-wrap gap-2">{featured.data.skills.slice(0, 10).map((skill) => <span class="tag">{skill}</span>)}</div></div>
+          <div class="roadmap-mini-grid" aria-hidden="true"><div class="roadmap-mini-line"></div>{['Foundations','ML + DL','LLMs','Production AI','Projects'].map((item, i) => <div class:list={["roadmap-mini-node", i === 2 && 'roadmap-mini-node-active']}><span>{String(i + 1).padStart(2,'0')}</span><strong>{item}</strong></div>)}</div>
+        </div>
+      </a>
+    </section>}
+
+    <section class="mt-12">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><p class="text-sm font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Explore</p><h2 class="mt-1 text-2xl sm:text-3xl font-black">Choose your destination</h2></div><div class="flex flex-wrap gap-2" id="roadmap-filters"><button class="roadmap-filter active-filter rounded-full border px-4 py-2 text-sm" data-filter="all">All</button><button class="roadmap-filter rounded-full border px-4 py-2 text-sm" data-filter="Engineering">Engineering</button><button class="roadmap-filter rounded-full border px-4 py-2 text-sm" data-filter="Algorithms">Algorithms</button><button class="roadmap-filter rounded-full border px-4 py-2 text-sm" data-filter="Career">Career</button></div></div>
+      <div class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3" id="roadmap-grid">
+        {roadmaps.map((roadmap) => { const meta = roadmapMeta(roadmap.id); return <a href={`/careers/${roadmap.id}/`} class="roadmap-card group relative overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-bg)] p-6" data-category={roadmap.data.category}><div class="flex items-start justify-between gap-3"><span class="roadmap-icon">{meta.icon}</span><span class="pill">{roadmap.data.difficulty}</span></div><p class="mt-5 text-xs font-bold uppercase tracking-wider text-[var(--color-accent)]">{meta.accent}</p><h3 class="mt-2 text-2xl font-black group-hover:text-[var(--color-accent)]">{roadmap.data.title.replace(' Roadmap','')}</h3><p class="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">{meta.description}</p><div class="mt-6 flex items-center justify-between border-t border-[var(--color-border)] pt-4 text-sm"><span>{roadmap.data.estimatedTime}</span><span class="font-semibold text-[var(--color-accent)]">Explore →</span></div><div class="roadmap-card-glow"></div></a> })}
+      </div>
+    </section>
+
+    <section class="mt-12 grid gap-5 lg:grid-cols-3">
+      {[
+        { title: 'Beginner mode', body: 'Start with fundamentals and skip advanced branches until you need them.', href: '/careers/ai-engineer/', cta: 'Open beginner-friendly path' },
+        { title: 'Build alongside learning', body: 'Use projects as checkpoints instead of waiting until the end of a roadmap.', href: '/projects/', cta: 'Browse projects' },
+        { title: 'Build evidence', body: 'Turn roadmap checkpoints into practical portfolio projects.', href: '/projects/', cta: 'Explore project paths' },
+      ].map((item) => <div class="rounded-3xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-6"><h3 class="text-xl font-black">{item.title}</h3><p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">{item.body}</p><a href={item.href} class="mt-5 inline-flex text-sm font-bold text-[var(--color-accent)]">{item.cta} →</a></div>)}
+    </section>
+  </div>
+  <script>
+    document.addEventListener('astro:page-load', () => {
+      const buttons = document.querySelectorAll<HTMLButtonElement>('.roadmap-filter');
+      const cards = document.querySelectorAll<HTMLElement>('.roadmap-card');
+      buttons.forEach((button) => button.addEventListener('click', () => {
+        buttons.forEach((b) => b.classList.remove('active-filter'));
+        button.classList.add('active-filter');
+        const filter = button.dataset.filter || 'all';
+        cards.forEach((card) => card.classList.toggle('hidden', filter !== 'all' && card.dataset.category !== filter));
+      }));
+    });
+  </script>
+</BaseLayout>
