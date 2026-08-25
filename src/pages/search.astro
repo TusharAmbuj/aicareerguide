@@ -1,86 +1,188 @@
 ---
-import BaseLayout from '@/components/layout/BaseLayout.astro';
+import BaseLayout from "@/components/layout/BaseLayout.astro";
 ---
-<BaseLayout noindex title="Search AI Career Guide" description="Search AI Career Guide articles, projects, career roadmaps, tools, and resources.">
+
+<BaseLayout
+  noindex
+  title="Search AI Career Guide"
+  description="Search AI Career Guide articles, projects, career roadmaps, tools, and resources."
+>
   <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-    <p class="text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]">Find something useful</p>
+    <p
+      class="text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]"
+    >
+      Find something useful
+    </p>
     <h1 class="mt-2 text-4xl font-bold tracking-tight">Search</h1>
-    <p class="mt-3 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)]">Search across guides, projects, career roadmaps, tools, and resources.</p>
+    <p
+      class="mt-3 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)]"
+    >
+      Search across guides, projects, career roadmaps, tools, and resources.
+    </p>
     <label for="site-search" class="sr-only">Search AI Career Guide</label>
-    <input id="site-search" type="search" autofocus autocomplete="off" placeholder="Search AI engineering, RAG, Python..." class="mt-7 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
-    <div class="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter search results">
-      {['All','Article','Project','Career','Tool','Resource'].map(type => <button type="button" data-type={type} aria-pressed={type === 'All'} class="search-filter rounded-full border border-[var(--color-border)] px-4 py-2 text-sm">{type}</button>)}
+    <input
+      id="site-search"
+      type="search"
+      autofocus
+      autocomplete="off"
+      placeholder="Search AI engineering, RAG, Python..."
+      class="mt-7 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+    />
+    <div
+      class="mt-4 flex flex-wrap gap-2"
+      role="group"
+      aria-label="Filter search results"
+    >
+      {
+        ["All", "Article", "Project", "Career", "Tool", "Resource"].map(
+          (type) => (
+            <button
+              type="button"
+              data-type={type}
+              aria-pressed={type === "All"}
+              class="search-filter rounded-full border border-[var(--color-border)] px-4 py-2 text-sm"
+            >
+              {type}
+            </button>
+          ),
+        )
+      }
     </div>
-    <p id="search-count" class="mt-5 text-sm text-[var(--color-text-muted)]" aria-live="polite"></p>
-    <div id="search-page-results" class="mt-6 grid gap-4" aria-live="polite"></div>
+    <p
+      id="search-count"
+      class="mt-5 text-sm text-[var(--color-text-muted)]"
+      aria-live="polite"
+    >
+    </p>
+    <div id="search-page-results" class="mt-6 grid gap-4" aria-live="polite">
+    </div>
   </section>
   <script>
-    import { createSearch } from '@/lib/search';
+    import { createSearch } from "@/lib/search";
 
-    const escapeHtml = (value: string) => value.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c] || c);
+    const escapeHtml = (value: string) =>
+      value.replace(
+        /[&<>"']/g,
+        (c) =>
+          (
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }) as Record<string, string>
+          )[c] || c,
+      );
 
     const init = async () => {
-      const input = document.getElementById('site-search') as HTMLInputElement | null;
-      const results = document.getElementById('search-page-results');
-      const count = document.getElementById('search-count');
-      const buttons = [...document.querySelectorAll<HTMLButtonElement>('.search-filter')];
-      if (!input || !results || !count || input.dataset.ready === 'true') return;
-      input.dataset.ready = 'true';
+      const input = document.getElementById(
+        "site-search",
+      ) as HTMLInputElement | null;
+      const results = document.getElementById("search-page-results");
+      const count = document.getElementById("search-count");
+      const buttons = [
+        ...document.querySelectorAll<HTMLButtonElement>(".search-filter"),
+      ];
+      if (!input || !results || !count || input.dataset.ready === "true")
+        return;
+      input.dataset.ready = "true";
 
       let fuse: ReturnType<typeof createSearch>;
       try {
-        const response = await fetch('/search-index.json');
-        if (!response.ok) throw new Error(`Search index failed: ${response.status}`);
+        const response = await fetch("/search-index.json");
+        if (!response.ok)
+          throw new Error(`Search index failed: ${response.status}`);
         fuse = createSearch(await response.json());
       } catch (error) {
         console.error(error);
-        count.textContent = 'Search is temporarily unavailable.';
+        count.textContent = "Search is temporarily unavailable.";
         return;
       }
 
-      let currentType = new URLSearchParams(location.search).get('type') || 'All';
-      if (!['All','Article','Project','Career','Tool','Resource'].includes(currentType)) currentType = 'All';
+      let currentType =
+        new URLSearchParams(location.search).get("type") || "All";
+      if (
+        !["All", "Article", "Project", "Career", "Tool", "Resource"].includes(
+          currentType,
+        )
+      )
+        currentType = "All";
       const render = () => {
         const query = input.value.trim();
         const params = new URLSearchParams(location.search);
-        if (query) params.set('q', query); else params.delete('q');
-        if (currentType === 'All') params.delete('type'); else params.set('type', currentType);
-        history.replaceState(null, '', `${location.pathname}${params.toString() ? `?${params}` : ''}`);
+        if (query) params.set("q", query);
+        else params.delete("q");
+        if (currentType === "All") params.delete("type");
+        else params.set("type", currentType);
+        history.replaceState(
+          null,
+          "",
+          `${location.pathname}${params.toString() ? `?${params}` : ""}`,
+        );
 
         if (!query) {
-          count.textContent = '';
-          results.innerHTML = '<div class="rounded-xl border border-dashed border-[var(--color-border)] p-8 text-center text-[var(--color-text-muted)]">Start typing to search the site.</div>';
+          count.textContent = "";
+          results.innerHTML =
+            '<div class="rounded-xl border border-dashed border-[var(--color-border)] p-8 text-center text-[var(--color-text-muted)]">Start typing to search the site.</div>';
           return;
         }
 
-        const raw = fuse.search(query).map(result => result.item);
-        const matches = currentType === 'All' ? raw : raw.filter(item => item.type === currentType);
-        count.textContent = `${matches.length} result${matches.length === 1 ? '' : 's'}`;
+        const raw = fuse.search(query).map((result) => result.item);
+        const matches =
+          currentType === "All"
+            ? raw
+            : raw.filter((item) => item.type === currentType);
+        count.textContent = `${matches.length} result${matches.length === 1 ? "" : "s"}`;
         if (!matches.length) {
-          results.innerHTML = '<div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-8 text-center"><p class="font-semibold">No matching results</p><p class="mt-2 text-sm text-[var(--color-text-muted)]">Try a broader phrase or another content type.</p></div>';
+          results.innerHTML =
+            '<div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-8 text-center"><p class="font-semibold">No matching results</p><p class="mt-2 text-sm text-[var(--color-text-muted)]">Try a broader phrase or another content type.</p></div>';
           return;
         }
 
-        results.innerHTML = matches.slice(0, 40).map(item => {
-          const destination = item.externalUrl || item.url;
-          const external = Boolean(item.externalUrl);
-          return `<article class="group rounded-xl border border-[var(--color-border)] p-5 hover:border-[var(--color-accent)] hover:bg-[var(--color-bg-secondary)]"><div class="flex flex-wrap items-center gap-2"><span class="text-xs font-bold uppercase tracking-wider text-[var(--color-accent)]">${escapeHtml(item.type)}</span><span class="text-xs text-[var(--color-text-muted)]">${escapeHtml(item.category)}</span></div><h2 class="mt-2 text-lg font-bold">${escapeHtml(item.title)}</h2><p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">${escapeHtml(item.description)}</p><div class="mt-4 flex flex-wrap gap-2">${item.tags.slice(0,4).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</div><div class="mt-4"><a href="${escapeHtml(destination)}" ${external ? 'target="_blank" rel="noopener noreferrer"' : ''} class="font-semibold text-[var(--color-accent)] hover:underline">${external ? 'Visit official site →' : 'Read / open →'}</a>${external ? `<a href="${escapeHtml(item.url)}" class="ml-4 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-accent)]">View directory →</a>` : ''}</div></article>`;
-        }).join('');
+        results.innerHTML = matches
+          .slice(0, 40)
+          .map((item) => {
+            const destination = item.externalUrl || item.url;
+            const external = Boolean(item.externalUrl);
+            return `<article class="group rounded-xl border border-[var(--color-border)] p-5 hover:border-[var(--color-accent)] hover:bg-[var(--color-bg-secondary)]"><div class="flex flex-wrap items-center gap-2"><span class="text-xs font-bold uppercase tracking-wider text-[var(--color-accent)]">${escapeHtml(item.type)}</span><span class="text-xs text-[var(--color-text-muted)]">${escapeHtml(item.category)}</span></div><h2 class="mt-2 text-lg font-bold">${escapeHtml(item.title)}</h2><p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">${escapeHtml(item.description)}</p><div class="mt-4 flex flex-wrap gap-2">${item.tags
+              .slice(0, 4)
+              .map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`)
+              .join(
+                "",
+              )}</div><div class="mt-4"><a href="${escapeHtml(destination)}" ${external ? 'target="_blank" rel="noopener noreferrer"' : ""} class="font-semibold text-[var(--color-accent)] hover:underline">${external ? "Visit official site →" : "Read / open →"}</a>${external ? `<a href="${escapeHtml(item.url)}" class="ml-4 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-accent)]">View directory →</a>` : ""}</div></article>`;
+          })
+          .join("");
       };
 
-      buttons.forEach(button => button.addEventListener('click', () => {
-        currentType = button.dataset.type || 'All';
-        buttons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
-        render();
-      }));
-      input.addEventListener('input', render);
-      input.addEventListener('keydown', event => { if (event.key === 'Escape') { input.value = ''; render(); input.focus(); } });
+      buttons.forEach((button) =>
+        button.addEventListener("click", () => {
+          currentType = button.dataset.type || "All";
+          buttons.forEach((item) =>
+            item.setAttribute("aria-pressed", String(item === button)),
+          );
+          render();
+        }),
+      );
+      input.addEventListener("input", render);
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          input.value = "";
+          render();
+          input.focus();
+        }
+      });
       const urlParams = new URLSearchParams(location.search);
-      const initialQuery = urlParams.get('q');
+      const initialQuery = urlParams.get("q");
       if (initialQuery) input.value = initialQuery;
-      buttons.forEach(item => item.setAttribute('aria-pressed', String((item.dataset.type || 'All') === currentType)));
+      buttons.forEach((item) =>
+        item.setAttribute(
+          "aria-pressed",
+          String((item.dataset.type || "All") === currentType),
+        ),
+      );
       render();
     };
-    document.addEventListener('astro:page-load', init);
+    document.addEventListener("astro:page-load", init);
   </script>
 </BaseLayout>

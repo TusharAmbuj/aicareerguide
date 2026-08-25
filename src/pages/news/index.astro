@@ -1,14 +1,121 @@
 ---
-import BaseLayout from "@/components/layout/BaseLayout.astro"; import CollectionHero from "@/components/common/CollectionHero.astro"; import {getNews,newsSources} from "@/lib/news"; const items=await getNews(); const hub=(s:string)=>s.startsWith("TechCrunch")?"https://techcrunch.com/category/artificial-intelligence/":s.startsWith("The Verge")?"https://www.theverge.com/ai-artificial-intelligence":"https://www.technologyreview.com/topic/artificial-intelligence/";
+import BaseLayout from "@/components/layout/BaseLayout.astro";
+import CollectionHero from "@/components/common/CollectionHero.astro";
+import { getNews, newsSources } from "@/lib/news";
+const items = await getNews();
+const hub = (s: string) =>
+  s.startsWith("TechCrunch")
+    ? "https://techcrunch.com/category/artificial-intelligence/"
+    : s.startsWith("The Verge")
+      ? "https://www.theverge.com/ai-artificial-intelligence"
+      : "https://www.technologyreview.com/topic/artificial-intelligence/";
 ---
-<BaseLayout title="AI & Technology News" description="Focused AI and technology headlines from established publishers."><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12"><CollectionHero
-  eyebrow="AI & Technology News"
-  title="Stay current without drowning in noise."
-  description="A focused stream of current AI and technology headlines. Open the original publisher for the full story, then come back here for deeper guides and roadmaps."
-  stats={[
-    { value: String(items.length), label: 'Headlines', detail: 'Current build-time feed' },
-    { value: String(newsSources.length), label: 'Publishers', detail: 'Established technology sources' },
-    { value: 'Curated', label: 'Editorial mode', detail: 'Noise kept deliberately low' },
-  ]}
-  actions={[{ label: 'Read deeper guides', href: '/blog/' }, { label: 'Explore roadmaps', href: '/careers/', kind: 'secondary' }]}
-/><section class="mt-10"><div class="flex items-end justify-between gap-4"><div><p class="section-kicker">Latest</p><h2 class="section-title">AI & technology headlines</h2></div><span class="text-sm text-[var(--color-text-muted)]">Build-time feed</span></div>{items.length?<div class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{items.map(x=><a href={x.link} target="_blank" rel="noopener noreferrer" class="surface-card surface-card-hover news-card p-6"><span class="news-source">{x.source}</span><h3 class="mt-4 text-xl font-black leading-snug">{x.title}</h3>{x.description&&<p class="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">{x.description}</p>}<div class="mt-5 flex items-center justify-between border-t border-[var(--color-border)] pt-4 text-xs text-[var(--color-text-muted)]"><time datetime={x.date.toISOString()}>{x.date.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</time><strong class="text-[var(--color-accent)]">Original ↗</strong></div></a>)}</div>:<div class="mt-6 rounded-2xl border border-dashed border-[var(--color-border)] p-10 text-center"><p class="font-black">Feeds unavailable in this build.</p><p class="mt-2 text-sm text-[var(--color-text-secondary)]">Use the publisher hubs below.</p></div>}</section><section class="mt-12 border-t border-[var(--color-border)] pt-10"><p class="section-kicker">Source hubs</p><h2 class="section-title">Follow publishers directly</h2><div class="mt-5 grid gap-4 md:grid-cols-3">{newsSources.map(s=><a href={hub(s.source)} target="_blank" rel="noopener noreferrer" class="surface-card surface-card-hover p-5"><p class="font-black">{s.source}</p><p class="mt-2 text-sm text-[var(--color-text-secondary)]">Open the latest AI coverage.</p><span class="mt-4 inline-flex text-sm font-bold text-[var(--color-accent)]">Open source ↗</span></a>)}</div></section></div></BaseLayout>
+
+<BaseLayout
+  title="AI & Technology News"
+  description="Focused AI and technology headlines from established publishers."
+  ><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <CollectionHero
+      eyebrow="AI & Technology News"
+      title="Stay current without drowning in noise."
+      description="A focused stream of current AI and technology headlines. Open the original publisher for the full story, then come back here for deeper guides and roadmaps."
+      stats={[
+        {
+          value: String(items.length),
+          label: "Headlines",
+          detail: "Current build-time feed",
+        },
+        {
+          value: String(newsSources.length),
+          label: "Publishers",
+          detail: "Established technology sources",
+        },
+        {
+          value: "Curated",
+          label: "Editorial mode",
+          detail: "Noise kept deliberately low",
+        },
+      ]}
+      actions={[
+        { label: "Read deeper guides", href: "/blog/" },
+        { label: "Explore roadmaps", href: "/careers/", kind: "secondary" },
+      ]}
+    /><section class="mt-10">
+      <div class="flex items-end justify-between gap-4">
+        <div>
+          <p class="section-kicker">Latest</p><h2 class="section-title">
+            AI & technology headlines
+          </h2>
+        </div><span class="text-sm text-[var(--color-text-muted)]"
+          >Build-time feed</span>
+      </div>{
+        items.length ? (
+          <div class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {items.map((x) => (
+              <a
+                href={x.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="surface-card surface-card-hover news-card p-6"
+              >
+                <span class="news-source">{x.source}</span>
+                <h3 class="mt-4 text-xl font-black leading-snug">{x.title}</h3>
+                {x.description && (
+                  <p class="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
+                    {x.description}
+                  </p>
+                )}
+                <div class="mt-5 flex items-center justify-between border-t border-[var(--color-border)] pt-4 text-xs text-[var(--color-text-muted)]">
+                  <time datetime={x.date.toISOString()}>
+                    {x.date.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </time>
+                  <strong class="text-[var(--color-accent)]">Original ↗</strong>
+                </div>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div class="mt-6 rounded-2xl border border-dashed border-[var(--color-border)] p-10 text-center">
+            <>
+              <p class="font-black">Feeds unavailable in this build.</p>
+              <p class="mt-2 text-sm text-[var(--color-text-secondary)]">
+                Use the publisher hubs below.
+              </p>
+            </>
+          </div>
+        )
+      }
+    </section><section
+      class="mt-12 border-t border-[var(--color-border)] pt-10"
+    >
+      <p class="section-kicker">Source hubs</p><h2 class="section-title">
+        Follow publishers directly
+      </h2><div class="mt-5 grid gap-4 md:grid-cols-3">
+        {
+          newsSources.map((s) => (
+            <a
+              href={hub(s.source)}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="surface-card surface-card-hover p-5"
+            >
+              <>
+                <p class="font-black">{s.source}</p>
+                <p class="mt-2 text-sm text-[var(--color-text-secondary)]">
+                  Open the latest AI coverage.
+                </p>
+                <span class="mt-4 inline-flex text-sm font-bold text-[var(--color-accent)]">
+                  Open source ↗
+                </span>
+              </>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </div></BaseLayout
+>

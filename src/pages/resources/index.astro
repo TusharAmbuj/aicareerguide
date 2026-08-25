@@ -1,14 +1,124 @@
 ---
-import BaseLayout from "@/components/layout/BaseLayout.astro"; import CollectionHero from "@/components/common/CollectionHero.astro"; import {getCollection} from "astro:content"; const r=(await getCollection("resources",({data})=>!data.draft&&data.status==="published")).sort((a,b)=>Number(b.data.featured)-Number(a.data.featured)); const types=["All",...Array.from(new Set(r.map(x=>x.data.type)))];
+import BaseLayout from "@/components/layout/BaseLayout.astro";
+import CollectionHero from "@/components/common/CollectionHero.astro";
+import { getCollection } from "astro:content";
+const r = (
+  await getCollection(
+    "resources",
+    ({ data }) => !data.draft && data.status === "published",
+  )
+).sort((a, b) => Number(b.data.featured) - Number(a.data.featured));
+const types = ["All", ...Array.from(new Set(r.map((x) => x.data.type)))];
 ---
-<BaseLayout title="AI Learning Resources" description="Curated courses, books, datasets, APIs, and roadmaps for AI and software engineering."><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12"><CollectionHero
-  eyebrow="Curated library"
-  title="Fewer links. Better resources."
-  description="Resources chosen for practical learning, with a dedicated page that explains what each resource is useful for."
-  stats={[
-    { value: String(r.length), label: 'Resources', detail: 'Selected learning material' },
-    { value: String(types.length - 1), label: 'Formats', detail: 'Books, courses, APIs & more' },
-    { value: 'Useful', label: 'Editorial goal', detail: 'Context before recommendation' },
-  ]}
-  actions={[{ label: 'Explore roadmaps', href: '/careers/' }, { label: 'Browse tools', href: '/tools/', kind: 'secondary' }]}
-/><div class="mt-10 blog-filter-bar"><div class="flex flex-wrap gap-1.5">{types.map((c,i)=><button type="button" class:list={["blog-filter-btn",i===0&&"active"]} data-type={c} aria-pressed={i===0}>{c}</button>)}</div></div><section class="mt-8"><div class="flex justify-between items-end"><div><p class="section-kicker">Library</p><h2 class="section-title">Explore resources</h2></div><span class="text-sm text-[var(--color-text-muted)]">{r.length} resources</span></div><div id="resource-grid" class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{r.map(x=><a href={`/resources/${x.id}/`} data-type={x.data.type} class="surface-card surface-card-hover p-6 group"><div class="flex justify-between gap-3"><span class="pill">{x.data.type}</span><span class="pill">{x.data.price}</span></div><h3 class="mt-5 text-xl font-black group-hover:text-[var(--color-accent)]">{x.data.title}</h3><p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">{x.data.description}</p><div class="mt-5 flex flex-wrap gap-2">{x.data.tags.slice(0,3).map(s=><span class="tag">{s}</span>)}</div><div class="mt-6 border-t border-[var(--color-border)] pt-4 text-sm font-bold text-[var(--color-accent)]">View resource details →</div></a>)}</div></section></div><script>document.addEventListener('astro:page-load',()=>{const b=[...document.querySelectorAll('.blog-filter-btn')],c=[...document.querySelectorAll('#resource-grid > a')];b.forEach(x=>x.addEventListener('click',()=>{const f=x.dataset.type||'All';b.forEach(y=>{y.classList.remove('active');y.setAttribute('aria-pressed','false')});x.classList.add('active');x.setAttribute('aria-pressed','true');c.forEach(y=>y.classList.toggle('hidden',f!=='All'&&y.dataset.type!==f));}))})</script></BaseLayout>
+
+<BaseLayout
+  title="AI Learning Resources"
+  description="Curated courses, books, datasets, APIs, and roadmaps for AI and software engineering."
+  ><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <CollectionHero
+      eyebrow="Curated library"
+      title="Fewer links. Better resources."
+      description="Resources chosen for practical learning, with a dedicated page that explains what each resource is useful for."
+      stats={[
+        {
+          value: String(r.length),
+          label: "Resources",
+          detail: "Selected learning material",
+        },
+        {
+          value: String(types.length - 1),
+          label: "Formats",
+          detail: "Books, courses, APIs & more",
+        },
+        {
+          value: "Useful",
+          label: "Editorial goal",
+          detail: "Context before recommendation",
+        },
+      ]}
+      actions={[
+        { label: "Explore roadmaps", href: "/careers/" },
+        { label: "Browse tools", href: "/tools/", kind: "secondary" },
+      ]}
+    /><div class="mt-10 blog-filter-bar">
+      <div class="flex flex-wrap gap-1.5">
+        {
+          types.map((c, i) => (
+            <button
+              type="button"
+              class:list={["blog-filter-btn", i === 0 && "active"]}
+              data-type={c}
+              aria-pressed={i === 0}
+            >
+              {c}
+            </button>
+          ))
+        }
+      </div>
+    </div><section class="mt-8">
+      <div class="flex justify-between items-end">
+        <div>
+          <p class="section-kicker">Library</p><h2 class="section-title">
+            Explore resources
+          </h2>
+        </div><span class="text-sm text-[var(--color-text-muted)]"
+          >{r.length} resources</span>
+      </div><div
+        id="resource-grid"
+        class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3"
+      >
+        {
+          r.map((x) => (
+            <a
+              href={`/resources/${x.id}/`}
+              data-type={x.data.type}
+              class="surface-card surface-card-hover p-6 group"
+            >
+              <>
+                <div class="flex justify-between gap-3">
+                  <>
+                    <span class="pill">{x.data.type}</span>
+                    <span class="pill">{x.data.price}</span>
+                  </>
+                </div>
+                <h3 class="mt-5 text-xl font-black group-hover:text-[var(--color-accent)]">
+                  {x.data.title}
+                </h3>
+                <p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+                  {x.data.description}
+                </p>
+                <div class="mt-5 flex flex-wrap gap-2">
+                  {x.data.tags.slice(0, 3).map((s) => (
+                    <span class="tag">{s}</span>
+                  ))}
+                </div>
+                <div class="mt-6 border-t border-[var(--color-border)] pt-4 text-sm font-bold text-[var(--color-accent)]">
+                  View resource details →
+                </div>
+              </>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </div><script>
+    document.addEventListener("astro:page-load", () => {
+      const b = [...document.querySelectorAll(".blog-filter-btn")],
+        c = [...document.querySelectorAll("#resource-grid > a")];
+      b.forEach((x) =>
+        x.addEventListener("click", () => {
+          const f = x.dataset.type || "All";
+          b.forEach((y) => {
+            y.classList.remove("active");
+            y.setAttribute("aria-pressed", "false");
+          });
+          x.classList.add("active");
+          x.setAttribute("aria-pressed", "true");
+          c.forEach((y) =>
+            y.classList.toggle("hidden", f !== "All" && y.dataset.type !== f),
+          );
+        }),
+      );
+    });
+  </script></BaseLayout
+>

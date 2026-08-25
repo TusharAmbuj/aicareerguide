@@ -1,6 +1,112 @@
 ---
-import BaseLayout from '@/components/layout/BaseLayout.astro'; import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'; import {getCollection, render} from 'astro:content';
-export async function getStaticPaths(){const r=await getCollection('resources',({data})=>!data.draft&&data.status==='published');return r.map(resource=>({params:{slug:resource.id},props:{resource}}))}
-const {resource}=Astro.props; const {Content}=await render(resource); const d=resource.data; const bc=[{label:'Home',url:'/'},{label:'Resources',url:'/resources'},{label:d.title,url:`/resources/${resource.id}`}]; const verified=d.lastVerified?d.lastVerified.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}):'Editorial review';
+import BaseLayout from "@/components/layout/BaseLayout.astro";
+import Breadcrumbs from "@/components/seo/Breadcrumbs.astro";
+import { getCollection, render } from "astro:content";
+export async function getStaticPaths() {
+    const r = await getCollection(
+        "resources",
+        ({ data }) => !data.draft && data.status === "published",
+    );
+    return r.map((resource) => ({
+        params: { slug: resource.id },
+        props: { resource },
+    }));
+}
+const { resource } = Astro.props;
+const { Content } = await render(resource);
+const d = resource.data;
+const bc = [
+    { label: "Home", url: "/" },
+    { label: "Resources", url: "/resources" },
+    { label: d.title, url: `/resources/${resource.id}` },
+];
+const verified = d.lastVerified
+    ? d.lastVerified.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+      })
+    : "Editorial review";
 ---
-<BaseLayout title={`${d.title}: Review & How to Use It`} description={d.description} breadcrumbs={bc}><div class="content-container py-8 sm:py-12"><Breadcrumbs items={bc}/><section class="resource-detail-hero resource-detail-hero-modern mt-5"><div class="resource-detail-grid"><div><div class="flex flex-wrap gap-2"><span class="pill">{d.type}</span><span class="pill">{d.price}</span>{d.recommendation&&<span class="pill">{d.recommendation}</span>}</div><h1 class="mt-5">{d.title}</h1><p class="resource-detail-subtitle">{d.description}</p><div class="mt-6 flex flex-wrap gap-2">{d.tags.map(x=><span class="tag">{x}</span>)}</div><div class="mt-7 flex flex-wrap gap-3"><a href={d.url} target="_blank" rel="noopener noreferrer" class="button-primary">Open resource ↗</a><a href="/resources/" class="button-secondary">Browse resources</a></div></div><div class="tool-detail-aside-card"><p class="context-label">Quick facts</p><div class="mt-4 space-y-4 text-sm"><div><span class="text-[var(--color-text-muted)]">Provider</span><strong class="block mt-1">{d.provider||'—'}</strong></div><div><span class="text-[var(--color-text-muted)]">Pricing</span><strong class="block mt-1">{d.price}</strong></div><div><span class="text-[var(--color-text-muted)]">Verified</span><strong class="block mt-1">{verified}</strong></div></div></div></div></section><div class="tool-content-layout mt-10"><article class="tool-guide-card surface-card"><div class="content-prose prose prose-lg"><Content/></div></article><aside class="tool-guide-sidebar"><section class="surface-card p-5"><p class="context-label">Best for</p><div class="mt-3 flex flex-wrap gap-2">{d.bestFor.map(x=><span class="tag">{x}</span>)}</div></section><section class="surface-card p-5"><p class="context-label">Editorial recommendation</p><p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">Use this resource for focused learning and pair it with implementation work. The goal is capability, not simply finishing resources.</p></section><a href={d.url} target="_blank" rel="noopener noreferrer" class="source-button w-full">Open original resource ↗</a></aside></div></div></BaseLayout>
+
+<BaseLayout
+    title={`${d.title}: Review & How to Use It`}
+    description={d.description}
+    breadcrumbs={bc}
+    ><div class="content-container py-8 sm:py-12">
+        <Breadcrumbs items={bc} /><section
+            class="resource-detail-hero resource-detail-hero-modern mt-5"
+        >
+            <div class="resource-detail-grid">
+                <div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="pill">{d.type}</span><span class="pill"
+                            >{d.price}</span
+                        >{
+                            d.recommendation && (
+                                <span class="pill">{d.recommendation}</span>
+                            )
+                        }
+                    </div><h1 class="mt-5">{d.title}</h1><p
+                        class="resource-detail-subtitle"
+                    >
+                        {d.description}
+                    </p><div class="mt-6 flex flex-wrap gap-2">
+                        {d.tags.map((x) => <span class="tag">{x}</span>)}
+                    </div><div class="mt-7 flex flex-wrap gap-3">
+                        <a
+                            href={d.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="button-primary">Open resource ↗</a
+                        ><a href="/resources/" class="button-secondary"
+                            >Browse resources</a>
+                    </div>
+                </div><div class="tool-detail-aside-card">
+                    <p class="context-label">Quick facts</p><div
+                        class="mt-4 space-y-4 text-sm"
+                    >
+                        <div>
+                            <span class="text-[var(--color-text-muted)]"
+                                >Provider</span
+                            ><strong class="block mt-1"
+                                >{d.provider || "—"}</strong>
+                        </div><div>
+                            <span class="text-[var(--color-text-muted)]"
+                                >Pricing</span
+                            ><strong class="block mt-1">{d.price}</strong>
+                        </div><div>
+                            <span class="text-[var(--color-text-muted)]"
+                                >Verified</span
+                            ><strong class="block mt-1">{verified}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section><div class="tool-content-layout mt-10">
+            <article class="tool-guide-card surface-card">
+                <div class="content-prose prose prose-lg"><Content /></div>
+            </article><aside class="tool-guide-sidebar">
+                <section class="surface-card p-5">
+                    <p class="context-label">Best for</p><div
+                        class="mt-3 flex flex-wrap gap-2"
+                    >
+                        {d.bestFor.map((x) => <span class="tag">{x}</span>)}
+                    </div>
+                </section><section class="surface-card p-5">
+                    <p class="context-label">Editorial recommendation</p><p
+                        class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]"
+                    >
+                        Use this resource for focused learning and pair it with
+                        implementation work. The goal is capability, not simply
+                        finishing resources.
+                    </p>
+                </section><a
+                    href={d.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="source-button w-full">Open original resource ↗</a>
+            </aside>
+        </div>
+    </div></BaseLayout
+>

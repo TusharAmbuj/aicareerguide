@@ -4513,4 +4513,39 @@ body {
       min-height: 4.4rem;
     }
   }
+
+  .roadmap-view-btn,
+  #phase-jump,
+  #focus-toggle {
+    min-height: 2.65rem;
+  }
+
+  .roadmap-view-controls,
+  .roadmap-secondary-controls {
+    min-width: 0;
+  }
+
+  @media (max-width: 560px) {
+    .roadmap-toolbar {
+      padding: .75rem;
+    }
+
+    .roadmap-view-controls,
+    .roadmap-secondary-controls {
+      width: 100%;
+    }
+
+    .roadmap-view-controls .roadmap-view-btn {
+      flex: 1 1 calc(50% - .4rem);
+    }
+
+    .roadmap-secondary-controls>* {
+      flex: 1 1 100%;
+    }
+
+    #phase-jump,
+    #focus-toggle {
+      width: 100%;
+    }
+  }
 }

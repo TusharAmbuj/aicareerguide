@@ -1,14 +1,129 @@
 ---
-import BaseLayout from "@/components/layout/BaseLayout.astro"; import CollectionHero from "@/components/common/CollectionHero.astro"; import {getCollection} from "astro:content"; const tools=(await getCollection("tools",({data})=>!data.draft&&data.status==="published")).sort((a,b)=>Number(b.data.featured)-Number(a.data.featured)); const cats=["All",...Array.from(new Set(tools.map(x=>x.data.category)))];
+import BaseLayout from "@/components/layout/BaseLayout.astro";
+import CollectionHero from "@/components/common/CollectionHero.astro";
+import { getCollection } from "astro:content";
+const tools = (
+  await getCollection(
+    "tools",
+    ({ data }) => !data.draft && data.status === "published",
+  )
+).sort((a, b) => Number(b.data.featured) - Number(a.data.featured));
+const cats = ["All", ...Array.from(new Set(tools.map((x) => x.data.category)))];
 ---
-<BaseLayout title="AI & Developer Tools" description="Curated AI, developer, research, design, and productivity tools."><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12"><CollectionHero
-  eyebrow="Curated toolkit"
-  title="Tools worth knowing, each with a page of context."
-  description="Not a giant directory. Explore practical tools and understand what they do, who they are for, pricing, and alternatives."
-  stats={[
-    { value: String(tools.length), label: 'Tools', detail: 'Curated instead of crowded' },
-    { value: String(cats.length - 1), label: 'Categories', detail: 'AI, dev, research & more' },
-    { value: 'Signal', label: 'Editorial goal', detail: 'Context before clicking' },
-  ]}
-  actions={[{ label: 'Explore resources', href: '/resources/' }, { label: 'Read the blog', href: '/blog/', kind: 'secondary' }]}
-/><div class="mt-10 blog-filter-bar"><div class="flex flex-wrap gap-1.5">{cats.map((c,i)=><button type="button" class:list={["blog-filter-btn",i===0&&"active"]} data-category={c} aria-pressed={i===0}>{c}</button>)}</div></div><section class="mt-8"><div class="flex justify-between items-end"><div><p class="section-kicker">Directory</p><h2 class="section-title">Explore tools</h2></div><span class="text-sm text-[var(--color-text-muted)]">{tools.length} tools</span></div><div id="tool-grid" class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{tools.map(t=><a href={`/tools/${t.id}/`} data-category={t.data.category} class="surface-card surface-card-hover p-6 group"><div class="flex justify-between items-start"><span class="roadmap-icon">{t.data.name.slice(0,2).toUpperCase()}</span><span class="pill">{t.data.pricing}</span></div><h3 class="mt-5 text-xl font-black group-hover:text-[var(--color-accent)]">{t.data.name}</h3><p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">{t.data.description}</p><div class="mt-5 flex flex-wrap gap-2">{t.data.tags.slice(0,3).map(x=><span class="tag">{x}</span>)}</div><div class="mt-6 border-t border-[var(--color-border)] pt-4 text-sm font-bold text-[var(--color-accent)]">View tool details →</div></a>)}</div></section></div><script>document.addEventListener('astro:page-load',()=>{const b=[...document.querySelectorAll('.blog-filter-btn')],c=[...document.querySelectorAll('#tool-grid > a')];b.forEach(x=>x.addEventListener('click',()=>{const f=x.dataset.category||'All';b.forEach(y=>{y.classList.remove('active');y.setAttribute('aria-pressed','false')});x.classList.add('active');x.setAttribute('aria-pressed','true');c.forEach(y=>y.classList.toggle('hidden',f!=='All'&&y.dataset.category!==f));}))})</script></BaseLayout>
+
+<BaseLayout
+  title="AI & Developer Tools"
+  description="Curated AI, developer, research, design, and productivity tools."
+  ><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <CollectionHero
+      eyebrow="Curated toolkit"
+      title="Tools worth knowing, each with a page of context."
+      description="Not a giant directory. Explore practical tools and understand what they do, who they are for, pricing, and alternatives."
+      stats={[
+        {
+          value: String(tools.length),
+          label: "Tools",
+          detail: "Curated instead of crowded",
+        },
+        {
+          value: String(cats.length - 1),
+          label: "Categories",
+          detail: "AI, dev, research & more",
+        },
+        {
+          value: "Signal",
+          label: "Editorial goal",
+          detail: "Context before clicking",
+        },
+      ]}
+      actions={[
+        { label: "Explore resources", href: "/resources/" },
+        { label: "Read the blog", href: "/blog/", kind: "secondary" },
+      ]}
+    /><div class="mt-10 blog-filter-bar">
+      <div class="flex flex-wrap gap-1.5">
+        {
+          cats.map((c, i) => (
+            <button
+              type="button"
+              class:list={["blog-filter-btn", i === 0 && "active"]}
+              data-category={c}
+              aria-pressed={i === 0}
+            >
+              {c}
+            </button>
+          ))
+        }
+      </div>
+    </div><section class="mt-8">
+      <div class="flex justify-between items-end">
+        <div>
+          <p class="section-kicker">Directory</p><h2 class="section-title">
+            Explore tools
+          </h2>
+        </div><span class="text-sm text-[var(--color-text-muted)]"
+          >{tools.length} tools</span>
+      </div><div
+        id="tool-grid"
+        class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3"
+      >
+        {
+          tools.map((t) => (
+            <a
+              href={`/tools/${t.id}/`}
+              data-category={t.data.category}
+              class="surface-card surface-card-hover p-6 group"
+            >
+              <>
+                <div class="flex justify-between items-start">
+                  <>
+                    <span class="roadmap-icon">
+                      {t.data.name.slice(0, 2).toUpperCase()}
+                    </span>
+                    <span class="pill">{t.data.pricing}</span>
+                  </>
+                </div>
+                <h3 class="mt-5 text-xl font-black group-hover:text-[var(--color-accent)]">
+                  {t.data.name}
+                </h3>
+                <p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+                  {t.data.description}
+                </p>
+                <div class="mt-5 flex flex-wrap gap-2">
+                  {t.data.tags.slice(0, 3).map((x) => (
+                    <span class="tag">{x}</span>
+                  ))}
+                </div>
+                <div class="mt-6 border-t border-[var(--color-border)] pt-4 text-sm font-bold text-[var(--color-accent)]">
+                  View tool details →
+                </div>
+              </>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </div><script>
+    document.addEventListener("astro:page-load", () => {
+      const b = [...document.querySelectorAll(".blog-filter-btn")],
+        c = [...document.querySelectorAll("#tool-grid > a")];
+      b.forEach((x) =>
+        x.addEventListener("click", () => {
+          const f = x.dataset.category || "All";
+          b.forEach((y) => {
+            y.classList.remove("active");
+            y.setAttribute("aria-pressed", "false");
+          });
+          x.classList.add("active");
+          x.setAttribute("aria-pressed", "true");
+          c.forEach((y) =>
+            y.classList.toggle(
+              "hidden",
+              f !== "All" && y.dataset.category !== f,
+            ),
+          );
+        }),
+      );
+    });
+  </script></BaseLayout
+>
