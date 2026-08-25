@@ -1,89 +1,283 @@
 ---
-import { Image } from 'astro:assets';
-import BaseLayout from '@/components/layout/BaseLayout.astro'; import CollectionHero from '@/components/common/CollectionHero.astro'; import ArticleCard from '@/components/cards/ArticleCard.astro'; import { getCollection } from 'astro:content';
-const posts=(await getCollection('blog',({data})=>!data.draft&&data.status==='published')).sort((a,b)=>b.data.pubDate.getTime()-a.data.pubDate.getTime()); const featured=posts.find(x=>x.data.featured)||posts[0]; const rest=featured?posts.filter(x=>x.id!==featured.id):posts; const cats=['All',...Array.from(new Set(posts.map(x=>x.data.category)))]; const types=['All',...Array.from(new Set(posts.map(x=>x.data.contentType)))];
+import { Image } from "astro:assets";
+import BaseLayout from "@/components/layout/BaseLayout.astro";
+import CollectionHero from "@/components/common/CollectionHero.astro";
+import ArticleCard from "@/components/cards/ArticleCard.astro";
+import { getCollection } from "astro:content";
+const posts = (
+  await getCollection(
+    "blog",
+    ({ data }) => !data.draft && data.status === "published",
+  )
+).sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+const featured = posts.find((x) => x.data.featured) || posts[0];
+const rest = featured ? posts.filter((x) => x.id !== featured.id) : posts;
+const cats = ["All", ...Array.from(new Set(posts.map((x) => x.data.category)))];
+const types = [
+  "All",
+  ...Array.from(new Set(posts.map((x) => x.data.contentType))),
+];
 ---
-<BaseLayout title="AI, Machine Learning & Career Blog" description="People-first technical guides on AI, machine learning, LLMs, software engineering, projects, and AI careers."><div class="content-container py-8 sm:py-12"><CollectionHero
+
+<BaseLayout
+  title="AI, Machine Learning & Career Blog"
+  description="People-first technical guides on AI, machine learning, LLMs, software engineering, projects, and AI careers."
+  ><div class="content-container py-8 sm:py-12">
+    <CollectionHero
       eyebrow="AI Career Guide · Journal"
       title="Technical writing for builders."
       description="Practical explanations, career guides, project thinking, and implementation notes designed to help you understand the idea and use it."
       stats={[
-        { value: String(posts.length), label: 'Guides', detail: 'Published technical articles' },
-        { value: 'AI-first', label: 'Focus', detail: 'Practical, career-oriented content' },
-        { value: 'Reviewed', label: 'Quality', detail: 'Editorial freshness metadata' },
+        {
+          value: String(posts.length),
+          label: "Guides",
+          detail: "Published technical articles",
+        },
+        {
+          value: "AI-first",
+          label: "Focus",
+          detail: "Practical, career-oriented content",
+        },
+        {
+          value: "Reviewed",
+          label: "Quality",
+          detail: "Editorial freshness metadata",
+        },
       ]}
       actions={[
-        { label: 'Explore roadmaps', href: '/careers/' },
-        { label: 'Explore projects', href: '/projects/', kind: 'secondary' },
+        { label: "Explore roadmaps", href: "/careers/" },
+        { label: "Explore projects", href: "/projects/", kind: "secondary" },
       ]}
-    />{featured&&<section class="mt-10"><div class="home-section-head"><div><p class="section-kicker">Featured</p><h2 class="section-title">Start with this guide.</h2></div></div><a href={`/blog/${featured.id}/`} class="blog-feature-card mt-6"><div><div class="flex flex-wrap gap-2"><span class="pill">{featured.data.category}</span><span class="pill">{featured.data.contentType}</span><span class="pill">{featured.data.readingTime||'8'} min read</span></div><h2>{featured.data.title}</h2><p>{featured.data.description}</p><div class="mt-5 flex flex-wrap gap-2">{featured.data.keyTakeaways.slice(0,3).map(k=><span class="tag">{k.length>66?k.slice(0,66)+'…':k}</span>)}</div><span class="card-link mt-6 inline-flex">Read guide →</span></div><div class="blog-feature-image">{featured.data.image&&<Image src={featured.data.image} alt={featured.data.imageAlt || featured.data.title} width={1200} height={630} widths={[640,960,1200]} sizes="(min-width:1024px) 55vw,100vw" quality={82} loading="eager" fetchpriority="high" decoding="async"/>}</div></a></section>}
-<section class="blog-library mt-12"><div class="blog-filter-bar"><div class="blog-filter-row"><div class="filter-scroll">{cats.map((c,i)=><button type="button" class:list={['blog-filter-btn',i===0&&'active']} data-category={c} aria-pressed={i===0}>{c}</button>)}</div><div class="filter-scroll">{types.map((t,i)=><button type="button" class:list={['blog-filter-btn',i===0&&'active']} data-type={t} aria-pressed={i===0}>{t}</button>)}</div><label class="blog-search-wrap"><span class="sr-only">Search articles</span><input id="blog-search" type="search" placeholder="Search articles…" autocomplete="off"/></label></div></div><div class="home-section-head mt-8"><div><p class="section-kicker">Library</p><h2 class="section-title">Browse the knowledge base.</h2></div><span id="blog-count" class="text-sm text-[var(--color-text-muted)]">{rest.length} articles</span></div><div id="blog-grid" class="article-grid mt-6">{rest.map(x=><div data-category={x.data.category} data-type={x.data.contentType} data-search={`${x.data.title} ${x.data.description} ${(x.data.tags||[]).join(' ')} ${(x.data.topics||[]).join(' ')}`.toLowerCase()}><ArticleCard post={x}/></div>)}</div><div id="blog-empty" class="hidden mt-8 empty-state"><strong>No articles match.</strong><p>Try a different keyword or clear the filters.</p></div></section></div><script>
-document.addEventListener('astro:page-load', () => {
-  const categoryButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-category]')];
-  const typeButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-type]')];
-  const cards = [...document.querySelectorAll<HTMLElement>('#blog-grid > div')];
-  const input = document.getElementById('blog-search') as HTMLInputElement | null;
-  const count = document.getElementById('blog-count');
-  const empty = document.getElementById('blog-empty');
-  const params = new URLSearchParams(window.location.search);
-  let category = params.get('category') || 'All';
-  let type = params.get('type') || 'All';
-  let query = params.get('q') || '';
+    />{
+      featured && (
+        <section class="mt-10">
+          <>
+            <div class="home-section-head">
+              <div>
+                <>
+                  <p class="section-kicker">Featured</p>
+                  <h2 class="section-title">Start with this guide.</h2>
+                </>
+              </div>
+            </div>
+            <a href={`/blog/${featured.id}/`} class="blog-feature-card mt-6">
+              <>
+                <div>
+                  <>
+                    <div class="flex flex-wrap gap-2">
+                      <>
+                        <span class="pill">{featured.data.category}</span>
+                        <span class="pill">{featured.data.contentType}</span>
+                        <span class="pill">
+                          {featured.data.readingTime || "8"} min read
+                        </span>
+                      </>
+                    </div>
+                    <h2>{featured.data.title}</h2>
+                    <p>{featured.data.description}</p>
+                    <div class="mt-5 flex flex-wrap gap-2">
+                      {featured.data.keyTakeaways.slice(0, 3).map((k) => (
+                        <span class="tag">
+                          {k.length > 66 ? k.slice(0, 66) + "…" : k}
+                        </span>
+                      ))}
+                    </div>
+                    <span class="card-link mt-6 inline-flex">Read guide →</span>
+                  </>
+                </div>
+                <div class="blog-feature-image">
+                  {featured.data.image && (
+                    <Image
+                      src={featured.data.image}
+                      alt={featured.data.imageAlt || featured.data.title}
+                      width={1200}
+                      height={630}
+                      widths={[640, 960, 1200]}
+                      sizes="(min-width:1024px) 55vw,100vw"
+                      quality={82}
+                      loading="eager"
+                      fetchpriority="high"
+                      decoding="async"
+                    />
+                  )}
+                </div>
+              </>
+            </a>
+          </>
+        </section>
+      )
+    }
+    <section class="blog-library mt-12">
+      <div class="blog-filter-bar">
+        <div class="blog-filter-row">
+          <div
+            class="filter-scroll"
+            role="group"
+            aria-label="Filter by category"
+          >
+            {
+              cats.map((c, i) => (
+                <button
+                  type="button"
+                  class:list={["blog-filter-btn", i === 0 && "active"]}
+                  data-category={c}
+                  aria-pressed={i === 0}
+                >
+                  {c}
+                </button>
+              ))
+            }
+          </div><div
+            class="filter-scroll"
+            role="group"
+            aria-label="Filter by content type"
+          >
+            {
+              types.map((t, i) => (
+                <button
+                  type="button"
+                  class:list={["blog-filter-btn", i === 0 && "active"]}
+                  data-type={t}
+                  aria-pressed={i === 0}
+                >
+                  {t}
+                </button>
+              ))
+            }
+          </div><label class="blog-search-wrap"
+            ><span class="sr-only">Search articles</span><input
+              id="blog-search"
+              type="search"
+              placeholder="Search articles…"
+              autocomplete="off"
+            /></label>
+        </div>
+      </div><div class="home-section-head mt-8">
+        <div>
+          <p class="section-kicker">Library</p><h2 class="section-title">
+            Browse the knowledge base.
+          </h2>
+        </div><span
+          id="blog-count"
+          class="text-sm text-[var(--color-text-muted)]"
+          >{rest.length} articles</span>
+      </div><div id="blog-grid" class="article-grid mt-6">
+        {
+          rest.map((x) => (
+            <div
+              data-category={x.data.category}
+              data-type={x.data.contentType}
+              data-search={`${x.data.title} ${x.data.description} ${(x.data.tags || []).join(" ")} ${(x.data.topics || []).join(" ")}`.toLowerCase()}
+            >
+              <ArticleCard post={x} />
+            </div>
+          ))
+        }
+      </div><div id="blog-empty" class="hidden mt-8 empty-state">
+        <strong>No articles match.</strong><p>
+          Try a different keyword or clear the filters.
+        </p>
+      </div>
+    </section>
+  </div><script>
+    document.addEventListener("astro:page-load", () => {
+      const categoryButtons = [
+        ...document.querySelectorAll<HTMLButtonElement>("[data-category]"),
+      ];
+      const typeButtons = [
+        ...document.querySelectorAll<HTMLButtonElement>("[data-type]"),
+      ];
+      const cards = [
+        ...document.querySelectorAll<HTMLElement>("#blog-grid > div"),
+      ];
+      const input = document.getElementById(
+        "blog-search",
+      ) as HTMLInputElement | null;
+      const count = document.getElementById("blog-count");
+      const empty = document.getElementById("blog-empty");
+      const params = new URLSearchParams(window.location.search);
+      let category = params.get("category") || "All";
+      let type = params.get("type") || "All";
+      let query = params.get("q") || "";
 
-  const validCategory = categoryButtons.some(btn => btn.dataset.category === category);
-  const validType = typeButtons.some(btn => btn.dataset.type === type);
-  if (!validCategory) category = 'All';
-  if (!validType) type = 'All';
-  if (input) input.value = query;
+      const validCategory = categoryButtons.some(
+        (btn) => btn.dataset.category === category,
+      );
+      const validType = typeButtons.some((btn) => btn.dataset.type === type);
+      if (!validCategory) category = "All";
+      if (!validType) type = "All";
+      if (input) input.value = query;
 
-  const syncButtons = () => {
-    categoryButtons.forEach(btn => { const active = btn.dataset.category === category; btn.classList.toggle('active', active); btn.setAttribute('aria-pressed', String(active)); });
-    typeButtons.forEach(btn => { const active = btn.dataset.type === type; btn.classList.toggle('active', active); btn.setAttribute('aria-pressed', String(active)); });
-  };
+      const syncButtons = () => {
+        categoryButtons.forEach((btn) => {
+          const active = btn.dataset.category === category;
+          btn.classList.toggle("active", active);
+          btn.setAttribute("aria-pressed", String(active));
+        });
+        typeButtons.forEach((btn) => {
+          const active = btn.dataset.type === type;
+          btn.classList.toggle("active", active);
+          btn.setAttribute("aria-pressed", String(active));
+        });
+      };
 
-  const syncUrl = () => {
-    const next = new URL(window.location.href);
-    category === 'All' ? next.searchParams.delete('category') : next.searchParams.set('category', category);
-    type === 'All' ? next.searchParams.delete('type') : next.searchParams.set('type', type);
-    query ? next.searchParams.set('q', query) : next.searchParams.delete('q');
-    window.history.replaceState({}, '', next);
-  };
+      const syncUrl = () => {
+        const next = new URL(window.location.href);
+        category === "All"
+          ? next.searchParams.delete("category")
+          : next.searchParams.set("category", category);
+        type === "All"
+          ? next.searchParams.delete("type")
+          : next.searchParams.set("type", type);
+        query
+          ? next.searchParams.set("q", query)
+          : next.searchParams.delete("q");
+        window.history.replaceState({}, "", next);
+      };
 
-  const apply = (updateUrl = true) => {
-    query = (input?.value || '').trim();
-    let visible = 0;
-    cards.forEach(card => {
-      const matches = (category === 'All' || card.dataset.category === category)
-        && (type === 'All' || card.dataset.type === type)
-        && (!query.toLowerCase() || (card.dataset.search || '').includes(query.toLowerCase()));
-      card.classList.toggle('hidden', !matches);
-      if (matches) visible++;
+      const apply = (updateUrl = true) => {
+        query = (input?.value || "").trim();
+        let visible = 0;
+        cards.forEach((card) => {
+          const matches =
+            (category === "All" || card.dataset.category === category) &&
+            (type === "All" || card.dataset.type === type) &&
+            (!query.toLowerCase() ||
+              (card.dataset.search || "").includes(query.toLowerCase()));
+          card.classList.toggle("hidden", !matches);
+          if (matches) visible++;
+        });
+        if (count)
+          count.textContent = `${visible} article${visible === 1 ? "" : "s"}`;
+        empty?.classList.toggle("hidden", visible > 0);
+        syncButtons();
+        if (updateUrl) syncUrl();
+      };
+
+      categoryButtons.forEach((btn) =>
+        btn.addEventListener("click", () => {
+          category = btn.dataset.category || "All";
+          apply();
+        }),
+      );
+      typeButtons.forEach((btn) =>
+        btn.addEventListener("click", () => {
+          type = btn.dataset.type || "All";
+          apply();
+        }),
+      );
+      input?.addEventListener("input", () => apply());
+
+      window.addEventListener("popstate", () => {
+        const next = new URLSearchParams(window.location.search);
+        category = next.get("category") || "All";
+        type = next.get("type") || "All";
+        query = next.get("q") || "";
+        if (input) input.value = query;
+        apply(false);
+      });
+
+      apply(false);
     });
-    if (count) count.textContent = `${visible} article${visible === 1 ? '' : 's'}`;
-    empty?.classList.toggle('hidden', visible > 0);
-    syncButtons();
-    if (updateUrl) syncUrl();
-  };
-
-  categoryButtons.forEach(btn => btn.addEventListener('click', () => {
-    category = btn.dataset.category || 'All';
-    apply();
-  }));
-  typeButtons.forEach(btn => btn.addEventListener('click', () => {
-    type = btn.dataset.type || 'All';
-    apply();
-  }));
-  input?.addEventListener('input', () => apply());
-
-  window.addEventListener('popstate', () => {
-    const next = new URLSearchParams(window.location.search);
-    category = next.get('category') || 'All';
-    type = next.get('type') || 'All';
-    query = next.get('q') || '';
-    if (input) input.value = query;
-    apply(false);
-  });
-
-  apply(false);
-});
-</script></BaseLayout>
+  </script></BaseLayout
+>

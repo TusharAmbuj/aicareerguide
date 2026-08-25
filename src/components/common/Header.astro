@@ -2,6 +2,8 @@
 import ThemeToggle from "./ThemeToggle.astro";
 import Search from "@/components/Search.astro";
 import { Search as SearchIcon, Menu, X } from "@lucide/astro";
+import { Image } from "astro:assets";
+import logoHeader from "@/assets/logo-header.webp";
 
 const nav = [
   { label: "AI", href: "/ai/" },
@@ -25,7 +27,17 @@ const active = (href: string) => {
 <header class="site-header sticky top-0 z-50">
   <div class="content-container site-header-inner">
     <a href="/" class="brand shrink-0" aria-label="AI Career Guide home">
-      <img src="/logo.webp" alt="" width="36" height="36" class="brand-mark" />
+      <Image
+        src={logoHeader}
+        alt=""
+        width={36}
+        height={36}
+        sizes="36px"
+        quality={80}
+        loading="eager"
+        decoding="async"
+        class="brand-mark"
+      />
       <span class="min-w-0">
         <span class="brand-name">AI Career Guide</span>
         <span class="brand-subtitle hidden xl:block"
