@@ -252,6 +252,7 @@ const allNodes = visual?.phases.flatMap((phase) => phase.nodes) ?? [];
                   {phase.nodes.map((node, nodeIndex) => (
                     <button
                       type="button"
+                      aria-label={`Open roadmap checkpoint: ${node.title}`}
                       class:list={[
                         "roadmap-node",
                         node.type === "project" && "is-project",
