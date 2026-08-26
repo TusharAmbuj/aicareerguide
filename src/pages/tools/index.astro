@@ -14,7 +14,11 @@ const cats = ["All", ...Array.from(new Set(tools.map((x) => x.data.category)))];
 <BaseLayout
   title="AI & Developer Tools"
   description="Curated AI, developer, research, design, and productivity tools."
-  ><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+  ><div
+    class="tools-page content-container pb-8 sm:pb-12"
+    data-filter-root
+    data-filter-count-label="tool"
+  >
     <CollectionHero
       eyebrow="Curated toolkit"
       title="Tools worth knowing, each with a page of context."
@@ -47,7 +51,8 @@ const cats = ["All", ...Array.from(new Set(tools.map((x) => x.data.category)))];
             <button
               type="button"
               class:list={["blog-filter-btn", i === 0 && "active"]}
-              data-category={c}
+              data-filter-group="category"
+              data-filter-value={c}
               aria-pressed={i === 0}
             >
               {c}
@@ -62,7 +67,8 @@ const cats = ["All", ...Array.from(new Set(tools.map((x) => x.data.category)))];
             Explore tools
           </h2>
         </div><span class="text-sm text-[var(--color-text-muted)]"
-          >{tools.length} tools</span>
+          >{tools.length} tools</span
+        >
       </div><div
         id="tool-grid"
         class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3"
@@ -71,7 +77,8 @@ const cats = ["All", ...Array.from(new Set(tools.map((x) => x.data.category)))];
           tools.map((t) => (
             <a
               href={`/tools/${t.id}/`}
-              data-category={t.data.category}
+              data-filter-item
+              data-filter-category={t.data.category}
               class="surface-card surface-card-hover p-6 group"
             >
               <>
@@ -103,27 +110,5 @@ const cats = ["All", ...Array.from(new Set(tools.map((x) => x.data.category)))];
         }
       </div>
     </section>
-  </div><script>
-    document.addEventListener("astro:page-load", () => {
-      const b = [...document.querySelectorAll(".blog-filter-btn")],
-        c = [...document.querySelectorAll("#tool-grid > a")];
-      b.forEach((x) =>
-        x.addEventListener("click", () => {
-          const f = x.dataset.category || "All";
-          b.forEach((y) => {
-            y.classList.remove("active");
-            y.setAttribute("aria-pressed", "false");
-          });
-          x.classList.add("active");
-          x.setAttribute("aria-pressed", "true");
-          c.forEach((y) =>
-            y.classList.toggle(
-              "hidden",
-              f !== "All" && y.dataset.category !== f,
-            ),
-          );
-        }),
-      );
-    });
-  </script></BaseLayout
+  </div></BaseLayout
 >

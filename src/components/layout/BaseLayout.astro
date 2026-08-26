@@ -21,14 +21,22 @@ export interface Props {
 }
 const props = Astro.props;
 const { article = false } = props;
+const section = Astro.url.pathname.split("/").filter(Boolean)[0] || "home";
 ---
 
 <!doctype html>
 <html lang="en" class="h-full">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0F172A" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content="#FFFFFF" /><meta
+      name="color-scheme"
+      content="light dark"
+    />
 
     <script is:inline>
       (() => {
@@ -45,6 +53,12 @@ const { article = false } = props;
           document
             .querySelector('meta[name="theme-color"]')
             ?.setAttribute("content", theme === "dark" ? "#0B1120" : "#FFFFFF");
+          document
+            .querySelector("#site-favicon")
+            ?.setAttribute("href", "/favicon.png");
+          document
+            .querySelector("#site-apple-icon")
+            ?.setAttribute("href", "/favicon.png");
         };
         applyTheme();
         document.addEventListener("astro:page-load", () => applyTheme());
@@ -55,14 +69,22 @@ const { article = false } = props;
       })();
     </script>
 
-    <link rel="icon" type="image/png" href="/favicon.png" /><link
+    <link
+      id="site-favicon"
+      rel="icon"
+      type="image/png"
+      href="/favicon.png"
+      sizes="128x128"
+    /><link
+      id="site-apple-icon"
       rel="apple-touch-icon"
       href="/favicon.png"
-    /><SEO {...props} /></head
+    /><link rel="manifest" href="/site.webmanifest" /><SEO {...props} /></head
   >
   <body
     class="min-h-full overflow-x-clip bg-[var(--color-bg)] text-[var(--color-text-primary)]"
     data-page-type={article ? "article" : "site"}
+    data-section={section}
   >
     {
       article && (
@@ -78,6 +100,588 @@ const { article = false } = props;
     <main id="main-content" class="min-h-[60vh]"><slot /></main>
     <Footer />
 
+    <script is:inline>
+      (() => {
+        const initFilters = () => {
+          document.querySelectorAll("[data-filter-root]").forEach((root) => {
+            if (root.dataset.filterControllerReady === "true") return;
+            root.dataset.filterControllerReady = "true";
+
+            const buttons = Array.from(
+              root.querySelectorAll("[data-filter-group][data-filter-value]"),
+            );
+            const items = Array.from(
+              root.querySelectorAll("[data-filter-item]"),
+            );
+            const input = root.querySelector("[data-filter-search]");
+            const clear = root.querySelector("[data-filter-clear]");
+            const count = root.querySelector("[data-filter-count]");
+            const empty = root.querySelector("[data-filter-empty]");
+            const state = {};
+
+            Array.from(
+              new Set(buttons.map((b) => b.dataset.filterGroup || "")),
+            ).forEach((group) => {
+              if (group) state[group] = "All";
+            });
+
+            const readUrlState = () => {
+              if (!root.hasAttribute("data-filter-sync-url")) return;
+              const params = new URLSearchParams(window.location.search);
+              Object.keys(state).forEach((group) => {
+                const requested = params.get(group) || "All";
+                state[group] = buttons.some(
+                  (b) =>
+                    b.dataset.filterGroup === group &&
+                    b.dataset.filterValue === requested,
+                )
+                  ? requested
+                  : "All";
+              });
+              if (input) input.value = params.get("q") || "";
+            };
+            readUrlState();
+
+            const getValue = (item, group) => {
+              const key = `filter${group.charAt(0).toUpperCase()}${group.slice(1)}`;
+              return item.dataset[key] || "";
+            };
+
+            const matches = (item, group, value) => {
+              if (value === "All") return true;
+              const raw = getValue(item, group);
+              return raw.includes("|")
+                ? raw.split("|").includes(value)
+                : raw === value;
+            };
+
+            const apply = (syncUrl) => {
+              const query = (input ? input.value : "").trim().toLowerCase();
+              let visible = 0;
+
+              items.forEach((item) => {
+                const filterMatch = Object.entries(state).every(
+                  ([group, value]) => matches(item, group, value),
+                );
+                const text = item.dataset.filterSearchText || "";
+                const searchMatch = !query || text.includes(query);
+                const show = filterMatch && searchMatch;
+                item.hidden = !show;
+                if (show) visible += 1;
+              });
+
+              const groups = Array.from(
+                new Set(buttons.map((b) => b.dataset.filterGroup || "")),
+              );
+              groups.forEach((group) => {
+                buttons
+                  .filter((b) => b.dataset.filterGroup === group)
+                  .forEach((b) => {
+                    const active =
+                      (state[group] || "All") ===
+                      (b.dataset.filterValue || "All");
+                    b.classList.toggle("active-filter", active);
+                    b.classList.toggle("active", active);
+                    b.setAttribute("aria-pressed", String(active));
+                  });
+              });
+
+              if (count) {
+                const kind = root.dataset.filterCountLabel || "item";
+                count.textContent = `${visible} ${kind}${visible === 1 ? "" : "s"}`;
+              }
+              if (empty) empty.classList.toggle("hidden", visible > 0);
+
+              if (syncUrl && root.hasAttribute("data-filter-sync-url")) {
+                const next = new URL(window.location.href);
+                Object.entries(state).forEach(([group, value]) => {
+                  if (!value || value === "All")
+                    next.searchParams.delete(group);
+                  else next.searchParams.set(group, value);
+                });
+                if (query) next.searchParams.set("q", query);
+                else next.searchParams.delete("q");
+                window.history.replaceState({}, "", next);
+              }
+            };
+
+            buttons.forEach((button) => {
+              button.addEventListener("click", () => {
+                const group = button.dataset.filterGroup;
+                if (!group) return;
+                state[group] = button.dataset.filterValue || "All";
+                apply(true);
+              });
+            });
+
+            if (input) input.addEventListener("input", () => apply(true));
+            if (clear) {
+              clear.addEventListener("click", () => {
+                Object.keys(state).forEach((group) => {
+                  state[group] = "All";
+                });
+                if (input) input.value = "";
+                apply(true);
+              });
+            }
+
+            apply(false);
+            if (root.hasAttribute("data-filter-sync-url")) {
+              root.addEventListener("filter:url-state", () => {
+                readUrlState();
+                apply(false);
+              });
+            }
+          });
+        };
+
+        initFilters();
+        document.addEventListener("astro:page-load", initFilters);
+        window.addEventListener("popstate", () => {
+          document
+            .querySelectorAll("[data-filter-root][data-filter-sync-url]")
+            .forEach((root) => {
+              root.dispatchEvent(new CustomEvent("filter:url-state"));
+            });
+        });
+      })();
+    </script>
+
+    <script is:inline>
+      (() => {
+        const initRoadmaps = () => {
+          document.querySelectorAll(".roadmap-detail-shell").forEach((root) => {
+            if (!(root instanceof HTMLElement)) return;
+            if (root.dataset.roadmapControllerReady === "true") return;
+            root.dataset.roadmapControllerReady = "true";
+
+            const slug =
+              root.dataset.roadmapSlug ||
+              root.getAttribute("data-roadmap-slug") ||
+              "roadmap";
+            const storageKey = `aicareerguide:roadmap-progress:v2:${encodeURIComponent(slug)}`;
+            const nodes = Array.from(root.querySelectorAll(".roadmap-node"));
+            const phases = Array.from(root.querySelectorAll(".roadmap-phase"));
+            const modal = root.querySelector("#roadmap-modal");
+            const closeButtons = root.querySelectorAll(
+              "[data-close-modal], #roadmap-modal-close",
+            );
+            const completeBtn = root.querySelector("#roadmap-complete-btn");
+            const progressBar = root.querySelector("#progress-bar");
+            const progressPercent = root.querySelector("#progress-percent");
+            const progressCount = root.querySelector("#progress-count");
+            const progressMessage = root.querySelector("#progress-message");
+            const progressRingValue = root.querySelector(
+              "#progress-ring-value",
+            );
+            const progressRing = root.querySelector(".roadmap-v2-ring");
+            const currentLabel = root.querySelector("#roadmap-current-label");
+            const resultLabel = root.querySelector("#roadmap-result-count");
+            const modeLabel = root.querySelector("#roadmap-mode-label");
+            const mobilePhaseSelect = root.querySelector("#mobile-phase-jump");
+            let completed = new Set();
+            let activeNode = null;
+            let lastFocused = null;
+
+            const safeStorage = (() => {
+              const memory = new Map();
+              const read = (key) => {
+                try {
+                  return window.localStorage.getItem(key);
+                } catch {}
+                return memory.get(key) ?? null;
+              };
+              const write = (key, value) => {
+                try {
+                  window.localStorage.setItem(key, value);
+                } catch {
+                  memory.set(key, value);
+                }
+              };
+              const remove = (key) => {
+                try {
+                  window.localStorage.removeItem(key);
+                } catch {}
+                memory.delete(key);
+              };
+              return { read, write, remove };
+            })();
+
+            try {
+              const raw = safeStorage.read(storageKey);
+              if (raw) {
+                const saved = JSON.parse(raw);
+                const values = Array.isArray(saved)
+                  ? saved
+                  : Array.isArray(saved?.completed)
+                    ? saved.completed
+                    : [];
+                completed = new Set(values.map(String));
+              }
+              // Migrate progress saved by earlier roadmap versions.
+              if (!completed.size) {
+                const legacyKey = `aicareerguide:roadmap:${slug}`;
+                const legacy = safeStorage.read(legacyKey);
+                const values = legacy ? JSON.parse(legacy) : [];
+                if (Array.isArray(values) && values.length) {
+                  completed = new Set(values.map(String));
+                  safeStorage.write(
+                    storageKey,
+                    JSON.stringify({
+                      version: 2,
+                      completed: [...completed],
+                      updatedAt: Date.now(),
+                    }),
+                  );
+                }
+              }
+            } catch {
+              completed = new Set();
+            }
+
+            const q = (selector) => root.querySelector(selector);
+            const save = () => {
+              safeStorage.write(
+                storageKey,
+                JSON.stringify({
+                  version: 2,
+                  slug,
+                  completed: [...completed],
+                  updatedAt: Date.now(),
+                }),
+              );
+            };
+            const visibleNodes = () => nodes.filter((node) => !node.hidden);
+
+            const updateProgress = () => {
+              const completedCount = nodes.filter((node) =>
+                completed.has(node.dataset.nodeId || ""),
+              ).length;
+              const pct = Math.round(
+                (completedCount / Math.max(nodes.length, 1)) * 100,
+              );
+              nodes.forEach((node) => {
+                const done = completed.has(node.dataset.nodeId || "");
+                node.classList.toggle("is-complete", done);
+                node.setAttribute("aria-pressed", done ? "true" : "false");
+              });
+              if (progressBar) progressBar.style.width = `${pct}%`;
+              if (progressBar)
+                progressBar.setAttribute("aria-valuenow", String(pct));
+              if (progressPercent) progressPercent.textContent = `${pct}%`;
+              if (progressRingValue) progressRingValue.textContent = `${pct}%`;
+              if (progressRing)
+                progressRing.style.background = `conic-gradient(var(--color-accent) ${pct * 3.6}deg, var(--color-border) ${pct * 3.6}deg)`;
+              if (progressCount)
+                progressCount.textContent = `${completedCount} / ${nodes.length}`;
+              if (progressMessage)
+                progressMessage.textContent =
+                  pct === 100
+                    ? "Roadmap complete. Keep building and revisiting weak spots."
+                    : pct
+                      ? "Good progress. Continue with the next incomplete checkpoint."
+                      : "Start with Phase 01. Your progress is saved on this device.";
+            };
+
+            const updateResultCount = () => {
+              const shown = visibleNodes().length;
+              if (resultLabel)
+                resultLabel.textContent = `${shown} of ${nodes.length} checkpoints`;
+            };
+
+            const close = () => {
+              if (!modal) return;
+              modal.classList.add("hidden");
+              document.body.classList.remove("roadmap-modal-open");
+              activeNode = null;
+              if (lastFocused && typeof lastFocused.focus === "function") {
+                lastFocused.focus();
+                lastFocused = null;
+              }
+            };
+
+            const open = (node) => {
+              if (!(node instanceof HTMLElement) || !modal) return;
+              activeNode = node;
+              lastFocused = document.activeElement;
+              const title = node.dataset.nodeTitle || "Checkpoint";
+              const desc = node.dataset.nodeDescription || "";
+              let tags = [];
+              let links = [];
+              let prereqs = [];
+              try {
+                tags = JSON.parse(node.dataset.nodeTags || "[]");
+              } catch {}
+              try {
+                links = JSON.parse(node.dataset.nodeLinks || "[]");
+              } catch {}
+              try {
+                prereqs = JSON.parse(node.dataset.nodePrereqs || "[]");
+              } catch {}
+
+              q("#roadmap-modal-title")?.replaceChildren(
+                document.createTextNode(title),
+              );
+              q("#roadmap-modal-description")?.replaceChildren(
+                document.createTextNode(desc),
+              );
+              const type = node.dataset.nodeType || "core";
+              const kicker = q("#roadmap-modal-kicker");
+              if (kicker)
+                kicker.textContent =
+                  type === "project"
+                    ? "Build checkpoint"
+                    : type === "career"
+                      ? "Career checkpoint"
+                      : type === "optional"
+                        ? "Optional branch"
+                        : "Roadmap checkpoint";
+
+              const tagsEl = q("#roadmap-modal-tags");
+              if (tagsEl) {
+                tagsEl.innerHTML = tags
+                  .map(
+                    (tag) =>
+                      `<span class="tag">${String(tag).replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>`,
+                  )
+                  .join("");
+              }
+
+              const preEl = q("#roadmap-modal-prereqs");
+              if (preEl) {
+                preEl.innerHTML = prereqs.length
+                  ? `<div class="roadmap-modal-info"><p>Prerequisites</p><ul>${prereqs.map((item) => `<li>${String(item).replace(/</g, "&lt;").replace(/>/g, "&gt;")}</li>`).join("")}</ul></div>`
+                  : `<div class="roadmap-modal-info roadmap-modal-info-muted"><p>No formal prerequisites</p><span>Start here, then use the related links below to continue.</span></div>`;
+              }
+
+              const linksEl = q("#roadmap-modal-links");
+              if (linksEl) {
+                linksEl.innerHTML = links.length
+                  ? links
+                      .map(
+                        (link) =>
+                          `<a class="roadmap-modal-link" href="${String(link.href).replace(/"/g, "&quot;")}">${String(link.label).replace(/</g, "&lt;").replace(/>/g, "&gt;")} <span>↗</span></a>`,
+                      )
+                      .join("")
+                  : `<a class="roadmap-modal-link" href="/blog/?q=${encodeURIComponent(title)}">Find a guide for ${String(title).replace(/</g, "&lt;").replace(/>/g, "&gt;")} <span>↗</span></a>`;
+              }
+
+              if (completeBtn)
+                completeBtn.textContent = completed.has(
+                  node.dataset.nodeId || "",
+                )
+                  ? "Mark incomplete"
+                  : "Mark complete";
+              modal.classList.remove("hidden");
+              document.body.classList.add("roadmap-modal-open");
+              requestAnimationFrame(() => q("#roadmap-modal-close")?.focus());
+            };
+
+            const applyView = (view) => {
+              root.querySelectorAll(".roadmap-view-btn").forEach((button) => {
+                const active = button.dataset.view === view;
+                button.classList.toggle("active-filter", active);
+                button.setAttribute("aria-pressed", active ? "true" : "false");
+              });
+              if (modeLabel)
+                modeLabel.textContent =
+                  view === "all"
+                    ? "All topics"
+                    : `${view.charAt(0).toUpperCase()}${view.slice(1)} focus`;
+
+              nodes.forEach((node) => {
+                const type = node.dataset.nodeType || "core";
+                const shouldShow =
+                  view === "all" ||
+                  type === view ||
+                  (view === "core" && type === "core");
+                node.hidden = !shouldShow;
+                node.classList.toggle("roadmap-node-hidden", !shouldShow);
+              });
+              phases.forEach((phase) => {
+                const visible = phase.querySelectorAll(
+                  ".roadmap-node:not([hidden])",
+                ).length;
+                phase.classList.toggle("is-filter-empty", visible === 0);
+              });
+              updateResultCount();
+            };
+
+            nodes.forEach((node) =>
+              node.addEventListener("click", (event) => {
+                if (
+                  event.target instanceof HTMLElement &&
+                  event.target.closest("a")
+                )
+                  return;
+                open(node);
+              }),
+            );
+            closeButtons.forEach((button) =>
+              button.addEventListener("click", close),
+            );
+            completeBtn?.addEventListener("click", () => {
+              if (!activeNode) return;
+              const id = activeNode.dataset.nodeId || "";
+              if (completed.has(id)) completed.delete(id);
+              else completed.add(id);
+              save();
+              updateProgress();
+              open(activeNode);
+            });
+
+            root
+              .querySelector("#reset-progress")
+              ?.addEventListener("click", () => {
+                if (!completed.size) return;
+                completed.clear();
+                save();
+                updateProgress();
+              });
+
+            root
+              .querySelector("#continue-btn")
+              ?.addEventListener("click", () => {
+                const next = nodes.find(
+                  (node) => !completed.has(node.dataset.nodeId || ""),
+                );
+                if (!next) {
+                  q("#guide")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                  return;
+                }
+                next.scrollIntoView({ behavior: "smooth", block: "center" });
+                setTimeout(() => next.focus(), 350);
+              });
+
+            // Keep progress synchronized across tabs/windows and persist before navigation.
+            window.addEventListener("storage", (event) => {
+              if (event.key !== storageKey || !event.newValue) return;
+              try {
+                const saved = JSON.parse(event.newValue);
+                const values = Array.isArray(saved)
+                  ? saved
+                  : Array.isArray(saved?.completed)
+                    ? saved.completed
+                    : [];
+                completed = new Set(values.map(String));
+                updateProgress();
+              } catch {}
+            });
+            window.addEventListener("pagehide", save, { once: true });
+
+            root.querySelectorAll(".roadmap-view-btn").forEach((button) => {
+              button.addEventListener("click", () =>
+                applyView(button.dataset.view || "all"),
+              );
+            });
+
+            root
+              .querySelector("#focus-toggle")
+              ?.addEventListener("click", (event) => {
+                const button = event.currentTarget;
+                const enabled = root.classList.toggle("focus-mode");
+                button.classList.toggle("active-filter", enabled);
+                button.setAttribute("aria-pressed", enabled ? "true" : "false");
+              });
+
+            const jumpToPhase = (value) => {
+              if (!value) return;
+              const target = root.querySelector(`#${CSS.escape(value)}`);
+              target?.scrollIntoView({ behavior: "smooth", block: "start" });
+            };
+
+            root
+              .querySelector("#phase-jump")
+              ?.addEventListener("change", (event) =>
+                jumpToPhase(event.currentTarget.value),
+              );
+            mobilePhaseSelect?.addEventListener("change", (event) =>
+              jumpToPhase(event.currentTarget.value),
+            );
+
+            root
+              .querySelectorAll(".phase-nav-item, [data-journey-phase]")
+              .forEach((link) => {
+                link.addEventListener("click", () => {
+                  const href = link.getAttribute("href") || "";
+                  const id = href.startsWith("#")
+                    ? href.slice(1)
+                    : link.getAttribute("data-journey-phase") || "";
+                  root
+                    .querySelectorAll(".phase-nav-item")
+                    .forEach((item) =>
+                      item.classList.toggle(
+                        "is-active",
+                        item.getAttribute("href") === `#${id}`,
+                      ),
+                    );
+                  root
+                    .querySelectorAll("[data-journey-phase]")
+                    .forEach((item) =>
+                      item.classList.toggle(
+                        "is-active",
+                        item.getAttribute("data-journey-phase") === id,
+                      ),
+                    );
+                });
+              });
+
+            document.addEventListener("keydown", (event) => {
+              if (
+                event.key === "Escape" &&
+                modal &&
+                !modal.classList.contains("hidden")
+              )
+                close();
+            });
+
+            const observer =
+              "IntersectionObserver" in window
+                ? new IntersectionObserver(
+                    (entries) => {
+                      entries.forEach((entry) => {
+                        if (!entry.isIntersecting) return;
+                        const id = entry.target.id;
+                        const link = root.querySelector(
+                          `.phase-nav-item[href="#${CSS.escape(id)}"]`,
+                        );
+                        root
+                          .querySelectorAll(".phase-nav-item")
+                          .forEach((item) =>
+                            item.classList.remove("is-active"),
+                          );
+                        root
+                          .querySelectorAll("[data-journey-phase]")
+                          .forEach((item) =>
+                            item.classList.toggle(
+                              "is-active",
+                              item.getAttribute("data-journey-phase") === id,
+                            ),
+                          );
+                        link?.classList.add("is-active");
+                        if (currentLabel)
+                          currentLabel.textContent = id
+                            ? link?.querySelector("strong")?.textContent ||
+                              "Current phase"
+                            : "Current phase";
+                      });
+                    },
+                    { rootMargin: "-25% 0px -60% 0px", threshold: 0 },
+                  )
+                : null;
+            phases.forEach((phase) => observer?.observe(phase));
+
+            updateProgress();
+            applyView("all");
+          });
+        };
+        initRoadmaps();
+        document.addEventListener("astro:page-load", initRoadmaps);
+      })();
+    </script>
     <script is:inline>
       (() => {
         const MEASUREMENT_ID = "G-Q91ESRJBBL";
@@ -104,10 +708,6 @@ const { article = false } = props;
             return;
           }
           started = true;
-          const s = document.createElement("script");
-          s.async = true;
-          s.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
-          document.head.appendChild(s);
           window.dataLayer = window.dataLayer || [];
           window.gtag =
             window.gtag ||
@@ -116,17 +716,15 @@ const { article = false } = props;
             };
           window.gtag("js", new Date());
           window.gtag("config", MEASUREMENT_ID, { send_page_view: false });
+          const s = document.createElement("script");
+          s.async = true;
+          s.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
+          document.head.appendChild(s);
           trackPageView();
         };
 
+        startAnalytics();
         document.addEventListener("astro:page-load", trackPageView);
-        const idle =
-          window.requestIdleCallback || ((cb) => window.setTimeout(cb, 10000));
-        const begin = () => startAnalytics();
-        ["pointerdown", "keydown", "touchstart"].forEach((event) =>
-          window.addEventListener(event, begin, { once: true, passive: true }),
-        );
-        idle(startAnalytics, { timeout: 10000 });
       })();
     </script>
     <script>
@@ -134,7 +732,7 @@ const { article = false } = props;
         if (!document.querySelector(".prose pre:not([data-code-ready])"))
           return;
         document
-          .querySelectorAll<HTMLPreElement>(".prose pre:not([data-code-ready])")
+          .querySelectorAll(".prose pre:not([data-code-ready])")
           .forEach((pre) => {
             pre.dataset.codeReady = "true";
             const wrapper = document.createElement("div");

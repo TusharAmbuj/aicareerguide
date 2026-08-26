@@ -18,6 +18,8 @@ topics:
   - Machine Learning
   - Software Engineering
 sources:
+  - title: "roadmap.sh — AI Engineer Roadmap"
+    url: "https://roadmap.sh/ai-engineer"
   - title: "IBM — What Is an AI Developer?"
     url: "https://www.ibm.com/think/topics/ai-developer"
   - title: "IBM — AI and the Future of Software Engineering"

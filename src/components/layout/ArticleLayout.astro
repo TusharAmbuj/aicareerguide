@@ -26,7 +26,7 @@ export interface Props {
     image?: any;
     imageAlt?: string;
     imageCaption?: string;
-    readingTime?: string;
+    readingTime?: number;
     headings: { depth: number; slug: string; text: string }[];
     relatedPosts?: any[];
     canonical?: string;
@@ -54,7 +54,7 @@ const {
     image,
     imageAlt,
     imageCaption,
-    readingTime = "8",
+    readingTime = 8,
     headings = [],
     relatedPosts = [],
     canonical,
@@ -89,10 +89,10 @@ const breadcrumbItems = [
     keywords={[...topics, ...tags]}
     breadcrumbs={breadcrumbItems}
 >
-    <article class="article-page">
+    <article class="article-page article-page-premium">
         <div class="article-shell">
             <Breadcrumbs items={breadcrumbItems} /><header
-                class="article-header"
+                class="article-header article-header-premium"
             >
                 <div class="article-header-copy">
                     <div class="article-meta-top">
@@ -171,7 +171,8 @@ const breadcrumbItems = [
                                 loading="eager"
                                 fetchpriority="high"
                                 decoding="async"
-                                class="w-full h-full object-cover"
+                                class="w-full h-auto object-contain"
+                                data-lightbox-src={image?.src}
                             />
                             {imageCaption && (
                                 <figcaption>{imageCaption}</figcaption>
@@ -202,6 +203,19 @@ const breadcrumbItems = [
                     </section>
                 )
             }
+            <div
+                class="article-learning-path"
+                aria-label="AI Career Guide learning path"
+            >
+                <span class="article-learning-path-label"
+                    >AI Career Guide method</span
+                >
+                <a href="/ai/">Learn</a>
+                <span aria-hidden="true">→</span>
+                <a href="/projects/">Build</a>
+                <span aria-hidden="true">→</span>
+                <a href="/careers/">Prove</a>
+            </div>
             {
                 headings.length > 0 && (
                     <div class="mobile-toc-card">
@@ -254,13 +268,33 @@ const breadcrumbItems = [
                     </div>
                 )
             }
+            <div class="article-content-kicker">
+                <span>Deep dive</span>
+                <span aria-hidden="true">•</span>
+                <span>{readingTime} min read</span>
+                <span aria-hidden="true">•</span>
+                <span
+                    >Updated {
+                        (
+                            updatedDate ||
+                            lastReviewed ||
+                            pubDate
+                        ).toLocaleDateString("en-US", {
+                            month: "short",
+                            year: "numeric",
+                        })
+                    }</span
+                >
+            </div>
             <div class="article-content-layout article-reading-layout">
                 <aside
                     class="article-sidebar hidden lg:block"
                     aria-label="Article navigation and context"
                 >
                     <div class="article-sidebar-inner">
-                        <div class="article-sidebar-section">
+                        <div
+                            class="article-sidebar-section article-sidebar-toc-section"
+                        >
                             <div class="article-sidebar-label">
                                 Navigate
                             </div><TableOfContents headings={headings} />
@@ -308,6 +342,28 @@ const breadcrumbItems = [
                     </div>
                 </aside><div class="article-prose prose"><slot /></div>
             </div>
+            <section
+                class="article-build-next"
+                aria-label="Next step after this article"
+            >
+                <div>
+                    <p class="section-kicker">Learn → Build → Prove</p>
+                    <h2>Turn this knowledge into evidence.</h2>
+                    <p>
+                        Use the related roadmap to choose what to learn next,
+                        then build a project that demonstrates the skill instead
+                        of stopping at theory.
+                    </p>
+                </div>
+                <div class="article-build-actions">
+                    <a href="/careers/" class="button-primary"
+                        >Explore roadmaps →</a
+                    >
+                    <a href="/projects/" class="button-secondary"
+                        >Build a project</a
+                    >
+                </div>
+            </section>
             <footer class="article-footer">
                 {
                     topics.length > 0 && (
@@ -349,6 +405,25 @@ const breadcrumbItems = [
                         </section>
                     )
                 }{
+                    (
+                        <div class="article-feedback-card">
+                            <div>
+                                <p class="context-label">Found an error?</p>
+                                <p class="text-sm text-[var(--color-text-secondary)]">
+                                    Technical content changes quickly. Report a
+                                    factual error or outdated reference so it
+                                    can be checked.
+                                </p>
+                            </div>
+                            <a
+                                href={`/contact/?subject=${encodeURIComponent(`Correction: ${title}`)}`}
+                                class="font-semibold text-[var(--color-accent)] hover:underline"
+                            >
+                                Report a correction →
+                            </a>
+                        </div>
+                    )
+                }{
                     (previousPost || nextPost) && (
                         <nav
                             class="article-next-nav"
@@ -382,5 +457,239 @@ const breadcrumbItems = [
                 }
             </footer>
         </div>
-    </article></BaseLayout
->
+    </article>
+
+    <dialog
+        id="article-image-lightbox"
+        class="article-lightbox"
+        aria-label="Image viewer"
+    >
+        <div class="article-lightbox-panel">
+            <div class="article-lightbox-bar">
+                <div class="min-w-0">
+                    <p class="article-lightbox-kicker">Image preview</p>
+                    <p
+                        id="article-lightbox-caption"
+                        class="article-lightbox-caption"
+                    >
+                        Expanded article image
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    id="article-lightbox-close"
+                    class="article-lightbox-close"
+                    aria-label="Close image viewer"
+                >
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div
+                id="article-lightbox-viewport"
+                class="article-lightbox-viewport"
+            >
+                <img
+                    id="article-lightbox-image"
+                    class="article-lightbox-image"
+                    alt=""
+                    decoding="async"
+                    draggable="false"
+                />
+            </div>
+            <div
+                class="article-lightbox-controls"
+                aria-label="Image zoom controls"
+            >
+                <button
+                    type="button"
+                    id="article-lightbox-zoom-out"
+                    class="article-lightbox-control"
+                    aria-label="Zoom out">−</button
+                >
+                <span
+                    id="article-lightbox-zoom-label"
+                    class="article-lightbox-zoom-label">100%</span
+                >
+                <button
+                    type="button"
+                    id="article-lightbox-reset"
+                    class="article-lightbox-control article-lightbox-reset"
+                    aria-label="Reset zoom">Reset</button
+                >
+                <button
+                    type="button"
+                    id="article-lightbox-zoom-in"
+                    class="article-lightbox-control"
+                    aria-label="Zoom in">+</button
+                >
+            </div>
+        </div>
+    </dialog>
+
+    <script>
+        const initArticleImageLightbox = () => {
+            const article =
+                document.querySelector<HTMLElement>(".article-page");
+            const dialog = document.getElementById(
+                "article-image-lightbox",
+            ) as HTMLDialogElement | null;
+            const viewport = document.getElementById(
+                "article-lightbox-viewport",
+            );
+            const viewer = document.getElementById(
+                "article-lightbox-image",
+            ) as HTMLImageElement | null;
+            const caption = document.getElementById("article-lightbox-caption");
+            const close = document.getElementById("article-lightbox-close");
+            const zoomOut = document.getElementById(
+                "article-lightbox-zoom-out",
+            );
+            const zoomIn = document.getElementById("article-lightbox-zoom-in");
+            const reset = document.getElementById("article-lightbox-reset");
+            const zoomLabel = document.getElementById(
+                "article-lightbox-zoom-label",
+            );
+            if (
+                !article ||
+                !dialog ||
+                !viewport ||
+                !viewer ||
+                !caption ||
+                dialog.dataset.bound === "true"
+            )
+                return;
+            dialog.dataset.bound = "true";
+
+            let zoom = 1;
+            const minZoom = 1;
+            const maxZoom = 4;
+            const step = 0.25;
+
+            const updateZoom = (value: number) => {
+                zoom = Math.min(
+                    maxZoom,
+                    Math.max(minZoom, Number(value.toFixed(2))),
+                );
+                viewer.style.transform = `scale(${zoom})`;
+                viewer.style.transformOrigin = "center center";
+                zoomLabel &&
+                    (zoomLabel.textContent = `${Math.round(zoom * 100)}%`);
+                zoomOut?.toggleAttribute("disabled", zoom <= minZoom);
+                zoomIn?.toggleAttribute("disabled", zoom >= maxZoom);
+                viewer.classList.toggle("is-zoomed", zoom > 1);
+            };
+
+            const closeDialog = () => {
+                if (dialog.open) dialog.close();
+                viewer.removeAttribute("src");
+                viewer.alt = "";
+                updateZoom(1);
+                document.body.classList.remove("image-lightbox-open");
+            };
+
+            const openImage = (img: HTMLImageElement) => {
+                const source =
+                    img.dataset.lightboxSrc ||
+                    img.currentSrc ||
+                    img.getAttribute("src") ||
+                    img.dataset.src;
+                if (!source) return;
+                viewer.src = source;
+                viewer.alt = img.alt || "Expanded article image";
+                const figure = img.closest("figure");
+                const figcaption = figure
+                    ?.querySelector("figcaption")
+                    ?.textContent?.trim();
+                caption.textContent =
+                    figcaption || img.alt || "Expanded article image";
+                updateZoom(1);
+                document.body.classList.add("image-lightbox-open");
+                if (typeof dialog.showModal === "function") dialog.showModal();
+                else dialog.setAttribute("open", "true");
+                requestAnimationFrame(() => {
+                    viewport.scrollLeft = Math.max(
+                        0,
+                        (viewport.scrollWidth - viewport.clientWidth) / 2,
+                    );
+                    viewport.scrollTop = Math.max(
+                        0,
+                        (viewport.scrollHeight - viewport.clientHeight) / 2,
+                    );
+                    close?.focus({ preventScroll: true });
+                });
+            };
+
+            article
+                .querySelectorAll<HTMLImageElement>(
+                    ".article-hero-media img, .article-prose img",
+                )
+                .forEach((img) => {
+                    img.classList.add("article-lightbox-trigger");
+                    img.tabIndex = 0;
+                    img.setAttribute("role", "button");
+                    img.setAttribute("aria-haspopup", "dialog");
+                    img.setAttribute(
+                        "aria-label",
+                        `${img.alt || "Article image"}. Open image viewer.`,
+                    );
+                });
+
+            article.addEventListener("click", (event) => {
+                const target = event.target as HTMLElement | null;
+                const img = target?.closest<HTMLImageElement>(
+                    ".article-hero-media img, .article-prose img",
+                );
+                if (!img) return;
+                event.preventDefault();
+                openImage(img);
+            });
+
+            article.addEventListener("keydown", (event) => {
+                const target = event.target as HTMLElement | null;
+                const img = target?.closest<HTMLImageElement>(
+                    ".article-hero-media img, .article-prose img",
+                );
+                if (!img) return;
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    openImage(img);
+                }
+            });
+
+            close?.addEventListener("click", closeDialog);
+            zoomOut?.addEventListener("click", () => updateZoom(zoom - step));
+            zoomIn?.addEventListener("click", () => updateZoom(zoom + step));
+            reset?.addEventListener("click", () => updateZoom(1));
+            viewport.addEventListener("dblclick", () =>
+                updateZoom(zoom === 1 ? 2 : 1),
+            );
+            viewport.addEventListener(
+                "wheel",
+                (event) => {
+                    if (!event.ctrlKey) return;
+                    event.preventDefault();
+                    updateZoom(zoom + (event.deltaY < 0 ? step : -step));
+                },
+                { passive: false },
+            );
+            dialog.addEventListener("click", (event) => {
+                if (event.target === dialog) closeDialog();
+            });
+            dialog.addEventListener("cancel", (event) => {
+                event.preventDefault();
+                closeDialog();
+            });
+            dialog.addEventListener("keydown", (event) => {
+                if (event.key === "+" || event.key === "=")
+                    updateZoom(zoom + step);
+                if (event.key === "-") updateZoom(zoom - step);
+                if (event.key === "0") updateZoom(1);
+            });
+            viewer.addEventListener("load", () => updateZoom(1));
+            updateZoom(1);
+        };
+
+        initArticleImageLightbox();
+        document.addEventListener("astro:page-load", initArticleImageLightbox);
+    </script>
+</BaseLayout>

@@ -24,7 +24,11 @@ const totalSkills = new Set(projects.flatMap((p) => p.data.skills)).size;
   title="AI & Software Projects | Build Your Portfolio"
   description="Practical AI, machine learning, LLM, and software projects with architecture, deployment, evaluation, and portfolio guidance."
 >
-  <div class="projects-modern-page">
+  <div
+    class="projects-modern-page premium-collection-page"
+    data-filter-root
+    data-filter-count-label="project"
+  >
     <div class="content-container">
       <CollectionHero
         eyebrow="Build · Ship · Prove"
@@ -109,7 +113,10 @@ const totalSkills = new Set(projects.flatMap((p) => p.data.skills)).size;
         )
       }
 
-      <section id="project-library" class="projects-library-modern">
+      <section
+        id="project-library"
+        class="projects-library-modern projects-library-premium"
+      >
         <div class="library-toolbar">
           <div>
             <p class="section-kicker">Project library</p><h2
@@ -124,10 +131,13 @@ const totalSkills = new Set(projects.flatMap((p) => p.data.skills)).size;
             <label class="sr-only" for="project-search">Search projects</label
             ><input
               id="project-search"
+              data-filter-search
               type="search"
               placeholder="Search projects, skills, stack…"
               autocomplete="off"
-            /><button id="project-clear" type="button">Clear</button>
+            /><button id="project-clear" data-filter-clear type="button"
+              >Clear</button
+            >
           </div>
         </div>
         <div class="projects-filter-modern">
@@ -141,8 +151,8 @@ const totalSkills = new Set(projects.flatMap((p) => p.data.skills)).size;
                       "filter-btn-modern",
                       i === 0 && "active-filter",
                     ]}
-                    data-filter="category"
-                    data-value={value}
+                    data-filter-group="category"
+                    data-filter-value={value}
                     aria-pressed={i === 0}
                   >
                     {value}
@@ -161,8 +171,8 @@ const totalSkills = new Set(projects.flatMap((p) => p.data.skills)).size;
                       "filter-btn-modern",
                       i === 0 && "active-filter",
                     ]}
-                    data-filter="difficulty"
-                    data-value={value}
+                    data-filter-group="difficulty"
+                    data-filter-value={value}
                     aria-pressed={i === 0}
                   >
                     {value}
@@ -178,8 +188,8 @@ const totalSkills = new Set(projects.flatMap((p) => p.data.skills)).size;
                   <button
                     type="button"
                     class="filter-btn-modern"
-                    data-filter="technology"
-                    data-value={value}
+                    data-filter-group="technology"
+                    data-filter-value={value}
                     aria-pressed={false}
                   >
                     {value}
@@ -189,54 +199,80 @@ const totalSkills = new Set(projects.flatMap((p) => p.data.skills)).size;
             </div>
           </div>
         </div>
-        <div class="library-count-row">
-          <span id="projects-count">{projects.length} projects</span><span
-            >Open a card for the full build plan.</span>
+        <div class="project-library-headline">
+          <div>
+            <p class="section-kicker">Project library</p>
+            <h2 class="section-title">Build something worth showing.</h2>
+            <p class="section-copy">
+              Filter by track, difficulty, or technology, then open a blueprint
+              to see the problem, architecture, implementation plan, evaluation,
+              and portfolio outcome.
+            </p>
+          </div>
+          <div class="project-library-signal" aria-live="polite">
+            <span
+              class="project-library-signal-value"
+              id="projects-count"
+              data-filter-count>{projects.length}</span
+            >
+            <span class="project-library-signal-label">projects available</span>
+          </div>
         </div>
-        <div id="projects-grid-modern" class="projects-modern-grid">
+        <div id="projects-grid-modern" class="projects-premium-grid">
           {
             projects.map((project, index) => (
               <a
                 href={`/projects/${project.id}/`}
-                class="project-modern-card"
-                data-category={project.data.category}
-                data-difficulty={project.data.difficulty}
-                data-technology={project.data.techStack.join("|")}
-                data-search={`${project.data.title} ${project.data.description} ${project.data.techStack.join(" ")} ${project.data.skills.join(" ")}`.toLowerCase()}
+                class="project-premium-card project-library-link"
+                data-filter-item
+                data-filter-category={project.data.category}
+                data-filter-difficulty={project.data.difficulty}
+                data-filter-technology={project.data.techStack.join("|")}
+                data-filter-search-text={`${project.data.title} ${project.data.description} ${project.data.techStack.join(" ")} ${project.data.skills.join(" ")}`.toLowerCase()}
               >
-                <div class="project-card-index">
+                <div class="project-premium-index">
                   {String(index + 1).padStart(2, "0")}
                 </div>
-                <div class="project-card-body">
-                  <div class="card-topline">
-                    <>
-                      <span class="pill">{project.data.category}</span>
-                      <span>{project.data.difficulty}</span>
-                      <span>{project.data.timeToBuild}</span>
-                    </>
+                <div class="project-premium-main">
+                  <div class="project-premium-meta">
+                    <span class="pill">{project.data.category}</span>
+                    <span>{project.data.difficulty}</span>
+                    <span>{project.data.timeToBuild}</span>
                   </div>
                   <h3>{project.data.title}</h3>
                   <p>{project.data.description}</p>
-                  <div class="chip-row">
+                  <div class="project-premium-tags">
                     {project.data.techStack.slice(0, 5).map((t) => (
                       <span class="tag">{t}</span>
                     ))}
                   </div>
-                  <div class="card-footer">
+                </div>
+                <div class="project-premium-side">
+                  <div>
                     <>
-                      <span>
-                        {project.data.skills.length} skills ·{" "}
-                        {project.data.resumeValue} portfolio value
-                      </span>
-                      <strong>View project →</strong>
+                      <span>Skills</span>
+                      <strong>{project.data.skills.length}</strong>
                     </>
                   </div>
+                  <div>
+                    <>
+                      <span>Portfolio</span>
+                      <strong>{project.data.resumeValue}</strong>
+                    </>
+                  </div>
+                  <span class="project-premium-link">
+                    Open blueprint <span aria-hidden="true">↗</span>
+                  </span>
                 </div>
               </a>
             ))
           }
         </div>
-        <div id="projects-empty-modern" class="empty-state hidden">
+        <div
+          id="projects-empty-modern"
+          data-filter-empty
+          class="empty-state hidden"
+        >
           <strong>No projects match your filters.</strong><p>
             Reset a filter or search for another skill or technology.
           </p>
@@ -244,77 +280,41 @@ const totalSkills = new Set(projects.flatMap((p) => p.data.skills)).size;
       </section>
     </div>
   </div>
-  <script>
-    document.addEventListener("astro:page-load", () => {
-      const buttons = [
-          ...document.querySelectorAll<HTMLButtonElement>("[data-filter]"),
-        ],
-        cards = [
-          ...document.querySelectorAll<HTMLElement>(
-            "#projects-grid-modern > a",
-          ),
-        ],
-        search = document.getElementById(
-          "project-search",
-        ) as HTMLInputElement | null,
-        clear = document.getElementById("project-clear"),
-        count = document.getElementById("projects-count"),
-        empty = document.getElementById("projects-empty-modern");
-      const state: {
-        category: string;
-        difficulty: string;
-        technology: string;
-      } = { category: "All", difficulty: "All", technology: "All" };
-      const apply = () => {
-        const q = (search?.value || "").trim().toLowerCase();
-        let n = 0;
-        cards.forEach((card) => {
-          const show =
-            (state.category === "All" ||
-              card.dataset.category === state.category) &&
-            (state.difficulty === "All" ||
-              card.dataset.difficulty === state.difficulty) &&
-            (state.technology === "All" ||
-              (card.dataset.technology || "")
-                .split("|")
-                .includes(state.technology)) &&
-            (!q || (card.dataset.search || "").includes(q));
-          card.hidden = !show;
-          if (show) n++;
-        });
-        if (count) count.textContent = `${n} project${n === 1 ? "" : "s"}`;
-        empty?.classList.toggle("hidden", n > 0);
-        buttons.forEach((b) => {
-          const active =
-            (state[
-              b.dataset.filter as "category" | "difficulty" | "technology"
-            ] || "All") === b.dataset.value;
-          b.classList.toggle("active-filter", active);
-          b.setAttribute("aria-pressed", String(active));
-        });
-      };
-      buttons.forEach((btn) =>
-        btn.addEventListener("click", () => {
-          const key = btn.dataset.filter as
-            "category" | "difficulty" | "technology";
-          if (key) state[key] = btn.dataset.value || "All";
-          apply();
-        }),
-      );
-      search?.addEventListener("input", apply);
-      clear?.addEventListener("click", () => {
-        if (search) search.value = "";
-        state.category = "All";
-        state.difficulty = "All";
-        state.technology = "All";
-        apply();
-      });
-      apply();
-    });
-  </script>
   <style>
     .projects-modern-page {
       padding: 24px 0 70px;
+      font-size: 1rem;
+    }
+
+    .projects-modern-page .section-copy {
+      font-size: 1rem;
+      line-height: 1.72;
+    }
+
+    .projects-modern-page .projects-filter-modern,
+    .projects-modern-page .projects-search-modern,
+    .projects-modern-page .filter-btn-modern {
+      font-size: 0.82rem;
+    }
+
+    .projects-modern-page .project-premium-main h3 {
+      font-size: clamp(1.12rem, 1.65vw, 1.38rem);
+      line-height: 1.18;
+    }
+
+    .projects-modern-page .project-premium-main p {
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .projects-modern-page .project-premium-meta,
+    .projects-modern-page .project-premium-side span,
+    .projects-modern-page .project-premium-link {
+      font-size: 0.72rem;
+    }
+
+    .projects-modern-page .project-premium-side strong {
+      font-size: 0.84rem;
     }
     .projects-modern-hero {
       display: grid;
@@ -578,6 +578,7 @@ const totalSkills = new Set(projects.flatMap((p) => p.data.skills)).size;
       display: none;
     }
     .project-card-index {
+      flex: 0 0 2.2rem;
       padding-top: 0.15rem;
       font: 900 0.68rem/1 var(--font-mono, monospace);
       color: var(--color-text-muted);

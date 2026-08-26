@@ -13,6 +13,10 @@ function filesFor(collection) {
   return fs.readdirSync(dir).filter((f) => /\.(md|mdx)$/.test(f)).map((f) => path.join(dir, f));
 }
 
+function stripCodeBlocks(text) {
+  return text.replace(/```[\s\S]*?```/g, "").replace(/~~~[\s\S]*?~~~/g, "");
+}
+
 function frontmatter(file) {
   const text = fs.readFileSync(file, 'utf8');
   if (!text.startsWith('---')) { errors.push(`${file}: missing frontmatter`); return { raw: text, data: {} }; }
@@ -48,6 +52,15 @@ for (const collection of collections) {
       if (!data.primaryTopic) errors.push(`${file}: missing primaryTopic`);
       if (data.featured === 'true') featuredBlogCount++;
       if (!data.imageAlt || data.imageAlt.length < 20) errors.push(`${file}: imageAlt should describe the actual article visual`);
+      if (data.readingTime && !/^\d+$/.test(data.readingTime.replaceAll('"', '').trim())) errors.push(`${file}: readingTime must be numeric minutes`);
+      if (!/^sources:/m.test(raw)) errors.push(`${file}: missing Sources & references metadata`);
+      if (/^sources:/m.test(raw)) {
+        const sourceBlock = raw.split(/^sources:\s*$/m)[1]?.split(/^---$/m)[0] ?? '';
+        const sourceUrls = [...sourceBlock.matchAll(/^\s*url:\s*[\"']([^\"']+)/gm)].map((m) => m[1]);
+        if (sourceUrls.length < 3) errors.push(`${file}: add at least 3 sources`);
+        for (const url of sourceUrls) if (!/^https?:\/\//.test(url) || /example\.com/i.test(url)) errors.push(`${file}: invalid or placeholder source URL ${url}`);
+      }
+      if (/example\.com|placeholder/i.test(stripCodeBlocks(raw))) errors.push(`${file}: placeholder/example text found outside code blocks`);
       if (!data.difficulty) reminders.push(`${file}: difficulty will use the schema default`);
       if (data.updatedDate && data.pubDate && new Date(data.updatedDate) < new Date(data.pubDate)) errors.push(`${file}: updatedDate is earlier than pubDate`);
     }
@@ -82,6 +95,17 @@ for (const expected of ['favicon.png', 'logo.webp', 'images/og-default.jpg', 'ro
 }
 
 if (featuredBlogCount > 1) errors.push(`blog: expected at most one featured article, found ${featuredBlogCount}`);
+
+const titleSeen = new Map();
+for (const collection of collections) {
+  for (const file of filesFor(collection)) {
+    const { data } = frontmatter(file);
+    if (!data.title) continue;
+    const key = `${collection}:${data.title.trim().toLowerCase()}`;
+    if (titleSeen.has(key)) errors.push(`${file}: duplicate title also used by ${titleSeen.get(key)}`);
+    else titleSeen.set(key, file);
+  }
+}
 
 if (errors.length) {
   console.error(`Content check failed with ${errors.length} error(s):`);

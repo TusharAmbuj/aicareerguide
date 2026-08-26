@@ -103,16 +103,19 @@ const organizationSchema = {
         width: 128,
         height: 128,
     },
-    description: "Practical AI, technology, project, and career guidance.",
+    description:
+        "Practical AI, technology, project, and career guidance for students and early-career builders.",
 };
 const webpageSchema = {
     "@context": "https://schema.org",
-    "@type": article ? "Article" : "WebPage",
+    "@type": "WebPage",
     "@id": canonicalURL + "#webpage",
     url: canonicalURL,
     name: fullTitle,
     description: desc,
     inLanguage: "en",
+    isPartOf: { "@id": `${siteUrl}#website` },
+    publisher: { "@id": `${siteUrl}#organization` },
 };
 const robots = noindex
     ? "noindex,follow,max-image-preview:large"

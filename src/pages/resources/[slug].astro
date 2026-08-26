@@ -33,7 +33,7 @@ const verified = d.lastVerified
     title={`${d.title}: Review & How to Use It`}
     description={d.description}
     breadcrumbs={bc}
-    ><div class="content-container py-8 sm:py-12">
+    ><div class="resource-detail-page content-container py-8 sm:py-12">
         <Breadcrumbs items={bc} /><section
             class="resource-detail-hero resource-detail-hero-modern mt-5"
         >
@@ -60,7 +60,8 @@ const verified = d.lastVerified
                             rel="noopener noreferrer"
                             class="button-primary">Open resource ↗</a
                         ><a href="/resources/" class="button-secondary"
-                            >Browse resources</a>
+                            >Browse resources</a
+                        >
                     </div>
                 </div><div class="tool-detail-aside-card">
                     <p class="context-label">Quick facts</p><div
@@ -70,7 +71,8 @@ const verified = d.lastVerified
                             <span class="text-[var(--color-text-muted)]"
                                 >Provider</span
                             ><strong class="block mt-1"
-                                >{d.provider || "—"}</strong>
+                                >{d.provider || "—"}</strong
+                            >
                         </div><div>
                             <span class="text-[var(--color-text-muted)]"
                                 >Pricing</span
@@ -105,7 +107,8 @@ const verified = d.lastVerified
                     href={d.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="source-button w-full">Open original resource ↗</a>
+                    class="source-button w-full">Open original resource ↗</a
+                >
             </aside>
         </div>
     </div></BaseLayout

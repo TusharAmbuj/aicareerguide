@@ -13,7 +13,7 @@ export const collections = {
       primaryTopic: z.string().min(2).max(80),
       contentType: z.enum(['guide','tutorial','comparison','career','project','reference','opinion']).default('guide'),
       topics: z.array(z.string()).default([]), tags: z.array(z.string()).default([]), image: image().optional(),
-      imageAlt: z.string().min(20).max(220).optional(), imageCaption: z.string().max(240).optional(), readingTime: z.string().optional(),
+      imageAlt: z.string().min(20).max(220).optional(), imageCaption: z.string().max(240).optional(), readingTime: z.coerce.number().int().positive().optional(),
       keyTakeaways: z.array(z.string()).min(2).max(6).default([]), featured: z.boolean().default(false), draft: z.boolean().default(false),
       status: z.enum(['draft','review','published','archived']).default('published'), canonical: url.optional(), lastReviewed: z.coerce.date().optional(),
       difficulty: z.enum(['Beginner','Intermediate','Advanced']).default('Intermediate'), prerequisites: z.array(z.string()).default([]), nextSteps: z.array(z.string()).default([]),

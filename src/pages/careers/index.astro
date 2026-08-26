@@ -62,15 +62,17 @@ const roadmapMeta = (slug) =>
 
 <BaseLayout
   title="AI & Technology Roadmaps"
-  description="Modern, visual roadmaps for AI engineering, machine learning, software engineering, DSA, internships, and technical interviews."
+  description="Modern, visual learning and career roadmaps for AI engineering, machine learning, software engineering, DSA, internships, and technical interviews. Guidance only — not a job listing service."
 >
   <div
     class="roadmaps-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14"
+    data-filter-root
+    data-filter-count-label="roadmap"
   >
     <CollectionHero
       eyebrow="Learn · Build · Prove"
       title="Roadmaps that feel like a path, not a document."
-      description="Follow a visual sequence of skills, checkpoints, projects, and career outcomes. Open any node to see what to learn, why it matters, and where to go next."
+      description="Follow a visual sequence of skills, checkpoints, projects, and career outcomes. Open any node to see what to learn, why it matters, and where to go next. These are educational career guides, not live job listings."
       stats={[
         {
           value: String(roadmaps.length),
@@ -181,16 +183,20 @@ const roadmapMeta = (slug) =>
         </div><div class="flex flex-wrap gap-2" id="roadmap-filters">
           <button
             class="roadmap-filter active-filter rounded-full border px-4 py-2 text-sm"
-            data-filter="all">All</button
+            data-filter-group="category"
+            data-filter-value="All">All</button
           ><button
             class="roadmap-filter rounded-full border px-4 py-2 text-sm"
-            data-filter="Engineering">Engineering</button
+            data-filter-group="category"
+            data-filter-value="Engineering">Engineering</button
           ><button
             class="roadmap-filter rounded-full border px-4 py-2 text-sm"
-            data-filter="Algorithms">Algorithms</button
+            data-filter-group="category"
+            data-filter-value="Algorithms">Algorithms</button
           ><button
             class="roadmap-filter rounded-full border px-4 py-2 text-sm"
-            data-filter="Career">Career</button
+            data-filter-group="category"
+            data-filter-value="Career">Career</button
           >
         </div>
       </div>
@@ -205,7 +211,8 @@ const roadmapMeta = (slug) =>
               <a
                 href={`/careers/${roadmap.id}/`}
                 class="roadmap-card group relative overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-bg)] p-6"
-                data-category={roadmap.data.category}
+                data-filter-item
+                data-filter-category={roadmap.data.category}
               >
                 <>
                   <div class="flex items-start justify-between gap-3">
@@ -280,24 +287,4 @@ const roadmapMeta = (slug) =>
       }
     </section>
   </div>
-  <script>
-    document.addEventListener("astro:page-load", () => {
-      const buttons =
-        document.querySelectorAll<HTMLButtonElement>(".roadmap-filter");
-      const cards = document.querySelectorAll<HTMLElement>(".roadmap-card");
-      buttons.forEach((button) =>
-        button.addEventListener("click", () => {
-          buttons.forEach((b) => b.classList.remove("active-filter"));
-          button.classList.add("active-filter");
-          const filter = button.dataset.filter || "all";
-          cards.forEach((card) =>
-            card.classList.toggle(
-              "hidden",
-              filter !== "all" && card.dataset.category !== filter,
-            ),
-          );
-        }),
-      );
-    });
-  </script>
 </BaseLayout>

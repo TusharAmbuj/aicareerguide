@@ -39,7 +39,9 @@
     );
   }
 
-  document.addEventListener("astro:page-load", syncThemeButton);
+  document.addEventListener("astro:page-load", () => {
+    syncThemeButton();
+  });
 
   document.addEventListener("click", (event) => {
     const target = event.target as HTMLElement;

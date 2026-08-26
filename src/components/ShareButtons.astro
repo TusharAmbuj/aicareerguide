@@ -1,48 +1,104 @@
 ---
+import { Link2, Share2 } from "@lucide/astro";
 const { url, title } = Astro.props as { url: string; title: string };
 const e = encodeURIComponent;
 ---
 
-<div class="flex items-center gap-1" aria-label="Share article">
-    <a
-        class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-lg hover:bg-[var(--color-bg-secondary)]"
-        href={`https://x.com/intent/post?url=${e(url)}&text=${e(title)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Share on X">X</a
-    ><a
-        class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-lg hover:bg-[var(--color-bg-secondary)]"
-        href={`https://www.linkedin.com/sharing/share-offsite/?url=${e(url)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Share on LinkedIn">in</a
-    ><a
-        class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-lg hover:bg-[var(--color-bg-secondary)]"
-        href={`https://api.whatsapp.com/send?text=${e(`${title} ${url}`)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Share on WhatsApp">WA</a
-    ><button
-        id="copy-link"
-        type="button"
-        class="min-h-11 min-w-11 rounded-lg hover:bg-[var(--color-bg-secondary)]"
-        aria-label="Copy article link">Copy</button
+<div class="article-share" data-share-root aria-label="Share this article">
+  <span class="article-share-label">Share</span>
+  <div class="article-share-actions">
+    <button
+      type="button"
+      class="article-share-button article-share-native"
+      data-share-native
+      aria-label="Share article"
+      title="Share article"
     >
+      <Share2 class="h-4 w-4" aria-hidden="true" /><span>Share</span>
+    </button>
+    <a
+      class="article-share-button"
+      href={`https://x.com/intent/post?url=${e(url)}&text=${e(title)}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Share on X"
+      title="Share on X">X</a
+    >
+    <a
+      class="article-share-button"
+      href={`https://www.linkedin.com/sharing/share-offsite/?url=${e(url)}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Share on LinkedIn"
+      title="Share on LinkedIn"
+      ><span aria-hidden="true" class="article-share-network-icon">in</span
+      ><span class="sr-only">LinkedIn</span></a
+    >
+    <a
+      class="article-share-button"
+      href={`https://api.whatsapp.com/send?text=${e(`${title} ${url}`)}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Share on WhatsApp"
+      title="Share on WhatsApp">WA</a
+    >
+    <button
+      type="button"
+      class="article-share-button article-share-copy"
+      data-share-copy
+      aria-label="Copy article link"
+      title="Copy link"
+    >
+      <Link2 class="h-4 w-4" aria-hidden="true" /><span>Copy</span>
+    </button>
+  </div>
 </div>
-<script>
-    document.addEventListener("click", async (event) => {
-        const b = (event.target as HTMLElement).closest<HTMLButtonElement>(
-            "#copy-link",
-        );
-        if (!b || b.dataset.ready === "true") return;
-        b.dataset.ready = "true";
-        try {
-            await navigator.clipboard.writeText(location.href);
-            b.textContent = "Copied";
-            setTimeout(() => (b.textContent = "Copy"), 1500);
-        } catch {
-            b.textContent = "Failed";
-            setTimeout(() => (b.textContent = "Copy"), 1500);
-        }
-    });
+
+<script is:inline>
+  (() => {
+    const init = () => {
+      document.querySelectorAll("[data-share-root]").forEach((root) => {
+        if (root.dataset.ready === "true") return;
+        root.dataset.ready = "true";
+        const nativeBtn = root.querySelector("[data-share-native]");
+        const copyBtn = root.querySelector("[data-share-copy]");
+        const title = document.title;
+        const url = window.location.href;
+        if (nativeBtn && !navigator.share) nativeBtn.remove();
+        nativeBtn?.addEventListener("click", async () => {
+          try {
+            await navigator.share({ title, url });
+          } catch {}
+        });
+        copyBtn?.addEventListener("click", async () => {
+          const label = copyBtn.querySelector("span");
+          try {
+            if (navigator.clipboard?.writeText)
+              await navigator.clipboard.writeText(url);
+            else {
+              const ta = document.createElement("textarea");
+              ta.value = url;
+              ta.style.position = "fixed";
+              ta.style.opacity = "0";
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand("copy");
+              ta.remove();
+            }
+            if (label) label.textContent = "Copied";
+            setTimeout(() => {
+              if (label) label.textContent = "Copy";
+            }, 1600);
+          } catch {
+            if (label) label.textContent = "Copy failed";
+            setTimeout(() => {
+              if (label) label.textContent = "Copy";
+            }, 1600);
+          }
+        });
+      });
+    };
+    init();
+    document.addEventListener("astro:page-load", init);
+  })();
 </script>

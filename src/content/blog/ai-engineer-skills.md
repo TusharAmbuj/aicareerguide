@@ -19,6 +19,13 @@ topics:
   - Machine Learning
   - Software Engineering
   - LLM Engineering
+sources:
+  - title: "roadmap.sh — AI Engineer Roadmap"
+    url: "https://roadmap.sh/ai-engineer"
+  - title: "W3Schools — AI Tutorial"
+    url: "https://www.w3schools.com/ai/"
+  - title: "IBM — What Is an AI Developer?"
+    url: "https://www.ibm.com/think/topics/ai-developer"
 imageAlt: "AI engineer skills infographic covering programming, machine learning, deep learning, LLMs, deployment, system design, and professional skills."
 contentType: "guide"
 difficulty: "Intermediate"

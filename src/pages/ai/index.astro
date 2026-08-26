@@ -1,192 +1,357 @@
 ---
-import BaseLayout from '@/components/layout/BaseLayout.astro';
-import ArticleCard from '@/components/cards/ArticleCard.astro';
-import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
-import { getCollection } from 'astro:content';
+import BaseLayout from "@/components/layout/BaseLayout.astro";
+import ArticleCard from "@/components/cards/ArticleCard.astro";
+import Breadcrumbs from "@/components/seo/Breadcrumbs.astro";
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
 
-const posts = await getCollection('blog', ({ data }) => !data.draft && data.status === 'published');
+const posts = await getCollection(
+  "blog",
+  ({ data }) => !data.draft && data.status === "published",
+);
 const aiPosts = posts
-  .filter(post => post.data.category === 'AI')
+  .filter((post) => post.data.category === "AI")
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+const normalize = (value: string) =>
+  value.toLowerCase().trim().replace(/\s+/g, "-");
 
 const topics = [
   {
-    slug: 'machine-learning',
-    name: 'Machine Learning',
-    number: '01',
-    icon: '◈',
-    description: 'Learn how models learn from data, from regression and classification to evaluation and generalization.',
-    focus: 'Algorithms · Data · Evaluation',
+    slug: "machine-learning",
+    name: "Machine Learning",
+    number: "01",
+    icon: "ML",
+    description:
+      "Build the core ideas: data, regression, classification, evaluation, features, and generalization.",
+    focus: "Algorithms · Data · Evaluation",
+    aliases: ["machine-learning", "machine learning", "ml"],
   },
   {
-    slug: 'deep-learning',
-    name: 'Deep Learning',
-    number: '02',
-    icon: '◉',
-    description: 'Understand neural networks, training, CNNs, transformers, PyTorch, and representation learning.',
-    focus: 'Neural Networks · PyTorch · Transformers',
+    slug: "deep-learning",
+    name: "Deep Learning",
+    number: "02",
+    icon: "DL",
+    description:
+      "Move into neural networks, training, PyTorch, CNNs, transformers, and representation learning.",
+    focus: "Neural Networks · PyTorch · Transformers",
+    aliases: ["deep-learning", "deep learning", "dl"],
   },
   {
-    slug: 'generative-ai',
-    name: 'Generative AI',
-    number: '03',
-    icon: '✦',
-    description: 'Move from model capabilities to useful systems built around generation, retrieval, agents, and multimodal AI.',
-    focus: 'Generation · RAG · Agents',
+    slug: "generative-ai",
+    name: "Generative AI",
+    number: "03",
+    icon: "Gen",
+    description:
+      "Learn how modern generative systems work and how to build useful applications around them.",
+    focus: "Generation · RAG · Agents",
+    aliases: [
+      "generative-ai",
+      "generative ai",
+      "gen-ai",
+      "generative artificial intelligence",
+    ],
   },
   {
-    slug: 'llms',
-    name: 'Large Language Models',
-    number: '04',
-    icon: '⌁',
-    description: 'Understand tokens, embeddings, attention, inference, fine-tuning, evaluation, and LLM applications.',
-    focus: 'LLMs · RAG · Evaluation',
+    slug: "llms",
+    name: "Large Language Models",
+    number: "04",
+    icon: "LLM",
+    description:
+      "Understand tokens, attention, embeddings, inference, evaluation, fine-tuning, and production use.",
+    focus: "LLMs · RAG · Evaluation",
+    aliases: [
+      "llm",
+      "llms",
+      "large-language-model",
+      "large language model",
+      "large language models",
+    ],
   },
   {
-    slug: 'ai-engineering',
-    name: 'AI Engineering',
-    number: '05',
-    icon: '⚙',
-    description: 'Turn AI capabilities into reliable software with APIs, deployment, observability, security, and MLOps.',
-    focus: 'Systems · Deployment · MLOps',
+    slug: "ai-engineering",
+    name: "AI Engineering",
+    number: "05",
+    icon: "AI",
+    description:
+      "Turn models into reliable software with APIs, deployment, observability, security, and MLOps.",
+    focus: "Systems · Deployment · MLOps",
+    aliases: ["ai-engineering", "ai engineering"],
   },
 ];
 
-const topicStats = topics.map(topic => ({
+const topicStats = topics.map((topic) => ({
   ...topic,
-  count: posts.filter(post => post.data.primaryTopic === topic.slug).length,
+  count: aiPosts.filter((post) => {
+    const aliases = topic.aliases.map(normalize);
+    return (
+      aliases.includes(normalize(post.data.primaryTopic)) ||
+      post.data.topics.some((item) => aliases.includes(normalize(item)))
+    );
+  }).length,
 }));
 
-const featuredPost = aiPosts.find(post => post.data.featured) ?? aiPosts[0];
-const latestPosts = aiPosts.filter(post => post !== featuredPost).slice(0, 3);
-const breadcrumbItems = [{ label: 'Home', url: '/' }, { label: 'Learn', url: '/ai' }, { label: 'AI', url: '/ai' }];
+const featuredPost = aiPosts.find((post) => post.data.featured) ?? aiPosts[0];
+const latestPosts = aiPosts.filter((post) => post !== featuredPost).slice(0, 4);
+const breadcrumbItems = [
+  { label: "Home", url: "/" },
+  { label: "Learn", url: "/ai" },
+];
 ---
 
-<BaseLayout title="Learn AI | AI Career Guide" description="Build a strong foundation in artificial intelligence, machine learning, deep learning, LLMs, and AI engineering." breadcrumbs={breadcrumbItems}>
-  <div class="border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)]">
-    <div class="mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8">
-      <Breadcrumbs items={breadcrumbItems} />
-      <div class="mt-10 grid items-end gap-10 lg:grid-cols-[1.35fr_.65fr]">
-        <div>
-          <span class="inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-accent)]">Learn</span>
-          <h1 class="mt-5 max-w-4xl text-4xl font-black tracking-tight text-[var(--color-text-primary)] sm:text-5xl lg:text-6xl">Explore AI without getting lost in the noise.</h1>
-          <p class="mt-5 max-w-2xl text-lg leading-8 text-[var(--color-text-secondary)]">Build the fundamentals first. Then move through machine learning, deep learning, LLMs, and AI engineering with practical projects and career-oriented guidance.</p>
-          <div class="mt-7 flex flex-wrap gap-3">
-            <a href="#learning-path" class="button-primary">Start the learning path →</a>
-            <a href="/blog" class="button-secondary">Browse all articles</a>
+<BaseLayout
+  title="Learn AI | AI Career Guide"
+  description="A practical, structured path through artificial intelligence, machine learning, deep learning, LLMs, and AI engineering."
+  breadcrumbs={breadcrumbItems}
+>
+  <div class="ai-hub-page ai-explore-page">
+    <section class="ai-learn-hero">
+      <div class="content-container ai-learn-hero-inner">
+        <Breadcrumbs items={breadcrumbItems} />
+        <div class="ai-learn-hero-grid">
+          <div class="ai-learn-copy">
+            <span class="ai-learn-eyebrow">Learn · Build · Prove</span>
+            <h1>Learn AI without getting lost in the noise.</h1>
+            <p>
+              Follow a practical sequence from fundamentals to modern AI
+              systems. Understand the concepts, build real things, and know what
+              you should be able to prove next.
+            </p>
+            <div class="ai-learn-actions">
+              <a href="#ai-learning-path" class="button-primary"
+                >Start the AI path <span aria-hidden="true">→</span></a
+              >
+              <a href="/careers/ai-engineer/" class="button-secondary"
+                >Open AI Engineer roadmap</a
+              >
+            </div>
+            <div
+              class="ai-learn-metrics"
+              aria-label="AI learning hub statistics"
+            >
+              <div><strong>{aiPosts.length}</strong><span>AI guides</span></div>
+              <div>
+                <strong>{topicStats.filter((t) => t.count > 0).length}</strong
+                ><span>Active areas</span>
+              </div>
+              <div><strong>5</strong><span>Learning stages</span></div>
+            </div>
+          </div>
+          <div class="ai-learn-orbit" aria-label="Explore AI learning topics">
+            <div class="ai-orbit-core"><span>AI</span></div>
+            <a
+              class="ai-orbit-tag ai-orbit-tag-link ai-orbit-1"
+              href="/ai/machine-learning/">Machine Learning</a
+            >
+            <a
+              class="ai-orbit-tag ai-orbit-tag-link ai-orbit-2"
+              href="/ai/deep-learning/">Deep Learning</a
+            >
+            <a
+              class="ai-orbit-tag ai-orbit-tag-link ai-orbit-3"
+              href="/ai/llms/">LLMs</a
+            >
+            <a
+              class="ai-orbit-tag ai-orbit-tag-link ai-orbit-4"
+              href="/ai/llms/">RAG</a
+            >
+            <a
+              class="ai-orbit-tag ai-orbit-tag-link ai-orbit-5"
+              href="/ai/ai-engineering/">AI Engineering</a
+            >
+            <a
+              class="ai-orbit-tag ai-orbit-tag-link ai-orbit-6"
+              href="/ai/ai-engineering/">MLOps</a
+            >
           </div>
         </div>
-        <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] p-5 shadow-sm sm:p-6">
-          <p class="text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-text-muted)]">Inside this hub</p>
-          <div class="mt-4 grid grid-cols-3 gap-3 text-center">
-            <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-4">
-              <p class="text-2xl font-black text-[var(--color-text-primary)]">{aiPosts.length}</p>
-              <p class="mt-1 text-xs font-medium text-[var(--color-text-muted)]">AI articles</p>
-            </div>
-            <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-4">
-              <p class="text-2xl font-black text-[var(--color-text-primary)]">5</p>
-              <p class="mt-1 text-xs font-medium text-[var(--color-text-muted)]">Core areas</p>
-            </div>
-            <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-4">
-              <p class="text-2xl font-black text-[var(--color-text-primary)]">∞</p>
-              <p class="mt-1 text-xs font-medium text-[var(--color-text-muted)]">Projects to build</p>
-            </div>
-          </div>
-          <p class="mt-5 text-sm leading-6 text-[var(--color-text-secondary)]">Follow the path in order when you're new. Jump directly to a topic when you already have the fundamentals.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-    <section id="learning-path">
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p class="text-sm font-bold uppercase tracking-[0.14em] text-[var(--color-accent)]">The path</p>
-          <h2 class="mt-2 text-3xl font-black tracking-tight text-[var(--color-text-primary)]">From fundamentals to production AI</h2>
-        </div>
-        <p class="max-w-xl text-sm leading-6 text-[var(--color-text-secondary)]">Each stage prepares you for the next. Don't skip the foundations just because the newest tools look more exciting.</p>
-      </div>
-
-      <div class="mt-8 grid gap-4 lg:grid-cols-5">
-        {topicStats.map((topic, index) => (
-          <a href={`/ai/${topic.slug}/`} class={`group relative rounded-2xl border p-5 transition-all duration-200 ${topic.count > 0 ? 'border-[var(--color-border)] bg-[var(--color-bg)] hover:-translate-y-1 hover:border-[var(--color-accent)] hover:shadow-lg' : 'border-dashed border-[var(--color-border)] bg-[var(--color-bg-secondary)]'}`}>
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-black tracking-[0.12em] text-[var(--color-text-muted)]">{topic.number}</span>
-              <span class="text-xl text-[var(--color-accent)]">{topic.icon}</span>
-            </div>
-            <h3 class="mt-6 text-lg font-bold text-[var(--color-text-primary)]">{topic.name}</h3>
-            <p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">{topic.description}</p>
-            <p class="mt-5 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">{topic.focus}</p>
-            <div class="mt-5 flex items-center justify-between border-t border-[var(--color-border)] pt-4 text-xs font-semibold">
-              <span class="text-[var(--color-text-muted)]">{topic.count ? `${topic.count} guide${topic.count === 1 ? '' : 's'}` : 'Coming next'}</span>
-              <span class={topic.count ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'}>{topic.count ? 'Explore →' : 'In progress'}</span>
-            </div>
-            {index < topicStats.length - 1 && <span class="pointer-events-none absolute -right-3 top-1/2 hidden -translate-y-1/2 text-xl text-[var(--color-text-muted)] lg:block">→</span>}
-          </a>
-        ))}
       </div>
     </section>
 
-    {featuredPost && (
-      <section class="mt-16">
-        <div class="flex items-end justify-between gap-4">
+    <div class="content-container ai-learn-body">
+      <section id="ai-learning-path" class="ai-learning-path">
+        <div class="ai-section-head">
           <div>
-            <p class="text-sm font-bold uppercase tracking-[0.14em] text-[var(--color-accent)]">Start here</p>
-            <h2 class="mt-2 text-3xl font-black tracking-tight text-[var(--color-text-primary)]">The foundation piece</h2>
+            <p class="section-kicker">The learning path</p>
+            <h2 class="section-title">From fundamentals to production AI.</h2>
           </div>
-          <a href="/blog" class="hidden text-sm font-bold text-[var(--color-accent)] hover:underline sm:inline">View all articles →</a>
+          <p class="section-copy">
+            Use the sequence when you're starting from scratch. Jump into a
+            topic directly when you already have the foundations.
+          </p>
         </div>
-        <div class="mt-6 grid overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] lg:grid-cols-[1.15fr_.85fr]">
-          <div class="p-7 sm:p-9">
-            <div class="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-wide text-[var(--color-text-muted)]">
-              <span class="rounded-full bg-[var(--color-bg-secondary)] px-3 py-1">{featuredPost.data.category}</span>
-              <span>•</span>
-              <span>{featuredPost.data.readingTime ? `${featuredPost.data.readingTime} min read` : 'Guide'}</span>
-            </div>
-            <h3 class="mt-5 text-3xl font-black tracking-tight text-[var(--color-text-primary)]">{featuredPost.data.title}</h3>
-            <p class="mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)]">{featuredPost.data.description}</p>
-            <a href={`/blog/${featuredPost.id}/`} class="mt-7 inline-flex min-h-11 items-center rounded-lg bg-[var(--color-text-primary)] px-5 py-3 text-sm font-bold text-[var(--color-bg)] transition hover:opacity-90">Read the guide →</a>
-          </div>
-          <div class="border-t border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-7 sm:p-9 lg:border-l lg:border-t-0">
-            <p class="text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-text-muted)]">What you'll get</p>
-            <div class="mt-5 space-y-4">
-              {['Clear mental models instead of buzzwords', 'Practical examples and implementation thinking', 'A path into projects and career skills'].map(item => (
-                <div class="flex gap-3">
-                  <span class="mt-1 text-sm text-[var(--color-accent)]">✓</span>
-                  <p class="text-sm leading-6 text-[var(--color-text-secondary)]">{item}</p>
+        <div class="ai-stage-list">
+          {
+            topicStats.map((topic, index) => (
+              <a
+                href={`/ai/${topic.slug}/`}
+                class:list={[
+                  "ai-stage-card",
+                  topic.count === 0 && "ai-stage-card-muted",
+                ]}
+              >
+                <div class="ai-stage-number">{topic.number}</div>
+                <div class="ai-stage-main">
+                  <div class="ai-stage-topline">
+                    <>
+                      <span class="ai-stage-icon">{topic.icon}</span>
+                      <span>
+                        {topic.count ? `${topic.count} guides` : "More coming"}
+                      </span>
+                    </>
+                  </div>
+                  <h3>{topic.name}</h3>
+                  <p>{topic.description}</p>
+                  <span class="ai-stage-focus">{topic.focus}</span>
                 </div>
+                <span class="ai-stage-arrow" aria-hidden="true">
+                  ↗
+                </span>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+
+      {
+        featuredPost && (
+          <section class="ai-feature-section">
+            <div class="ai-section-head">
+              <div>
+                <>
+                  <p class="section-kicker">Start here</p>
+                  <h2 class="section-title">
+                    One strong foundation beats twenty random tabs.
+                  </h2>
+                </>
+              </div>
+              <a href="/blog/" class="section-link">
+                Browse the full library →
+              </a>
+            </div>
+            <article class="ai-feature-card">
+              <div class="ai-feature-copy">
+                <div class="ai-feature-meta">
+                  <>
+                    <span>{featuredPost.data.primaryTopic}</span>
+                    <span>
+                      {featuredPost.data.readingTime
+                        ? `${featuredPost.data.readingTime} min read`
+                        : "Guide"}
+                    </span>
+                  </>
+                </div>
+                <h3>{featuredPost.data.title}</h3>
+                <p>{featuredPost.data.description}</p>
+                <div class="ai-feature-checks">
+                  <>
+                    <span>Clear mental models</span>
+                    <span>Practical implementation</span>
+                    <span>Next-step guidance</span>
+                  </>
+                </div>
+                <a href={`/blog/${featuredPost.id}/`} class="button-primary">
+                  Read the guide →
+                </a>
+              </div>
+              <a
+                class="ai-feature-media"
+                href={`/blog/${featuredPost.id}/`}
+                aria-label={`Read ${featuredPost.data.title}`}
+              >
+                {featuredPost.data.image ? (
+                  <Image
+                    src={featuredPost.data.image}
+                    alt={featuredPost.data.imageAlt || featuredPost.data.title}
+                    width={1200}
+                    height={630}
+                    widths={[640, 960, 1200]}
+                    sizes="(min-width:1024px) 52vw, 100vw"
+                    quality={84}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="ai-feature-placeholder">AI</div>
+                )}
+              </a>
+            </article>
+          </section>
+        )
+      }
+
+      <section class="ai-topic-grid-section">
+        <div class="ai-section-head">
+          <div>
+            <p class="section-kicker">Explore by topic</p><h2
+              class="section-title"
+            >
+              Choose depth, not just breadth.
+            </h2>
+          </div><p class="section-copy">
+            Each topic connects explanations with the next thing you should
+            learn or build.
+          </p>
+        </div>
+        <div class="ai-topic-grid">
+          {
+            topicStats.map((topic) => (
+              <a href={`/ai/${topic.slug}/`} class="ai-topic-card">
+                <div class="ai-topic-card-top">
+                  <>
+                    <span class="ai-stage-icon">{topic.icon}</span>
+                    <span>{topic.count} guides</span>
+                  </>
+                </div>
+                <h3>{topic.name}</h3>
+                <p>{topic.description}</p>
+                <span class="ai-topic-card-link">
+                  Explore topic <span aria-hidden="true">→</span>
+                </span>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="ai-build-strip">
+        <div>
+          <p class="section-kicker">Don't stop at reading</p>
+          <h2>Turn every concept into proof.</h2>
+          <p>
+            When you understand something, build it. When you build it, evaluate
+            it. When you can explain the result, you have evidence.
+          </p>
+        </div>
+        <div class="ai-build-actions">
+          <a href="/projects/" class="button-primary">Explore projects →</a><a
+            href="/careers/"
+            class="button-secondary">Explore roadmaps</a>
+        </div>
+      </section>
+
+      {
+        latestPosts.length > 0 && (
+          <section class="ai-latest-section">
+            <div class="ai-section-head">
+              <>
+                <div>
+                  <>
+                    <p class="section-kicker">Continue learning</p>
+                    <h2 class="section-title">Latest AI guides.</h2>
+                  </>
+                </div>
+                <a href="/blog/" class="section-link">
+                  View all articles →
+                </a>
+              </>
+            </div>
+            <div class="ai-latest-grid">
+              {latestPosts.map((post) => (
+                <ArticleCard post={post} />
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-    )}
-
-    {latestPosts.length > 0 && (
-      <section class="mt-16">
-        <div class="flex items-end justify-between gap-4">
-          <div>
-            <p class="text-sm font-bold uppercase tracking-[0.14em] text-[var(--color-accent)]">Continue learning</p>
-            <h2 class="mt-2 text-3xl font-black tracking-tight text-[var(--color-text-primary)]">Latest AI guides</h2>
-          </div>
-          <a href="/blog" class="hidden text-sm font-bold text-[var(--color-accent)] hover:underline sm:inline">Browse the blog →</a>
-        </div>
-        <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {latestPosts.map(post => <ArticleCard post={post} />)}
-        </div>
-      </section>
-    )}
-
-    <section class="mt-16 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-7 sm:p-9">
-      <div class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
-        <div>
-          <p class="text-sm font-bold uppercase tracking-[0.14em] text-[var(--color-accent)]">Next move</p>
-          <h2 class="mt-2 text-2xl font-black tracking-tight text-[var(--color-text-primary)]">Don't just read about AI. Build something.</h2>
-          <p class="mt-3 max-w-2xl text-sm leading-6 text-[var(--color-text-secondary)]">Once you've understood the fundamentals, move into practical projects and start turning knowledge into engineering ability.</p>
-        </div>
-        <a href="/projects" class="button-primary whitespace-nowrap">Explore AI projects →</a>
-      </div>
-    </section>
+          </section>
+        )
+      }
+    </div>
   </div>
 </BaseLayout>

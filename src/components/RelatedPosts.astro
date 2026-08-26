@@ -1,4 +1,5 @@
 ---
+import { getReadingTime } from "@/lib/content";
 // src/components/RelatedPosts.astro
 import { Calendar, Clock } from "@lucide/astro";
 
@@ -44,12 +45,10 @@ const { posts = [] } = Astro.props;
                 })}
               </span>
 
-              {post.data.readingTime && (
-                <span class="flex items-center gap-1.5">
-                  <Clock class="w-3.5 h-3.5" />
-                  {post.data.readingTime} min
-                </span>
-              )}
+              <span class="flex items-center gap-1.5">
+                <Clock class="w-3.5 h-3.5" />
+                {getReadingTime(post.body, post.data.readingTime)} min
+              </span>
             </div>
           </a>
         ))}

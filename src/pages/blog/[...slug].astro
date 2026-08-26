@@ -1,23 +1,148 @@
 ---
-import ArticleLayout from '@/components/layout/ArticleLayout.astro';
-import {getCollection , render} from 'astro:content';
-import InternalLinks from '@/components/InternalLinks.astro';
-export async function getStaticPaths(){const posts=await getCollection('blog',({data})=>!data.draft && data.status === 'published');return posts.map(post=>({params:{slug:post.id},props:{post}}));}
-const {post}=Astro.props;const {Content,headings}=await render(post);
-const all=await getCollection('blog',({data})=>!data.draft && data.status === 'published');
-const score=(candidate:any)=>{const tags=new Set([...(post.data.tags||[]),...(post.data.topics||[])]);const candidateTags=[...(candidate.data.tags||[]),...(candidate.data.topics||[])];return (candidate.data.category===post.data.category?3:0)+candidateTags.filter((t:string)=>tags.has(t)).length;};
-const chronological=[...all].sort((a,b)=>b.data.pubDate.getTime()-a.data.pubDate.getTime());const currentIndex=chronological.findIndex(p=>p.id===post.id);const previousPost=currentIndex>=0?chronological[currentIndex+1]:undefined;const nextPost=currentIndex>0?chronological[currentIndex-1]:undefined;
-const related=all.filter(p=>p.id!==post.id).sort((a,b)=>score(b)-score(a)||b.data.pubDate.getTime()-a.data.pubDate.getTime()).slice(0,3);
-const roadmaps=await getCollection('roadmaps',({data})=>!data.draft&&data.status==='published');
-const projects=await getCollection('projects',({data})=>!data.draft&&data.status==='published');
-const resources=await getCollection('resources',({data})=>!data.draft&&data.status==='published');
-const relevance=(item:any)=>{const source=new Set([...(post.data.tags||[]),...(post.data.topics||[])].map((x:string)=>x.toLowerCase())); const values=[...(item.data.tags||[]),...(item.data.topics||[]),...(item.data.skills||[]),...(item.data.techStack||[]),...(item.data.category?[item.data.category]:[])].map((x:string)=>x.toLowerCase()); return values.reduce((n:number,v:string)=>n+(source.has(v)?1:0),0);};
-const finalLinks=[
-  ...[...all].filter(x=>x.id!==post.id).sort((a,b)=>score(b)-score(a)).slice(0,2).map(x=>({href:`/blog/${x.id}/`,label:x.data.title,description:x.data.description,type:'Article'})),
-  ...roadmaps.sort((a,b)=>relevance(b)-relevance(a)).slice(0,1).map(x=>({href:`/careers/${x.id}/`,label:x.data.title,description:x.data.description,type:'Roadmap'})),
-  ...projects.sort((a,b)=>relevance(b)-relevance(a)).slice(0,1).map(x=>({href:`/projects/${x.id}/`,label:x.data.title,description:x.data.description,type:'Project'})),
-  ...resources.sort((a,b)=>relevance(b)-relevance(a)).slice(0,2).map(x=>({href:`/resources/${x.id}/`,label:x.data.title,description:x.data.description,type:'Resource'}))
-].slice(0,6);
-const words=post.body?.split(/\s+/).filter(Boolean).length||0;const readingTime=post.data.readingTime||Math.max(1,Math.ceil(words/200)).toString();
+import { getReadingTime } from "@/lib/content";
+import ArticleLayout from "@/components/layout/ArticleLayout.astro";
+import { getCollection, render } from "astro:content";
+import InternalLinks from "@/components/InternalLinks.astro";
+export async function getStaticPaths() {
+  const posts = await getCollection(
+    "blog",
+    ({ data }) => !data.draft && data.status === "published",
+  );
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const all = await getCollection(
+  "blog",
+  ({ data }) => !data.draft && data.status === "published",
+);
+const score = (candidate: any) => {
+  const tags = new Set([
+    ...(post.data.tags || []),
+    ...(post.data.topics || []),
+  ]);
+  const candidateTags = [
+    ...(candidate.data.tags || []),
+    ...(candidate.data.topics || []),
+  ];
+  return (
+    (candidate.data.category === post.data.category ? 3 : 0) +
+    candidateTags.filter((t: string) => tags.has(t)).length
+  );
+};
+const chronological = [...all].sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+const currentIndex = chronological.findIndex((p) => p.id === post.id);
+const previousPost =
+  currentIndex >= 0 ? chronological[currentIndex + 1] : undefined;
+const nextPost = currentIndex > 0 ? chronological[currentIndex - 1] : undefined;
+const related = all
+  .filter((p) => p.id !== post.id)
+  .sort(
+    (a, b) =>
+      score(b) - score(a) ||
+      b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+  )
+  .slice(0, 3);
+const roadmaps = await getCollection(
+  "roadmaps",
+  ({ data }) => !data.draft && data.status === "published",
+);
+const projects = await getCollection(
+  "projects",
+  ({ data }) => !data.draft && data.status === "published",
+);
+const resources = await getCollection(
+  "resources",
+  ({ data }) => !data.draft && data.status === "published",
+);
+const relevance = (item: any) => {
+  const source = new Set(
+    [...(post.data.tags || []), ...(post.data.topics || [])].map((x: string) =>
+      x.toLowerCase(),
+    ),
+  );
+  const values = [
+    ...(item.data.tags || []),
+    ...(item.data.topics || []),
+    ...(item.data.skills || []),
+    ...(item.data.techStack || []),
+    ...(item.data.category ? [item.data.category] : []),
+  ].map((x: string) => x.toLowerCase());
+  return values.reduce(
+    (n: number, v: string) => n + (source.has(v) ? 1 : 0),
+    0,
+  );
+};
+const finalLinks = [
+  ...[...all]
+    .filter((x) => x.id !== post.id)
+    .sort((a, b) => score(b) - score(a))
+    .slice(0, 2)
+    .map((x) => ({
+      href: `/blog/${x.id}/`,
+      label: x.data.title,
+      description: x.data.description,
+      type: "Article",
+    })),
+  ...roadmaps
+    .sort((a, b) => relevance(b) - relevance(a))
+    .slice(0, 1)
+    .map((x) => ({
+      href: `/careers/${x.id}/`,
+      label: x.data.title,
+      description: x.data.description,
+      type: "Roadmap",
+    })),
+  ...projects
+    .sort((a, b) => relevance(b) - relevance(a))
+    .slice(0, 1)
+    .map((x) => ({
+      href: `/projects/${x.id}/`,
+      label: x.data.title,
+      description: x.data.description,
+      type: "Project",
+    })),
+  ...resources
+    .sort((a, b) => relevance(b) - relevance(a))
+    .slice(0, 2)
+    .map((x) => ({
+      href: `/resources/${x.id}/`,
+      label: x.data.title,
+      description: x.data.description,
+      type: "Resource",
+    })),
+].slice(0, 6);
+const readingTime = getReadingTime(post.body, post.data.readingTime);
 ---
-<ArticleLayout title={post.data.title} description={post.data.description} pubDate={post.data.pubDate} updatedDate={post.data.updatedDate} lastReviewed={post.data.lastReviewed} sources={post.data.sources} author={post.data.author} category={post.data.category} tags={post.data.tags} topics={post.data.topics} image={post.data.image} imageAlt={post.data.imageAlt} imageCaption={post.data.imageCaption} readingTime={readingTime} difficulty={post.data.difficulty} prerequisites={post.data.prerequisites} nextSteps={post.data.nextSteps} keyTakeaways={post.data.keyTakeaways} contentType={post.data.contentType} articleType={post.data.articleType} authorType={post.data.authorType} headings={headings} relatedPosts={related} canonical={post.data.canonical} previousPost={previousPost} nextPost={nextPost}><Content/><InternalLinks links={finalLinks}/></ArticleLayout>
+
+<ArticleLayout
+  title={post.data.title}
+  description={post.data.description}
+  pubDate={post.data.pubDate}
+  updatedDate={post.data.updatedDate}
+  lastReviewed={post.data.lastReviewed}
+  sources={post.data.sources}
+  author={post.data.author}
+  category={post.data.category}
+  tags={post.data.tags}
+  topics={post.data.topics}
+  image={post.data.image}
+  imageAlt={post.data.imageAlt}
+  imageCaption={post.data.imageCaption}
+  readingTime={readingTime}
+  difficulty={post.data.difficulty}
+  prerequisites={post.data.prerequisites}
+  nextSteps={post.data.nextSteps}
+  keyTakeaways={post.data.keyTakeaways}
+  contentType={post.data.contentType}
+  articleType={post.data.articleType}
+  authorType={post.data.authorType}
+  headings={headings}
+  relatedPosts={related}
+  canonical={post.data.canonical}
+  previousPost={previousPost}
+  nextPost={nextPost}
+  ><Content /><InternalLinks links={finalLinks} /></ArticleLayout
+>

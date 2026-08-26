@@ -38,22 +38,36 @@ const { eyebrow, title, description, stats, actions = [] } = Astro.props;
                 }
               >
                 {action.label}
+                <span aria-hidden="true">→</span>
               </a>
             ))}
           </div>
         )
       }
     </div>
-    <div class="collection-hero-stats" aria-label="Section overview">
-      {
-        stats.slice(0, 3).map((stat) => (
-          <div class="collection-hero-stat">
-            <strong>{stat.value}</strong>
-            <span>{stat.label}</span>
-            {stat.detail && <small>{stat.detail}</small>}
-          </div>
-        ))
-      }
+    <div class="collection-hero-panel">
+      <div class="collection-hero-panel-grid" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <p class="collection-hero-panel-label">At a glance</p>
+      <div class="collection-hero-stats" aria-label="Section overview">
+        {
+          stats.slice(0, 3).map((stat, index) => (
+            <div class="collection-hero-stat">
+              <div class="collection-hero-stat-index" aria-hidden="true">
+                0{index + 1}
+              </div>
+              <div class="collection-hero-stat-content">
+                <div class="collection-hero-stat-value">{stat.value}</div>
+                <div class="collection-hero-stat-label">{stat.label}</div>
+                {stat.detail && (
+                  <div class="collection-hero-stat-detail">{stat.detail}</div>
+                )}
+              </div>
+            </div>
+          ))
+        }
+      </div>
     </div>
   </div>
 </section>

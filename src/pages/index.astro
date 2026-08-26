@@ -1,13 +1,422 @@
 ---
-import { Image } from 'astro:assets';
-import BaseLayout from '@/components/layout/BaseLayout.astro'; import ArticleCard from '@/components/cards/ArticleCard.astro'; import { getCollection } from 'astro:content';
-const posts=(await getCollection('blog',({data})=>!data.draft&&data.status==='published')).sort((a,b)=>b.data.pubDate.getTime()-a.data.pubDate.getTime()); const featured=posts.find(x=>x.data.featured)||posts[0]; const latest=posts.filter(x=>x.id!==featured?.id).slice(0,4); const roadmaps=(await getCollection('roadmaps',({data})=>!data.draft&&data.status==='published')).filter(x=>x.data.featured).slice(0,3); const projects=(await getCollection('projects',({data})=>!data.draft&&data.status==='published')).filter(x=>x.data.featured).slice(0,3);
+import { getReadingTime } from "@/lib/content";
+import { Image } from "astro:assets";
+import BaseLayout from "@/components/layout/BaseLayout.astro";
+import ArticleCard from "@/components/cards/ArticleCard.astro";
+import { getCollection } from "astro:content";
+
+const posts = (
+  await getCollection(
+    "blog",
+    ({ data }) => !data.draft && data.status === "published",
+  )
+).sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+const featured = posts.find((x) => x.data.featured) || posts[0];
+const latest = posts.filter((x) => x.id !== featured?.id).slice(0, 4);
+const roadmaps = (
+  await getCollection(
+    "roadmaps",
+    ({ data }) => !data.draft && data.status === "published",
+  )
+).slice(0, 3);
+const projects = (
+  await getCollection(
+    "projects",
+    ({ data }) => !data.draft && data.status === "published",
+  )
+).slice(0, 3);
+const topicLinks = [
+  [
+    "Machine Learning",
+    "/ai/machine-learning/",
+    "Models, evaluation, features, overfitting, and practical workflows.",
+  ],
+  [
+    "Deep Learning",
+    "/ai/deep-learning/",
+    "Neural networks, optimization, PyTorch, and real applications.",
+  ],
+  [
+    "LLMs & RAG",
+    "/ai/llms/",
+    "Transformers, retrieval, evaluation, agents, and production patterns.",
+  ],
+  [
+    "AI Engineering",
+    "/ai/ai-engineering/",
+    "Turn models into reliable software with APIs, deployment, and observability.",
+  ],
+];
 ---
-<BaseLayout title="Practical AI, Technology & Career Guidance" description="Learn AI, build real projects, follow practical roadmaps, and make better technical career decisions."><div class="home-page"><section class="home-hero"><div class="content-container home-hero-grid"><div class="home-hero-copy"><span class="eyebrow">AI Career Guide · Learn → Build → Career</span><h1>Build the skills that make you <span>useful with AI.</span></h1><p>Clear technical guides, visual roadmaps, serious projects, curated resources, and career guidance for students and early-career builders.</p><div class="flex flex-wrap gap-3 mt-8"><a href="/careers/ai-engineer/" class="button-primary">Start the AI Engineer path</a><a href="/careers/" class="button-secondary">Explore roadmaps</a></div><div class="home-proof"><span><strong>Learn</strong> foundations</span><span><strong>Build</strong> real systems</span><span><strong>Prove</strong> your ability</span></div></div><div class="home-hero-visual"><div class="hero-grid-bg"></div><div class="hero-orbit orbit-a"></div><div class="hero-orbit orbit-b"></div><div class="hero-core"><span>AI</span><small>career system</small></div><div class="hero-node n1">Learn</div><div class="hero-node n2">Build</div><div class="hero-node n3">Prove</div></div></div></section>
-<section class="content-container py-14"><div class="home-section-head"><div><p class="section-kicker">Start here</p><h2 class="section-title">Choose your next move.</h2><p class="section-copy">You do not need more tabs. You need a useful next step.</p></div><a class="section-link" href="/careers/">Explore roadmaps →</a></div><div class="decision-grid mt-7"><a href="/careers/" class="decision-card"><span>01</span><div><strong>I need a roadmap</strong><p>Follow a visual path with clear checkpoints.</p></div><b>→</b></a><a href="/careers/" class="decision-card"><span>02</span><div><strong>I don't know what to learn next</strong><p>Start with a structured roadmap and clear checkpoints.</p></div><b>→</b></a><a href="/projects/" class="decision-card"><span>03</span><div><strong>I need a project</strong><p>Find a project that fits your level and goal.</p></div><b>→</b></a><a href="/news/" class="decision-card"><span>04</span><div><strong>I need to stay current</strong><p>Track useful AI and technology developments.</p></div><b>→</b></a></div></section>
-{featured&&<section class="home-feature-section"><div class="content-container py-14"><div class="home-section-head"><div><p class="section-kicker">Featured guide</p><h2 class="section-title">One article worth your time.</h2></div><a class="section-link" href="/blog/">Browse the blog →</a></div><a href={`/blog/${featured.id}/`} class="feature-article-card mt-7"><div class="feature-article-copy"><div class="flex flex-wrap gap-2"><span class="pill">{featured.data.category}</span><span class="pill">{featured.data.difficulty}</span><span class="pill">{featured.data.readingTime||'8'} min</span></div><h3>{featured.data.title}</h3><p>{featured.data.description}</p><span class="feature-cta">Read the guide →</span></div><div class="feature-article-image">{featured.data.image&&<Image src={featured.data.image} alt={featured.data.imageAlt || featured.data.title} width={1200} height={630} widths={[640,960,1200]} sizes="(min-width:1024px) 55vw,100vw" quality={82} loading="eager" fetchpriority="high" decoding="async"/>}</div></a></div></section>}
-<section class="content-container py-14"><div class="home-section-head"><div><p class="section-kicker">Learn</p><h2 class="section-title">Build your foundation in the right order.</h2></div><a class="section-link" href="/ai/">Explore AI topics →</a></div><div class="learning-tracks mt-7"><a href="/ai/machine-learning/" class="learning-track"><span>01</span><div><strong>Machine Learning</strong><p>Models, evaluation, features, overfitting, and practical workflows.</p></div></a><a href="/ai/deep-learning/" class="learning-track"><span>02</span><div><strong>Deep Learning</strong><p>Neural networks, optimization, PyTorch, and real applications.</p></div></a><a href="/ai/llms/" class="learning-track"><span>03</span><div><strong>LLMs</strong><p>Transformers, RAG, evaluation, tools, and production patterns.</p></div></a><a href="/ai/ai-engineering/" class="learning-track"><span>04</span><div><strong>AI Engineering</strong><p>Turn models into reliable software with APIs, deployment, and observability.</p></div></a></div></section>
-{roadmaps.length>0&&<section class="home-soft-section"><div class="content-container py-14"><div class="home-section-head"><div><p class="section-kicker">Build your path</p><h2 class="section-title">Visual roadmaps connected to real work.</h2></div><a class="section-link" href="/careers/">All roadmaps →</a></div><div class="modern-card-grid mt-7">{roadmaps.map(r=><a href={`/careers/${r.id}/`} class="modern-roadmap-card"><div class="card-topline"><span class="pill">{r.data.category}</span><span>{r.data.estimatedTime}</span></div><h3>{r.data.title.replace(' Roadmap','')}</h3><p>{r.data.description}</p><div class="card-tags">{r.data.skills.slice(0,4).map(s=><span class="tag">{s}</span>)}</div><div class="card-link">Open roadmap →</div></a>)}</div></div></section>}
-{projects.length>0&&<section class="content-container py-14"><div class="home-section-head"><div><p class="section-kicker">Build</p><h2 class="section-title">Projects that create proof.</h2></div><a class="section-link" href="/projects/">All projects →</a></div><div class="modern-card-grid mt-7">{projects.map(p=><a href={`/projects/${p.id}/`} class="modern-project-card"><div class="card-topline"><span class="pill">{p.data.category}</span><span>{p.data.difficulty}</span></div><h3>{p.data.title}</h3><p>{p.data.description}</p><div class="card-tags">{p.data.techStack.slice(0,4).map(s=><span class="tag">{s}</span>)}</div><div class="card-link">View project →</div></a>)}</div></section>}
-<section class="home-soft-section"><div class="content-container py-14"><div class="home-section-head"><div><p class="section-kicker">Latest</p><h2 class="section-title">Recent writing.</h2></div><a class="section-link" href="/blog/">See all articles →</a></div><div class="article-grid mt-7">{latest.map(p=><ArticleCard post={p}/>)}</div></div></section>
-<section class="content-container py-16"><div class="home-final-cta"><div><p class="section-kicker">Build momentum</p><h2>Stop collecting resources. Start building evidence.</h2><p>Pick one roadmap, one project, and one measurable goal. Then ship.</p></div><div class="flex flex-wrap gap-3"><a href="/careers/ai-engineer/" class="button-primary">Start a roadmap</a><a href="/projects/" class="button-secondary">Explore projects</a></div></div></section></div></BaseLayout>
+
+<BaseLayout
+  title="AI Career Guide — Learn AI. Build Real Systems. Prove Your Skills."
+  description="A practical AI learning platform for students and builders: learn AI and ML, follow structured roadmaps, build real projects, and prepare for your technical career."
+>
+  <div class="home-page home-premium">
+    <section class="home-hero">
+      <div class="home-hero-noise" aria-hidden="true"></div>
+      <div class="content-container home-hero-grid">
+        <div class="home-hero-copy">
+          <span class="eyebrow hero-eyebrow">✦ Your AI journey starts here</span
+          >
+          <h1>Learn AI. Build Real Systems. <span>Prove Your Skills.</span></h1>
+          <p>
+            Practical guides, structured roadmaps, real projects, and career
+            guidance for students, developers, and future AI engineers.
+          </p>
+          <div class="home-hero-actions">
+            <a href="/careers/ai-engineer/" class="button-primary hero-button"
+              >Start your journey <span aria-hidden="true">→</span></a
+            >
+            <a href="/careers/" class="button-secondary hero-button-secondary"
+              >Explore roadmaps</a
+            >
+          </div>
+          <div
+            class="hero-stats"
+            aria-label="AI Career Guide content statistics"
+          >
+            <div><strong>{posts.length}+</strong><span>Guides</span></div>
+            <div><strong>{roadmaps.length}+</strong><span>Roadmaps</span></div>
+            <div><strong>{projects.length}+</strong><span>Projects</span></div>
+            <div><strong>100%</strong><span>Open learning</span></div>
+          </div>
+        </div>
+        <div class="home-hero-visual" aria-label="Explore AI topics">
+          <div class="hero-visual-glow"></div>
+          <div class="hero-visual-grid"></div>
+          <div class="hero-core-frame">
+            <div class="hero-core-cube"><span>AI</span></div>
+          </div>
+          <a class="hero-topic hero-topic-link t-a" href="/ai/machine-learning/"
+            >Machine Learning</a
+          >
+          <a class="hero-topic hero-topic-link t-b" href="/ai/deep-learning/"
+            >Deep Learning</a
+          >
+          <a class="hero-topic hero-topic-link t-c" href="/ai/llms/">LLMs</a>
+          <a class="hero-topic hero-topic-link t-d" href="/ai/ai-engineering/"
+            >AI Engineering</a
+          >
+          <a class="hero-topic hero-topic-link t-e" href="/ai/">Data Science</a>
+          <a class="hero-topic hero-topic-link t-f" href="/ai/ai-engineering/"
+            >MLOps</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <section class="content-container home-journey-section">
+      <div class="home-section-head">
+        <div>
+          <p class="section-kicker">Your learning journey</p><h2
+            class="section-title"
+          >
+            Learn · Build · Prove
+          </h2><p class="section-copy">
+            Follow a clear path from fundamentals to real-world AI systems.
+          </p>
+        </div><a class="section-link" href="/careers/">Choose your path →</a>
+      </div>
+      <div class="journey-strip">
+        <div class="journey-step">
+          <span class="journey-icon journey-blue">01</span><div>
+            <strong>Learn</strong><p>
+              Understand the concepts and foundations that matter.
+            </p>
+          </div>
+        </div>
+        <div class="journey-arrow" aria-hidden="true">→</div>
+        <div class="journey-step">
+          <span class="journey-icon journey-purple">02</span><div>
+            <strong>Build</strong><p>
+              Turn what you learn into useful, measurable projects.
+            </p>
+          </div>
+        </div>
+        <div class="journey-arrow" aria-hidden="true">→</div>
+        <div class="journey-step">
+          <span class="journey-icon journey-amber">03</span><div>
+            <strong>Prove</strong><p>
+              Show what you can build in portfolios and interviews.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-start-section">
+      <div class="content-container py-14">
+        <div class="home-section-head">
+          <div>
+            <p class="section-kicker">Start here</p><h2 class="section-title">
+              What do you want to do?
+            </h2><p class="section-copy">
+              Pick the path that matches your goal right now.
+            </p>
+          </div>
+        </div>
+        <div class="decision-grid mt-7">
+          <a href="/careers/ai-engineer/" class="decision-card decision-blue"
+            ><span class="decision-icon">⌁</span><div>
+              <strong>Become an AI Engineer</strong><p>
+                Follow a complete roadmap from fundamentals to advanced systems.
+              </p>
+            </div><b>→</b></a
+          >
+          <a href="/ai/" class="decision-card decision-purple"
+            ><span class="decision-icon">◈</span><div>
+              <strong>Learn AI / ML</strong><p>
+                Master concepts with practical explanations and examples.
+              </p>
+            </div><b>→</b></a
+          >
+          <a href="/projects/" class="decision-card decision-green"
+            ><span class="decision-icon">&lt;/&gt;</span><div>
+              <strong>Build AI Projects</strong><p>
+                Create real-world work that strengthens your portfolio.
+              </p>
+            </div><b>→</b></a
+          >
+          <a href="/careers/interviews/" class="decision-card decision-orange"
+            ><span class="decision-icon">↗</span><div>
+              <strong>Prepare for Interviews</strong><p>
+                Practice technical questions, projects, and system thinking.
+              </p>
+            </div><b>→</b></a
+          >
+        </div>
+      </div>
+    </section>
+
+    {
+      featured && (
+        <section class="home-feature-section">
+          <div class="content-container py-14">
+            <>
+              <div class="home-section-head">
+                <>
+                  <div>
+                    <>
+                      <p class="section-kicker">Featured content</p>
+                      <h2 class="section-title">One guide worth your time.</h2>
+                      <p class="section-copy">
+                        A handpicked starting point for your learning journey.
+                      </p>
+                    </>
+                  </div>
+                  <a class="section-link" href="/blog/">
+                    View all articles →
+                  </a>
+                </>
+              </div>
+              <a
+                href={`/blog/${featured.id}/`}
+                class="feature-article-card mt-7"
+              >
+                <>
+                  <div class="feature-article-copy">
+                    <>
+                      <div class="flex flex-wrap gap-2">
+                        <>
+                          <span class="pill">{featured.data.category}</span>
+                          <span class="pill">{featured.data.difficulty}</span>
+                          <span class="pill">
+                            {getReadingTime(
+                              featured.body,
+                              featured.data.readingTime,
+                            )}{" "}
+                            min read
+                          </span>
+                        </>
+                      </div>
+                      <h3>{featured.data.title}</h3>
+                      <p>{featured.data.description}</p>
+                      <span class="feature-cta">
+                        Read the guide <span aria-hidden="true">→</span>
+                      </span>
+                    </>
+                  </div>
+                  <div class="feature-article-image">
+                    {featured.data.image && (
+                      <Image
+                        src={featured.data.image}
+                        alt={featured.data.imageAlt || featured.data.title}
+                        width={1200}
+                        height={630}
+                        widths={[640, 960, 1200]}
+                        sizes="(min-width:1024px) 55vw,100vw"
+                        quality={84}
+                        loading="eager"
+                        fetchpriority="high"
+                        decoding="async"
+                      />
+                    )}
+                  </div>
+                </>
+              </a>
+            </>
+          </div>
+        </section>
+      )
+    }
+
+    <section class="content-container py-14">
+      <div class="home-section-head">
+        <div>
+          <p class="section-kicker">Learn</p><h2 class="section-title">
+            Build your foundation in the right order.
+          </h2>
+        </div><a class="section-link" href="/ai/">Explore all topics →</a>
+      </div><div class="learning-tracks mt-7">
+        {
+          topicLinks.map(([title, href, description], index) => (
+            <a href={href} class="learning-track">
+              <>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <>
+                    <strong>{title}</strong>
+                    <p>{description}</p>
+                  </>
+                </div>
+                <b>→</b>
+              </>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      roadmaps.length > 0 && (
+        <section class="home-soft-section">
+          <div class="content-container py-14">
+            <>
+              <div class="home-section-head">
+                <>
+                  <div>
+                    <>
+                      <p class="section-kicker">Roadmaps</p>
+                      <h2 class="section-title">Choose a clear path.</h2>
+                      <p class="section-copy">
+                        Structured learning paths connected to practical work.
+                      </p>
+                    </>
+                  </div>
+                  <a class="section-link" href="/careers/">
+                    All roadmaps →
+                  </a>
+                </>
+              </div>
+              <div class="modern-card-grid mt-7">
+                {roadmaps.map((r, i) => (
+                  <a
+                    href={`/careers/${r.id}/`}
+                    class={`modern-roadmap-card roadmap-tone-${i + 1}`}
+                  >
+                    <div class="card-topline">
+                      <span class="pill">{r.data.category}</span>
+                      <span>{r.data.estimatedTime}</span>
+                    </div>
+                    <h3>{r.data.title.replace(" Roadmap", "")}</h3>
+                    <p>{r.data.description}</p>
+                    <div class="card-tags">
+                      {r.data.skills.slice(0, 4).map((s) => (
+                        <span class="tag">{s}</span>
+                      ))}
+                    </div>
+                    <div class="card-link">
+                      Open roadmap <span aria-hidden="true">→</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </>
+          </div>
+        </section>
+      )
+    }
+
+    {
+      projects.length > 0 && (
+        <section class="content-container py-14">
+          <>
+            <div class="home-section-head">
+              <>
+                <div>
+                  <>
+                    <p class="section-kicker">Build</p>
+                    <h2 class="section-title">Projects that create proof.</h2>
+                    <p class="section-copy">
+                      Build useful systems, not just tutorial clones.
+                    </p>
+                  </>
+                </div>
+                <a class="section-link" href="/projects/">
+                  All projects →
+                </a>
+              </>
+            </div>
+            <div class="modern-card-grid mt-7">
+              {projects.map((p) => (
+                <a href={`/projects/${p.id}/`} class="modern-project-card">
+                  <div class="card-topline">
+                    <span class="pill">{p.data.category}</span>
+                    <span>{p.data.difficulty}</span>
+                  </div>
+                  <h3>{p.data.title}</h3>
+                  <p>{p.data.description}</p>
+                  <div class="card-tags">
+                    {p.data.techStack.slice(0, 4).map((s) => (
+                      <span class="tag">{s}</span>
+                    ))}
+                  </div>
+                  <div class="card-link">
+                    View project <span aria-hidden="true">→</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </>
+        </section>
+      )
+    }
+
+    <section class="home-soft-section">
+      <div class="content-container py-14">
+        <div class="home-section-head">
+          <div>
+            <p class="section-kicker">Latest articles</p><h2
+              class="section-title"
+            >
+              Recent writing.
+            </h2><p class="section-copy">
+              Deep explanations without the fluff.
+            </p>
+          </div><a class="section-link" href="/blog/">Browse the blog →</a>
+        </div><div class="article-grid mt-7">
+          {latest.map((p) => <ArticleCard post={p} />)}
+        </div>
+      </div>
+    </section>
+
+    <section class="content-container py-16">
+      <div class="home-final-cta">
+        <div>
+          <p class="section-kicker">Ready to build?</p><h2>
+            Choose one roadmap. Build one project. Prove one skill.
+          </h2><p>
+            Consistency beats collecting more tabs. Start with one useful next
+            step.
+          </p>
+        </div><div class="flex flex-wrap gap-3">
+          <a href="/careers/ai-engineer/" class="button-primary"
+            >Start your journey →</a
+          ><a href="/projects/" class="button-secondary">Explore projects</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

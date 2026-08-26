@@ -1,51 +1,103 @@
 ---
-import BaseLayout from '@/components/layout/BaseLayout.astro';
-import ArticleCard from '@/components/cards/ArticleCard.astro';
-import { getCollection } from 'astro:content';
-import { AUTHORS, getAuthorProfile } from '@/data/authors';
+import BaseLayout from "@/components/layout/BaseLayout.astro";
+import ArticleCard from "@/components/cards/ArticleCard.astro";
+import { getCollection } from "astro:content";
+import { AUTHORS, getAuthorProfile } from "@/data/authors";
 
 export async function getStaticPaths() {
-  return Object.values(AUTHORS).map((author) => ({ params: { slug: author.slug }, props: { author } }));
+  return Object.values(AUTHORS).map((author) => ({
+    params: { slug: author.slug },
+    props: { author },
+  }));
 }
 
 const { author } = Astro.props;
-const posts = (await getCollection('blog', ({ data }) => !data.draft && data.status === 'published' && data.author === author.name))
-  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+const posts = (
+  await getCollection(
+    "blog",
+    ({ data }) =>
+      !data.draft && data.status === "published" && data.author === author.name,
+  )
+).sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 const profile = getAuthorProfile(author.name);
 ---
-<BaseLayout title={`${profile.name} | AI Career Guide`} description={profile.bio} canonical={profile.url}>
-  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+
+<BaseLayout
+  title={`${profile.name} | AI Career Guide`}
+  description={profile.bio}
+  canonical={profile.url}
+>
+  <section
+    class="author-page-premium max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14"
+  >
     <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
-      <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-3xl font-bold text-white">{profile.name.charAt(0)}</div>
+      <div
+        class="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-3xl font-bold text-white"
+      >
+        {profile.name.charAt(0)}
+      </div>
       <div>
-        <p class="text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]">{profile.type}</p>
+        <p
+          class="text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]"
+        >
+          {profile.type}
+        </p>
         <h1 class="mt-1 text-4xl font-bold tracking-tight">{profile.name}</h1>
-        <p class="mt-4 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]">{profile.bio}</p>
-        {profile.expertise.length > 0 && <div class="mt-4 flex flex-wrap gap-2">{profile.expertise.map((item) => <span class="tag">{item}</span>)}</div>}
+        <p
+          class="mt-4 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]"
+        >
+          {profile.bio}
+        </p>
+        {
+          profile.expertise.length > 0 && (
+            <div class="mt-4 flex flex-wrap gap-2">
+              {profile.expertise.map((item) => (
+                <span class="tag">{item}</span>
+              ))}
+            </div>
+          )
+        }
       </div>
     </div>
 
     <div class="mt-14">
       <div class="flex items-end justify-between gap-4">
         <div>
-          <p class="text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]">Published work</p>
+          <p
+            class="text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]"
+          >
+            Published work
+          </p>
           <h2 class="mt-1 text-2xl font-bold">Articles</h2>
         </div>
-        <span class="text-sm text-[var(--color-text-muted)]">{posts.length} article{posts.length === 1 ? '' : 's'}</span>
+        <span class="text-sm text-[var(--color-text-muted)]"
+          >{posts.length} article{posts.length === 1 ? "" : "s"}</span
+        >
       </div>
-      {posts.length > 0 ? (
-        <div class="mt-6 grid gap-6 md:grid-cols-2">{posts.map((post) => <ArticleCard post={post} />)}</div>
-      ) : (
-        <div class="mt-6 rounded-xl border border-dashed border-[var(--color-border)] p-8 text-center text-[var(--color-text-muted)]">No published articles yet.</div>
-      )}
+      {
+        posts.length > 0 ? (
+          <div class="mt-6 grid gap-6 md:grid-cols-2">
+            {posts.map((post) => (
+              <ArticleCard post={post} />
+            ))}
+          </div>
+        ) : (
+          <div class="mt-6 rounded-xl border border-dashed border-[var(--color-border)] p-8 text-center text-[var(--color-text-muted)]">
+            No published articles yet.
+          </div>
+        )
+      }
     </div>
   </section>
 
-  <script type="application/ld+json" set:html={JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': profile.type,
-    name: profile.name,
-    url: new URL(profile.url, Astro.site ?? 'https://aicareerguide.xyz').href,
-    description: profile.bio,
-  })} />
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": profile.type,
+      name: profile.name,
+      url: new URL(profile.url, Astro.site ?? "https://aicareerguide.xyz").href,
+      description: profile.bio,
+    })}
+  />
 </BaseLayout>

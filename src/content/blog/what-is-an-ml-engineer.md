@@ -17,6 +17,13 @@ topics:
   - Machine Learning
   - Software Engineering
   - MLOps
+sources:
+  - title: "roadmap.sh — Machine Learning Roadmap"
+    url: "https://roadmap.sh/machine-learning"
+  - title: "Google Cloud — MLOps"
+    url: "https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning"
+  - title: "scikit-learn — User Guide"
+    url: "https://scikit-learn.org/stable/user_guide.html"
 imageAlt: "Machine learning engineer career infographic showing responsibilities, skills, workflow, tools, projects, and the path into ML engineering."
 contentType: "guide"
 difficulty: "Beginner"

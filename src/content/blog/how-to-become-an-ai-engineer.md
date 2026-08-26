@@ -18,6 +18,13 @@ topics:
   - Career Roadmaps
   - AI Engineering
   - Machine Learning
+sources:
+  - title: "roadmap.sh — AI Engineer Roadmap"
+    url: "https://roadmap.sh/ai-engineer"
+  - title: "GeeksforGeeks — Machine Learning"
+    url: "https://www.geeksforgeeks.org/machine-learning/"
+  - title: "IBM — What Is an AI Developer?"
+    url: "https://www.ibm.com/think/topics/ai-developer"
 imageAlt: "AI engineer roadmap graphic showing progression from programming and fundamentals to AI systems, projects, deployment, and career preparation."
 contentType: "guide"
 featured: true

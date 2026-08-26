@@ -14,7 +14,11 @@ const types = ["All", ...Array.from(new Set(r.map((x) => x.data.type)))];
 <BaseLayout
   title="AI Learning Resources"
   description="Curated courses, books, datasets, APIs, and roadmaps for AI and software engineering."
-  ><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+  ><div
+    class="resources-page content-container pb-10 sm:pb-14"
+    data-filter-root
+    data-filter-count-label="resource"
+  >
     <CollectionHero
       eyebrow="Curated library"
       title="Fewer links. Better resources."
@@ -40,38 +44,74 @@ const types = ["All", ...Array.from(new Set(r.map((x) => x.data.type)))];
         { label: "Explore roadmaps", href: "/careers/" },
         { label: "Browse tools", href: "/tools/", kind: "secondary" },
       ]}
-    /><div class="mt-10 blog-filter-bar">
-      <div class="flex flex-wrap gap-1.5">
-        {
-          types.map((c, i) => (
-            <button
-              type="button"
-              class:list={["blog-filter-btn", i === 0 && "active"]}
-              data-type={c}
-              aria-pressed={i === 0}
-            >
-              {c}
-            </button>
-          ))
-        }
-      </div>
-    </div><section class="mt-8">
-      <div class="flex justify-between items-end">
-        <div>
-          <p class="section-kicker">Library</p><h2 class="section-title">
-            Explore resources
+    /><section
+      class="resources-explore"
+      aria-labelledby="resources-explore-title"
+    >
+      <div class="resources-explore-head">
+        <div class="resources-explore-intro">
+          <p class="section-kicker">Explore</p>
+          <h2 id="resources-explore-title" class="section-title">
+            Find the right resource for the next step.
           </h2>
-        </div><span class="text-sm text-[var(--color-text-muted)]"
-          >{r.length} resources</span>
-      </div><div
+          <p>
+            Filter by format or search by title, topic, or tag. Every card leads
+            to a page with context, strengths, limitations, and where it fits in
+            your learning path.
+          </p>
+        </div>
+        <span class="resources-result-count" data-filter-count
+          >{r.length} resources</span
+        >
+      </div>
+      <div
+        class="resources-filter-bar"
+        role="toolbar"
+        aria-label="Resource filters"
+      >
+        <div
+          class="resources-filter-scroller"
+          role="group"
+          aria-label="Filter by format"
+        >
+          {
+            types.map((c, i) => (
+              <button
+                type="button"
+                class:list={["blog-filter-btn", i === 0 && "active"]}
+                data-filter-group="type"
+                data-filter-value={c}
+                aria-pressed={i === 0}
+              >
+                {c}
+              </button>
+            ))
+          }
+        </div>
+        <label class="resources-search-wrap">
+          <span class="sr-only">Search resources</span>
+          <input
+            data-filter-search
+            type="search"
+            placeholder="Search resources…"
+            autocomplete="off"
+          />
+        </label>
+        <button type="button" class="resources-filter-clear" data-filter-clear
+          >Clear</button
+        >
+      </div>
+      <div
         id="resource-grid"
-        class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3"
+        class="mt-5 grid gap-5 md:grid-cols-2 lg:grid-cols-3"
       >
         {
           r.map((x) => (
             <a
               href={`/resources/${x.id}/`}
-              data-type={x.data.type}
+              data-filter-item
+              data-filter-type={x.data.type}
+              data-filter-search-text={`${x.data.title} ${x.data.description} ${(x.data.tags || []).join(" ")}`.toLowerCase()}
               class="surface-card surface-card-hover p-6 group"
             >
               <>
@@ -100,25 +140,9 @@ const types = ["All", ...Array.from(new Set(r.map((x) => x.data.type)))];
           ))
         }
       </div>
+      <p class="hidden" data-filter-empty>
+        No resources match these filters. Try another format or search term.
+      </p>
     </section>
-  </div><script>
-    document.addEventListener("astro:page-load", () => {
-      const b = [...document.querySelectorAll(".blog-filter-btn")],
-        c = [...document.querySelectorAll("#resource-grid > a")];
-      b.forEach((x) =>
-        x.addEventListener("click", () => {
-          const f = x.dataset.type || "All";
-          b.forEach((y) => {
-            y.classList.remove("active");
-            y.setAttribute("aria-pressed", "false");
-          });
-          x.classList.add("active");
-          x.setAttribute("aria-pressed", "true");
-          c.forEach((y) =>
-            y.classList.toggle("hidden", f !== "All" && y.dataset.type !== f),
-          );
-        }),
-      );
-    });
-  </script></BaseLayout
+  </div></BaseLayout
 >

@@ -14,7 +14,7 @@ const hub = (s: string) =>
 <BaseLayout
   title="AI & Technology News"
   description="Focused AI and technology headlines from established publishers."
-  ><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+  ><div class="news-page content-container py-8 sm:py-12">
     <CollectionHero
       eyebrow="AI & Technology News"
       title="Stay current without drowning in noise."
@@ -47,7 +47,8 @@ const hub = (s: string) =>
             AI & technology headlines
           </h2>
         </div><span class="text-sm text-[var(--color-text-muted)]"
-          >Build-time feed</span>
+          >Build-time feed</span
+        >
       </div>{
         items.length ? (
           <div class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">

@@ -6,6 +6,13 @@ updatedDate: 2026-08-25
 author: "AI Career Guide"
 category: "Career"
 primaryTopic: "ml-engineering"
+sources:
+  - title: "roadmap.sh — Machine Learning Roadmap"
+    url: "https://roadmap.sh/machine-learning"
+  - title: "Google Cloud — MLOps"
+    url: "https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning"
+  - title: "scikit-learn — User Guide"
+    url: "https://scikit-learn.org/stable/user_guide.html"
 contentType: "career"
 topics:
   - Machine Learning
@@ -22,8 +29,8 @@ tags:
 imageAlt: "Machine learning engineer roadmap showing Python, mathematics, machine learning, projects, deployment, and career preparation."
 imageCaption: "A practical ML engineering roadmap from programming and machine learning fundamentals to deployment, MLOps, and production systems."
 image: "../../assets/blog/how-to-become-an-ml-engineer.webp"
-readingTime: "12 min read"
-featured: true
+readingTime: 12
+featured: false
 difficulty: "Intermediate"
 keyTakeaways:
   - "Build strong Python and software engineering fundamentals before specializing deeply in machine learning."

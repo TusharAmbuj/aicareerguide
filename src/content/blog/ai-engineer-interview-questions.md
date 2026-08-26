@@ -18,6 +18,13 @@ topics:
   - Machine Learning
   - LLM Engineering
   - System Design
+sources:
+  - title: "roadmap.sh — AI Engineer Roadmap"
+    url: "https://roadmap.sh/ai-engineer"
+  - title: "GeeksforGeeks — Machine Learning Interview Questions"
+    url: "https://www.geeksforgeeks.org/machine-learning/machine-learning-interview-questions/"
+  - title: "W3Schools — AI Tutorial"
+    url: "https://www.w3schools.com/ai/"
 imageAlt: "AI engineer interview preparation infographic covering coding, machine learning, deep learning, system design, behavioral questions, and interview strategy."
 contentType: "guide"
 difficulty: "Advanced"

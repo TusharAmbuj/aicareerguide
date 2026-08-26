@@ -33,7 +33,7 @@ const verified = d.lastVerified
     title={`${d.name}: Features, Pricing & Best Use Cases`}
     description={d.description}
     breadcrumbs={bc}
-    ><div class="content-container py-8 sm:py-12">
+    ><div class="tool-detail-page content-container py-8 sm:py-12">
         <Breadcrumbs items={bc} /><section
             class="tool-detail-hero tool-detail-hero-modern mt-5"
         >
@@ -64,7 +64,8 @@ const verified = d.lastVerified
                             rel="noopener noreferrer"
                             class="button-primary">Visit official site ↗</a
                         ><a href="/tools/" class="button-secondary"
-                            >Browse all tools</a>
+                            >Browse all tools</a
+                        >
                     </div>
                 </div><div class="tool-detail-aside-card">
                     <p class="context-label">Quick verdict</p><p
@@ -93,7 +94,8 @@ const verified = d.lastVerified
         </section><div class="tool-detail-metrics mt-6">
             <div>
                 <span>Best for</span><strong
-                    >{d.bestFor[0] || "General use"}</strong>
+                    >{d.bestFor[0] || "General use"}</strong
+                >
             </div><div>
                 <span>Category</span><strong>{d.category}</strong>
             </div><div>
@@ -121,7 +123,8 @@ const verified = d.lastVerified
                     href={d.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="source-button w-full">Visit official site ↗</a>
+                    class="source-button w-full">Visit official site ↗</a
+                >
             </aside>
         </div>
     </div></BaseLayout
