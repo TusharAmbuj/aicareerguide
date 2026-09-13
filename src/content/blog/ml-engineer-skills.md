@@ -56,7 +56,6 @@ A strong ML engineer has to understand data, build reliable software, choose and
 
 This guide breaks down the most important **ML engineer skills** to develop, what each skill is used for, and what “good enough” looks like when you are preparing for real projects and jobs.
 
-## What Skills Does an ML Engineer Need?
 
 A practical ML engineer skill set can be grouped into eight areas:
 

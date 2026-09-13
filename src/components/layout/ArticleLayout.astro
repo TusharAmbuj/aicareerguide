@@ -26,6 +26,8 @@ export interface Props {
     image?: any;
     imageAlt?: string;
     imageCaption?: string;
+    imageFit?: "natural" | "cover" | "contain";
+    seoTitle?: string;
     readingTime?: number;
     headings: { depth: number; slug: string; text: string }[];
     relatedPosts?: any[];
@@ -54,6 +56,8 @@ const {
     image,
     imageAlt,
     imageCaption,
+    imageFit = "natural",
+    seoTitle,
     readingTime = 8,
     headings = [],
     relatedPosts = [],
@@ -67,13 +71,13 @@ const authorProfile = getAuthorProfile(author);
 const breadcrumbItems = [
     { label: "Home", url: "/" },
     { label: "Blog", url: "/blog" },
-    { label: category, url: `/blog/?category=${encodeURIComponent(category)}` },
+    { label: category, url: "/blog/" },
     { label: title, url: Astro.url.pathname },
 ];
 ---
 
 <BaseLayout
-    title={title}
+    title={seoTitle || title}
     description={description}
     image={image?.src}
     imageAlt={imageAlt}
@@ -102,77 +106,43 @@ const breadcrumbItems = [
                     </div><h1>{title}</h1><p class="article-dek">
                         {description}
                     </p><div class="article-byline">
-                        <a href={authorProfile.url} class="article-author"
-                            >{author}</a
-                        ><span aria-hidden="true">·</span><time
-                            datetime={pubDate.toISOString()}
-                            >{
-                                pubDate.toLocaleDateString("en-US", {
+                        <a href={authorProfile.url} class="article-author">{author}</a>
+                        <span aria-hidden="true">·</span>
+                        <span>Published {pubDate.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</span>
+                        <span aria-hidden="true">·</span>
+                        <span>{readingTime} min read</span>
+                        {updatedDate && (<>
+                            <span aria-hidden="true">·</span>
+                            <time datetime={updatedDate.toISOString()}>Updated {updatedDate.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</time>
+                        </>)}
+                    </div>{lastReviewed && (
+                        <div class="article-review-line">
+                            <span>
+                                Editorially reviewed{" "}
+                                {lastReviewed.toLocaleDateString("en-US", {
                                     year: "numeric",
-                                    month: "long",
+                                    month: "short",
                                     day: "numeric",
-                                })
-                            }</time
-                        ><span aria-hidden="true">·</span><span
-                            >{readingTime} min read</span
-                        ><span aria-hidden="true">·</span><span
-                            >{
-                                (updatedDate || pubDate).toLocaleDateString(
-                                    "en-US",
-                                    { month: "short", year: "numeric" },
-                                )
-                            }</span
-                        >
-                    </div>{
-                        (updatedDate || lastReviewed) && (
-                            <div class="article-review-line">
-                                {updatedDate && (
-                                    <span>
-                                        Updated{" "}
-                                        {updatedDate.toLocaleDateString(
-                                            "en-US",
-                                            {
-                                                year: "numeric",
-                                                month: "short",
-                                                day: "numeric",
-                                            },
-                                        )}
-                                    </span>
-                                )}
-                                {lastReviewed && (
-                                    <span>
-                                        Editorially reviewed{" "}
-                                        {lastReviewed.toLocaleDateString(
-                                            "en-US",
-                                            {
-                                                year: "numeric",
-                                                month: "short",
-                                                day: "numeric",
-                                            },
-                                        )}
-                                    </span>
-                                )}
-                            </div>
-                        )
-                    }<div class="mt-5">
+                                })}
+                            </span>
+                        </div>
+                    )}<div class="mt-5">
                         <ShareButtons url={Astro.url.href} title={title} />
                     </div>
                 </div>{
                     image && (
-                        <figure class="article-hero-media">
+                        <figure class:list={["article-hero-media", `article-hero-media-${imageFit}`]} data-lightbox-root>
                             <Image
                                 src={image}
                                 alt={imageAlt || `Illustration for ${title}`}
                                 width={1200}
-                                height={630}
                                 widths={[640, 960, 1200]}
-                                sizes="(min-width:1024px) 470px,100vw"
+                                sizes="(min-width: 1100px) 1000px, calc(100vw - 2rem)"
                                 quality={84}
                                 loading="eager"
                                 fetchpriority="high"
                                 decoding="async"
-                                class="w-full h-auto object-contain"
-                                data-lightbox-src={image?.src}
+                                class:list={["w-full", "h-auto", "article-hero-image", `article-hero-image-${imageFit}`]}
                             />
                             {imageCaption && (
                                 <figcaption>{imageCaption}</figcaption>
@@ -203,19 +173,6 @@ const breadcrumbItems = [
                     </section>
                 )
             }
-            <div
-                class="article-learning-path"
-                aria-label="AI Career Guide learning path"
-            >
-                <span class="article-learning-path-label"
-                    >AI Career Guide method</span
-                >
-                <a href="/ai/">Learn</a>
-                <span aria-hidden="true">→</span>
-                <a href="/projects/">Build</a>
-                <span aria-hidden="true">→</span>
-                <a href="/careers/">Prove</a>
-            </div>
             {
                 headings.length > 0 && (
                     <div class="mobile-toc-card">
@@ -268,24 +225,7 @@ const breadcrumbItems = [
                     </div>
                 )
             }
-            <div class="article-content-kicker">
-                <span>Deep dive</span>
-                <span aria-hidden="true">•</span>
-                <span>{readingTime} min read</span>
-                <span aria-hidden="true">•</span>
-                <span
-                    >Updated {
-                        (
-                            updatedDate ||
-                            lastReviewed ||
-                            pubDate
-                        ).toLocaleDateString("en-US", {
-                            month: "short",
-                            year: "numeric",
-                        })
-                    }</span
-                >
-            </div>
+            <div class="article-reading-start" aria-hidden="true"><span>Deep dive</span></div>
             <div class="article-content-layout article-reading-layout">
                 <aside
                     class="article-sidebar hidden lg:block"
@@ -492,6 +432,7 @@ const breadcrumbItems = [
                     id="article-lightbox-image"
                     class="article-lightbox-image"
                     alt=""
+                    hidden
                     decoding="async"
                     draggable="false"
                 />
@@ -561,6 +502,7 @@ const breadcrumbItems = [
             dialog.dataset.bound = "true";
 
             let zoom = 1;
+            let lastTrigger: HTMLImageElement | null = null;
             const minZoom = 1;
             const maxZoom = 4;
             const step = 0.25;
@@ -583,17 +525,21 @@ const breadcrumbItems = [
                 if (dialog.open) dialog.close();
                 viewer.removeAttribute("src");
                 viewer.alt = "";
+                viewer.hidden = true;
                 updateZoom(1);
                 document.body.classList.remove("image-lightbox-open");
+                lastTrigger?.focus({ preventScroll: true });
+                lastTrigger = null;
             };
 
             const openImage = (img: HTMLImageElement) => {
                 const source =
-                    img.dataset.lightboxSrc ||
                     img.currentSrc ||
                     img.getAttribute("src") ||
                     img.dataset.src;
                 if (!source) return;
+                lastTrigger = img;
+                viewer.hidden = false;
                 viewer.src = source;
                 viewer.alt = img.alt || "Expanded article image";
                 const figure = img.closest("figure");

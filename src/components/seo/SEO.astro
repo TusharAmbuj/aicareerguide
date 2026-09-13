@@ -37,11 +37,15 @@ const {
 } = Astro.props;
 const siteTitle = "AI Career Guide";
 const siteUrl = Astro.site?.href || "https://aicareerguide.xyz/";
-const fullTitle = title
-    ? title.endsWith(siteTitle)
+const titleSource = title
+    ? title.includes(siteTitle)
         ? title
         : `${title} | ${siteTitle}`
     : `${siteTitle} | Practical AI, Technology & Career Guidance`;
+// Do not mechanically truncate titles. Search engines can rewrite long titles
+// based on query/device context; our job is to provide an accurate, readable title.
+// Important pages can supply an explicit seoTitle from content frontmatter.
+const fullTitle = titleSource.trim();
 const desc =
     description ||
     "Practical AI, technology, project, and career guidance for people building their future in tech.";
@@ -57,17 +61,9 @@ const articleSchema = article
           description: desc,
           image: imageURL,
           datePublished: pubDate?.toISOString(),
-          dateModified: (updatedDate || pubDate)?.toISOString(),
+          dateModified: updatedDate?.toISOString(),
           author: { "@type": authorType, name: author, url: authorURL },
-          publisher: {
-              "@type": "Organization",
-              name: siteTitle,
-              url: siteUrl,
-              logo: {
-                  "@type": "ImageObject",
-                  url: new URL("/logo.webp", siteUrl).href,
-              },
-          },
+          publisher: { "@id": `${siteUrl}#organization` },
           mainEntityOfPage: { "@type": "WebPage", "@id": canonicalURL },
           articleSection,
           keywords: keywords.length ? keywords : undefined,
@@ -82,14 +78,6 @@ const websiteSchema = {
     url: siteUrl,
     description: desc,
     inLanguage: "en",
-    potentialAction: {
-        "@type": "SearchAction",
-        target: {
-            "@type": "EntryPoint",
-            urlTemplate: `${siteUrl}search/?q={search_term_string}`,
-        },
-        "query-input": "required name=search_term_string",
-    },
 };
 const organizationSchema = {
     "@context": "https://schema.org",

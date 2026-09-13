@@ -1,5 +1,5 @@
 ---
-title: "Large Language Models (LLMs): How They Work and How to Learn Them"
+title: "LLMs: How They Work & How to Learn Them"
 description: "Learn how LLMs work, including tokens, transformers, inference, RAG, fine-tuning, evaluation, agents, and production LLM engineering."
 pubDate: 2026-08-16
 author: "AI Career Guide"
@@ -32,7 +32,6 @@ sources:
     url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"
 ---
 
-# Large Language Models (LLMs): How They Work, How to Use Them, and What to Learn in 2026
 
 **Large language models (LLMs)** have changed the way people write software, search for information, analyze documents, learn new subjects, and build products.
 

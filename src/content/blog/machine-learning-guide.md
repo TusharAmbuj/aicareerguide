@@ -30,7 +30,6 @@ sources:
     url: "https://developers.google.com/machine-learning/crash-course/overfitting/dividing-datasets"
 ---
 
-# Machine Learning: What It Is, How It Works, and How to Learn It in 2026
 
 **Machine learning (ML)** is the part of artificial intelligence that lets computer systems improve their performance by learning patterns from data rather than relying entirely on hand-written rules.
 

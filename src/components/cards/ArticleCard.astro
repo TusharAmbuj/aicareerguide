@@ -11,9 +11,11 @@ const { id, data } = post;
 const displayReadingTime = getReadingTime(post.body, data.readingTime);
 ---
 
+<article class="article-card-wrap h-full">
 <a
   href={`/blog/${id}/`}
   class="article-card-premium group block h-full overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] transition-all"
+  aria-label={`Read article: ${data.title}`}
 >
   {
     data.image && (
@@ -74,3 +76,4 @@ const displayReadingTime = getReadingTime(post.body, data.readingTime);
     </div>
   </div>
 </a>
+</article>

@@ -63,9 +63,7 @@ const cats = ["All", ...Array.from(new Set(tools.map((x) => x.data.category)))];
     </div><section class="mt-8">
       <div class="flex justify-between items-end">
         <div>
-          <p class="section-kicker">Directory</p><h2 class="section-title">
-            Explore tools
-          </h2>
+          <p class="section-kicker">Library</p><h2 class="section-title">Tools</h2>
         </div><span class="text-sm text-[var(--color-text-muted)]"
           >{tools.length} tools</span
         >
@@ -96,14 +94,7 @@ const cats = ["All", ...Array.from(new Set(tools.map((x) => x.data.category)))];
                 <p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
                   {t.data.description}
                 </p>
-                <div class="mt-5 flex flex-wrap gap-2">
-                  {t.data.tags.slice(0, 3).map((x) => (
-                    <span class="tag">{x}</span>
-                  ))}
-                </div>
-                <div class="mt-6 border-t border-[var(--color-border)] pt-4 text-sm font-bold text-[var(--color-accent)]">
-                  View tool details →
-                </div>
+                <div class="mt-5 text-sm font-semibold text-[var(--color-accent)]">View tool →</div>
               </>
             </a>
           ))

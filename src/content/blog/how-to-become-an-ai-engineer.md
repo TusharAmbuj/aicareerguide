@@ -36,7 +36,6 @@ keyTakeaways:
 image: "../../assets/blog/how-to-become-an-ai-engineer.webp"
 ---
 
-# How to Become an AI Engineer: A Practical Step-by-Step Guide
 
 Becoming an AI engineer can look confusing from the outside. New models, frameworks, vector databases, agents, cloud services, and AI tools appear constantly. It is easy to assume that you need to learn all of them before you can start.
 
@@ -127,7 +126,7 @@ That is why software engineering matters so much in AI.
 
 ---
 
-# Step 1 — Learn Programming
+## Step 1 — Learn Programming
 
 Python should become your primary language for most AI engineering work.
 
@@ -157,7 +156,7 @@ C++ is also valuable for DSA, performance, and systems fundamentals.
 
 ---
 
-# Step 2 — Build Problem-Solving Skills
+## Step 2 — Build Problem-Solving Skills
 
 Learn data structures and algorithms:
 
@@ -190,7 +189,7 @@ Use the [DSA Mastery roadmap](/careers/dsa-mastery/) and [Interviews roadmap](/c
 
 ---
 
-# Step 3 — Learn Git and Linux
+## Step 3 — Learn Git and Linux
 
 Learn Git well enough for normal development:
 
@@ -228,7 +227,7 @@ These are everyday engineering skills, not optional extras.
 
 ---
 
-# Step 4 — Learn SQL and Databases
+## Step 4 — Learn SQL and Databases
 
 AI applications still need ordinary software infrastructure.
 
@@ -262,7 +261,7 @@ PostgreSQL is an excellent database to learn deeply.
 
 ---
 
-# Step 5 — Learn Software Engineering
+## Step 5 — Learn Software Engineering
 
 This is where many aspiring AI engineers are weak.
 
@@ -303,13 +302,13 @@ The [Software Engineer roadmap](/careers/software-engineer/) is useful for build
 
 ---
 
-# Step 6 — Learn Mathematics and Statistics
+## Step 6 — Learn Mathematics and Statistics
 
 You do not need research-level mathematics before starting AI engineering.
 
 Focus on:
 
-### Linear Algebra
+#### Linear Algebra
 
 - vectors
 - matrices
@@ -318,7 +317,7 @@ Focus on:
 - norms
 - transformations
 
-### Probability
+#### Probability
 
 - distributions
 - conditional probability
@@ -326,7 +325,7 @@ Focus on:
 - variance
 - Bayes' theorem
 
-### Statistics
+#### Statistics
 
 - sampling
 - distributions
@@ -335,7 +334,7 @@ Focus on:
 - confidence intervals
 - experiment design
 
-### Calculus
+#### Calculus
 
 - derivatives
 - gradients
@@ -346,7 +345,7 @@ The goal is understanding, not memorizing formulas.
 
 ---
 
-# Step 7 — Learn Classical Machine Learning
+## Step 7 — Learn Classical Machine Learning
 
 Before jumping directly into LLMs, learn traditional ML.
 
@@ -379,19 +378,19 @@ Start with the [Machine Learning guide](/blog/machine-learning-guide/).
 
 ---
 
-# Step 8 — Build ML Projects
+## Step 8 — Build ML Projects
 
 Do not stay in course mode.
 
 Start with projects such as:
 
-### Beginner
+#### Beginner
 
 - house price prediction
 - spam classification
 - student performance prediction
 
-### Intermediate
+#### Intermediate
 
 - customer churn prediction
 - recommendation system
@@ -420,7 +419,7 @@ The [House Price Prediction project](/projects/house-price-prediction/) is an ex
 
 ---
 
-# Step 9 — Learn Deep Learning
+## Step 9 — Learn Deep Learning
 
 Once classical ML is comfortable, move to neural networks.
 
@@ -451,7 +450,7 @@ Continue with the [Deep Learning guide](/blog/deep-learning-guide/).
 
 ---
 
-# Step 10 — Learn Transformers and LLMs
+## Step 10 — Learn Transformers and LLMs
 
 Modern AI engineering increasingly involves foundation models.
 
@@ -483,7 +482,7 @@ See the [LLMs guide](/blog/llms-guide/).
 
 ---
 
-# Step 11 — Learn Embeddings and Semantic Search
+## Step 11 — Learn Embeddings and Semantic Search
 
 Embeddings are central to many AI applications.
 
@@ -520,7 +519,7 @@ These concepts lead directly into RAG.
 
 ---
 
-# Step 12 — Learn RAG
+## Step 12 — Learn RAG
 
 Retrieval-augmented generation combines retrieval with generation.
 
@@ -567,7 +566,7 @@ Your [AI Research Assistant project](/projects/ai-research-assistant/) is a good
 
 ---
 
-# Step 13 — Learn AI Agents and Tool Use
+## Step 13 — Learn AI Agents and Tool Use
 
 Some applications need an AI model to interact with tools.
 
@@ -615,7 +614,7 @@ The model should never be your security boundary.
 
 ---
 
-# Step 14 — Learn AI Evaluation
+## Step 14 — Learn AI Evaluation
 
 A working demo does not prove an AI system works reliably.
 
@@ -654,7 +653,7 @@ This is one of the clearest differences between a prototype and an engineered AI
 
 ---
 
-# Step 15 — Learn AI Application Engineering
+## Step 15 — Learn AI Application Engineering
 
 Now connect your AI skills with normal software.
 
@@ -687,7 +686,7 @@ Your AI application should be structured like reliable software.
 
 ---
 
-# Step 16 — Learn Docker and Deployment
+## Step 16 — Learn Docker and Deployment
 
 Move beyond localhost.
 
@@ -718,7 +717,7 @@ Do not introduce Kubernetes until you have a real reason to need it.
 
 ---
 
-# Step 17 — Learn MLOps and LLMOps
+## Step 17 — Learn MLOps and LLMOps
 
 As systems grow, reproducibility becomes important.
 
@@ -747,7 +746,7 @@ You should be able to identify what changed between a good version and a bad ver
 
 ---
 
-# Step 18 — Learn Observability
+## Step 18 — Learn Observability
 
 A production AI system needs useful visibility.
 
@@ -777,7 +776,7 @@ Avoid logging unnecessary sensitive user information.
 
 ---
 
-# Step 19 — Learn Security
+## Step 19 — Learn Security
 
 AI systems can introduce new attack surfaces.
 
@@ -811,7 +810,7 @@ Security must be enforced by application code, not by hoping the model follows i
 
 ---
 
-# Step 20 — Learn System Design
+## Step 20 — Learn System Design
 
 Once you can build individual applications, learn to reason about systems.
 
@@ -856,7 +855,7 @@ Ask:
 
 ---
 
-# Step 21 — Build a Serious Portfolio
+## Step 21 — Build a Serious Portfolio
 
 Show progression instead of collecting shallow demos.
 
@@ -902,7 +901,7 @@ The [AI Projects guide](/blog/ai-projects-guide/) and [Projects hub](/projects/)
 
 ---
 
-# Step 22 — Build Your GitHub Portfolio
+## Step 22 — Build Your GitHub Portfolio
 
 For serious projects, include:
 
@@ -921,7 +920,7 @@ A smaller portfolio of strong projects is better than dozens of tutorial copies.
 
 ---
 
-# Step 23 — Prepare for Internships
+## Step 23 — Prepare for Internships
 
 You do not need to know everything before applying.
 
@@ -940,11 +939,11 @@ Use the [Internships roadmap](/careers/internships/) for the application process
 
 ---
 
-# Step 24 — Prepare for Interviews
+## Step 24 — Prepare for Interviews
 
 AI engineering interviews can combine:
 
-### Coding
+#### Coding
 
 - arrays
 - strings
@@ -952,7 +951,7 @@ AI engineering interviews can combine:
 - graphs
 - dynamic programming
 
-### Machine Learning
+#### Machine Learning
 
 - overfitting
 - regularization
@@ -961,14 +960,14 @@ AI engineering interviews can combine:
 - leakage
 - cross-validation
 
-### Deep Learning
+#### Deep Learning
 
 - backpropagation
 - optimization
 - CNNs
 - transformers
 
-### LLMs
+#### LLMs
 
 - attention
 - embeddings
@@ -976,7 +975,7 @@ AI engineering interviews can combine:
 - evaluation
 - tool use
 
-### System Design
+#### System Design
 
 - APIs
 - databases
@@ -985,7 +984,7 @@ AI engineering interviews can combine:
 - model serving
 - reliability
 
-### Projects
+#### Projects
 
 Be ready to explain:
 
@@ -999,7 +998,7 @@ Use the [Interviews roadmap](/careers/interviews/).
 
 ---
 
-# Step 25 — Know When You're Job-Ready
+## Step 25 — Know When You're Job-Ready
 
 You do not need to know everything.
 
@@ -1022,47 +1021,47 @@ If you can do these things independently, you have real evidence of AI engineeri
 
 ---
 
-# Common Mistakes
+## Common Mistakes
 
-## Trying to Learn Every New Tool
+### Trying to Learn Every New Tool
 
 The ecosystem changes too quickly.
 
 Learn concepts first.
 
-## Skipping Software Engineering
+### Skipping Software Engineering
 
 A model in a notebook is not a production application.
 
-## Jumping Straight to Agents
+### Jumping Straight to Agents
 
 Learn model APIs, tool use, retrieval, and evaluation before building highly autonomous systems.
 
-## Building Only Chatbots
+### Building Only Chatbots
 
 A basic chatbot does not demonstrate much engineering depth.
 
 Add real data, retrieval, evaluation, authentication, APIs, or other constraints.
 
-## Ignoring Evaluation
+### Ignoring Evaluation
 
 A demo can look impressive while producing unreliable results.
 
 Measure it.
 
-## Copying Tutorials
+### Copying Tutorials
 
 Use tutorials to learn.
 
 Then rebuild the project yourself and change the requirements.
 
-## Waiting Until You Feel Ready
+### Waiting Until You Feel Ready
 
 You become ready partly by building and applying.
 
 ---
 
-# How Long Does It Take?
+## How Long Does It Take?
 
 There is no universal timeline.
 
@@ -1072,15 +1071,15 @@ Someone who already knows software engineering can move much faster into ML and 
 
 Measure progress by capability rather than months.
 
-### Early stage
+#### Early stage
 
 You can write programs and train basic models.
 
-### Developing stage
+#### Developing stage
 
 You can build and deploy AI applications.
 
-### Job-ready stage
+#### Job-ready stage
 
 You can independently design, build, evaluate, deploy, and explain an AI system.
 
@@ -1088,7 +1087,7 @@ That is a much more useful definition of readiness.
 
 ---
 
-# A Practical Learning Direction
+## A Practical Learning Direction
 
 A realistic sequence is:
 
@@ -1123,7 +1122,7 @@ Deploy projects while studying system design.
 
 ---
 
-# The Learning Loop That Actually Works
+## The Learning Loop That Actually Works
 
 Do not organize your progress around finishing courses.
 
@@ -1153,49 +1152,49 @@ It forces you to understand what is actually happening rather than just reproduc
 
 ---
 
-# Final Checklist
+## Final Checklist
 
 Before calling yourself job-ready, ask:
 
-### Programming
+#### Programming
 
 - Can I build Python applications independently?
 - Can I debug my own code?
 
-### Software Engineering
+#### Software Engineering
 
 - Can I build an API?
 - Can I work with a database?
 - Can I write tests?
 - Can I use Git confidently?
 
-### Machine Learning
+#### Machine Learning
 
 - Can I build and evaluate an ML model?
 - Can I recognize overfitting and data leakage?
 
-### Deep Learning
+#### Deep Learning
 
 - Can I explain backpropagation?
 - Can I train and debug a PyTorch model?
 
-### LLMs
+#### LLMs
 
 - Do I understand attention and transformers?
 - Can I build an LLM application?
 
-### RAG
+#### RAG
 
 - Can I implement retrieval?
 - Can I evaluate retrieval quality?
 
-### Production
+#### Production
 
 - Can I deploy an AI application?
 - Can I monitor it?
 - Can I explain its failure modes?
 
-### Career
+#### Career
 
 - Can I explain my projects deeply?
 - Can I solve common interview problems?
@@ -1205,7 +1204,7 @@ If most answers are yes, you are moving toward real AI engineering capability.
 
 ---
 
-# Final Thoughts
+## Final Thoughts
 
 There is no shortcut to becoming an AI engineer.
 
@@ -1241,7 +1240,7 @@ That is what makes the skill valuable.
 
 ---
 
-## Your Next Step
+### Your Next Step
 
 Use the [AI Engineer Roadmap](/careers/ai-engineer/) as your structured path.
 

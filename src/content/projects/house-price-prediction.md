@@ -1,6 +1,6 @@
 ---
 title: "House Price Prediction"
-description: "Build an end-to-end regression system that predicts house prices from property features while learning data cleaning, feature engineering, model training, evaluation, and deployment."
+description: "Build an end-to-end house price regression project covering data cleaning, feature engineering, model evaluation, and deployment."
 category: "ML"
 difficulty: "Beginner"
 timeToBuild: "1–2 weeks"

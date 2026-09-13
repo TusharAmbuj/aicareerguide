@@ -34,7 +34,6 @@ sources:
     url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"
 ---
 
-# AI Engineering: What It Is, What AI Engineers Do, and How to Become One in 2026
 
 **AI engineering** is the discipline of turning artificial intelligence capabilities into reliable software systems that solve real problems.
 

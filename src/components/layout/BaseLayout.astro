@@ -3,6 +3,12 @@ import Header from "@/components/common/Header.astro";
 import Footer from "@/components/common/Footer.astro";
 import SEO from "@/components/seo/SEO.astro";
 import "@/styles/global.css";
+import "@/styles/page-v6.css";
+import "@/styles/page-v7.css";
+import "@/styles/page-v8.css";
+import "@/styles/page-v9.css";
+import "@/styles/page-v10.css";
+import "@/styles/page-v11.css";
 export interface Props {
   title?: string;
   description?: string;
@@ -370,17 +376,37 @@ const section = Astro.url.pathname.split("/").filter(Boolean)[0] || "home";
                 progressBar.setAttribute("aria-valuenow", String(pct));
               if (progressPercent) progressPercent.textContent = `${pct}%`;
               if (progressRingValue) progressRingValue.textContent = `${pct}%`;
-              if (progressRing)
+              if (progressRing) {
                 progressRing.style.background = `conic-gradient(var(--color-accent) ${pct * 3.6}deg, var(--color-border) ${pct * 3.6}deg)`;
+                progressRing.setAttribute("aria-valuenow", String(pct));
+              }
               if (progressCount)
                 progressCount.textContent = `${completedCount} / ${nodes.length}`;
               if (progressMessage)
                 progressMessage.textContent =
                   pct === 100
-                    ? "Roadmap complete. Keep building and revisiting weak spots."
+                    ? "Complete. Revisit weak spots or build a stronger project."
                     : pct
-                      ? "Good progress. Continue with the next incomplete checkpoint."
-                      : "Start with Phase 01. Your progress is saved on this device.";
+                      ? "Keep going. The next incomplete checkpoint is ready."
+                      : "Start with Phase 01.";
+
+              phases.forEach((phase) => {
+                const phaseNodes = Array.from(phase.querySelectorAll(".roadmap-node"));
+                const phaseDone = phaseNodes.filter((node) => completed.has(node.dataset.nodeId || "")).length;
+                const phasePct = Math.round((phaseDone / Math.max(phaseNodes.length, 1)) * 100);
+                const fill = phase.querySelector(".roadmap-phase-progress-fill");
+                const label = phase.querySelector(".roadmap-phase-progress-label");
+                if (fill) fill.style.width = `${phasePct}%`;
+                if (label) label.textContent = `${phasePct}%`;
+              });
+
+              const next = nodes.find((node) => !completed.has(node.dataset.nodeId || ""));
+              const continueButton = root.querySelector("#continue-btn");
+              if (continueButton) {
+                continueButton.textContent = next
+                  ? `Continue with ${next.dataset.nodeTitle || "next checkpoint"} →`
+                  : `Roadmap complete ✓`;
+              }
             };
 
             const updateResultCount = () => {
@@ -391,7 +417,8 @@ const section = Astro.url.pathname.split("/").filter(Boolean)[0] || "home";
 
             const close = () => {
               if (!modal) return;
-              modal.classList.add("hidden");
+              modal.classList.remove("hidden");
+              modal.setAttribute("hidden", "");
               document.body.classList.remove("roadmap-modal-open");
               activeNode = null;
               if (lastFocused && typeof lastFocused.focus === "function") {
@@ -473,9 +500,34 @@ const section = Astro.url.pathname.split("/").filter(Boolean)[0] || "home";
                   ? "Mark incomplete"
                   : "Mark complete";
               modal.classList.remove("hidden");
+              modal.removeAttribute("hidden");
               document.body.classList.add("roadmap-modal-open");
               requestAnimationFrame(() => q("#roadmap-modal-close")?.focus());
             };
+
+            const trapModalFocus = (event) => {
+              if (!modal || modal.classList.contains("hidden") || event.key !== "Tab") return;
+              const focusables = Array.from(
+                modal.querySelectorAll(
+                  'a[href], button:not([disabled]), select:not([disabled]), textarea:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+                ),
+              ).filter((el) => el instanceof HTMLElement && !el.hidden);
+              if (!focusables.length) {
+                event.preventDefault();
+                return;
+              }
+              const first = focusables[0];
+              const last = focusables[focusables.length - 1];
+              if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+              } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+              }
+            };
+
+            document.addEventListener("keydown", trapModalFocus);
 
             const applyView = (view) => {
               root.querySelectorAll(".roadmap-view-btn").forEach((button) => {
@@ -534,6 +586,7 @@ const section = Astro.url.pathname.split("/").filter(Boolean)[0] || "home";
               .querySelector("#reset-progress")
               ?.addEventListener("click", () => {
                 if (!completed.size) return;
+                if (!window.confirm("Reset all roadmap progress saved on this device?")) return;
                 completed.clear();
                 save();
                 updateProgress();
@@ -723,7 +776,16 @@ const section = Astro.url.pathname.split("/").filter(Boolean)[0] || "home";
           trackPageView();
         };
 
-        startAnalytics();
+        const scheduleAnalytics = () => {
+          const run = () => startAnalytics();
+          if ("requestIdleCallback" in window) {
+            window.requestIdleCallback(run, { timeout: 2000 });
+          } else {
+            window.setTimeout(run, 1200);
+          }
+        };
+
+        scheduleAnalytics();
         document.addEventListener("astro:page-load", trackPageView);
       })();
     </script>

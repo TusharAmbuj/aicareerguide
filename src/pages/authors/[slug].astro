@@ -23,7 +23,7 @@ const profile = getAuthorProfile(author.name);
 ---
 
 <BaseLayout
-  title={`${profile.name} | AI Career Guide`}
+  title={`${profile.name} Author Profile`}
   description={profile.bio}
   canonical={profile.url}
 >
@@ -94,10 +94,15 @@ const profile = getAuthorProfile(author.name);
     type="application/ld+json"
     set:html={JSON.stringify({
       "@context": "https://schema.org",
-      "@type": profile.type,
-      name: profile.name,
-      url: new URL(profile.url, Astro.site ?? "https://aicareerguide.xyz").href,
-      description: profile.bio,
+      "@type": "ProfilePage",
+      mainEntity: {
+        "@type": profile.type,
+        "@id": new URL(profile.url, Astro.site ?? "https://aicareerguide.xyz").href + "#profile",
+        name: profile.name,
+        url: new URL(profile.url, Astro.site ?? "https://aicareerguide.xyz").href,
+        description: profile.bio,
+        sameAs: profile.links.map((x) => x.href),
+      },
     })}
   />
 </BaseLayout>

@@ -1,5 +1,5 @@
 ---
-title: "Artificial Intelligence: What It Is, How It Works, and What to Learn"
+title: "Artificial Intelligence Explained: How AI Works"
 description: "Understand AI, machine learning, deep learning, and generative AI, then follow a practical path to build a strong AI foundation."
 pubDate: 2026-08-16
 author: "AI Career Guide"
@@ -30,7 +30,6 @@ sources:
     url: "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.800-4.pdf"
 ---
 
-# Artificial Intelligence: What It Is, How It Works, and What to Learn in 2026
 
 **Artificial Intelligence (AI)** is no longer a subject limited to research laboratories and university courses. It is already part of search engines, recommendation systems, software development tools, medical systems, financial services, robotics, and everyday consumer products.
 

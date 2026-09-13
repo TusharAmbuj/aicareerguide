@@ -23,11 +23,11 @@ const types = [
 <BaseLayout
   title="AI, Machine Learning & Career Blog"
   description="People-first technical guides on AI, machine learning, LLMs, software engineering, projects, and AI careers."
-  ><div class="blog-page-shell content-container pb-10 sm:pb-14">
+  ><div class="blog-page-shell blog-v11-page content-container pb-10 sm:pb-14">
     <CollectionHero
       eyebrow="AI Career Guide · Journal"
-      title="Technical writing for builders."
-      description="Practical explanations, career guides, project thinking, and implementation notes designed to help you understand the idea and use it."
+      title="Practical AI & engineering guides."
+      description="Clear technical guides, career roadmaps, and project-focused explanations for people learning to build with AI."
       stats={[
         {
           value: String(posts.length),
@@ -53,14 +53,9 @@ const types = [
       featured && (
         <section class="mt-10">
           <>
-            <div class="home-section-head">
-              <div>
-                <>
-                  <p class="section-kicker">Featured</p>
-                  <h2 class="section-title">Start with this guide.</h2>
-                </>
-              </div>
-            </div>
+            <div class="v9-section-head">
+        <div><p class="section-kicker">Featured</p><h2>Start here</h2></div>
+      </div>
             <a href={`/blog/${featured.id}/`} class="blog-feature-card mt-6">
               <>
                 <div>
@@ -80,13 +75,7 @@ const types = [
                     </div>
                     <h2>{featured.data.title}</h2>
                     <p>{featured.data.description}</p>
-                    <div class="mt-5 flex flex-wrap gap-2">
-                      {featured.data.keyTakeaways.slice(0, 3).map((k) => (
-                        <span class="tag">
-                          {k.length > 66 ? k.slice(0, 66) + "…" : k}
-                        </span>
-                      ))}
-                    </div>
+
                     <span class="card-link mt-6 inline-flex">Read guide →</span>
                   </>
                 </div>
@@ -94,9 +83,8 @@ const types = [
                   {featured.data.image && (
                     <Image
                       src={featured.data.image}
-                      alt={featured.data.imageAlt || featured.data.title}
+                      alt={featured.data.imageAlt || `Featured image for ${featured.data.title}`}
                       width={1200}
-                      height={630}
                       widths={[640, 960, 1200]}
                       sizes="(min-width:1024px) 55vw,100vw"
                       quality={82}
@@ -119,6 +107,21 @@ const types = [
       data-filter-sync-url
     >
       <div class="blog-filter-bar">
+        <div class="blog-search-primary">
+          <label class="blog-search-field">
+            <span class="sr-only">Search articles</span>
+            <span class="blog-search-icon" aria-hidden="true">⌕</span>
+            <input
+              id="blog-search"
+              data-filter-search
+              type="search"
+              placeholder="Search guides, AI topics, careers, projects…"
+              autocomplete="off"
+            />
+            <kbd>⌘K</kbd>
+          </label>
+          <button type="button" data-filter-clear class="blog-filter-clear">Clear</button>
+        </div>
         <div class="blog-filter-row">
           <div
             class="filter-scroll"
@@ -180,10 +183,12 @@ const types = [
         </div><span
           id="blog-count"
           data-filter-count
-          class="text-sm text-[var(--color-text-muted)]"
+          class="blog-result-count"
+          aria-live="polite"
           >{rest.length} articles</span
         >
-      </div><p class="hidden mt-5" data-filter-empty>
+      </div><p class="blog-filter-hint" id="blog-filter-help">Search first, then narrow by topic or format.</p>
+      <p class="hidden mt-5" data-filter-empty>
         No articles match these filters. Try a different topic or search term.
       </p><div id="blog-grid" class="article-grid mt-6" data-filter-items>
         {

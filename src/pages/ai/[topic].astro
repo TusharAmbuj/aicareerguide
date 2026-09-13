@@ -94,11 +94,12 @@ const breadcrumbItems = [
       {topic.title}
     </h1>
 
-    <p class="mt-3 max-w-2xl text-lg text-[var(--color-text-secondary)]">
+    <p class="ai-topic-intro mt-3 text-lg text-[var(--color-text-secondary)]">
       {topic.description}
     </p>
+    <div class="v9-meta-line"><span>{filteredPosts.length} guide{filteredPosts.length === 1 ? "" : "s"}</span><span>Updated library</span><a class="v9-link" href="/blog/">All blog posts →</a></div>
 
-    <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {
         filteredPosts.length ? (
           filteredPosts.map((post) => <ArticleCard post={post} />)

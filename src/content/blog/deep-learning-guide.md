@@ -30,7 +30,6 @@ sources:
     url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"
 ---
 
-# Deep Learning: What It Is, How Neural Networks Work, and How to Learn It in 2026
 
 **Deep learning** is a branch of machine learning built around neural networks with multiple layers. It has become one of the central technologies behind modern computer vision, speech recognition, language models, recommendation systems, and many generative AI applications.
 

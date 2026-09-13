@@ -34,7 +34,6 @@ sources:
     url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"
 ---
 
-# AI Projects: 30+ Ideas From Beginner to Advanced and How to Build Them
 
 Learning AI from courses, books, and tutorials gives you knowledge.
 
@@ -192,7 +191,7 @@ Add:
 
 This progression is far more useful than judging projects only by whether they use a "fancy" model.
 
-# Beginner AI Projects
+## Beginner AI Projects
 
 Beginner projects should teach you the fundamentals of data, models, evaluation, and problem solving.
 
@@ -200,7 +199,7 @@ Do not underestimate simple projects.
 
 A small, well-understood project is much better than a large project you cannot explain.
 
-## 1. House Price Prediction
+### 1. House Price Prediction
 
 **Difficulty:** Beginner
 
@@ -212,7 +211,7 @@ Build a regression model that predicts house prices from features such as:
 - age
 - amenities
 
-### Skills
+#### Skills
 
 - pandas
 - NumPy
@@ -222,7 +221,7 @@ Build a regression model that predicts house prices from features such as:
 - MAE / RMSE
 - feature engineering
 
-### What to learn
+#### What to learn
 
 The real goal is not predicting house prices.
 
@@ -244,7 +243,7 @@ Model
 Evaluation
 ```
 
-### How to improve it
+#### How to improve it
 
 After the baseline model:
 
@@ -254,20 +253,20 @@ After the baseline model:
 - use cross-validation
 - build a small prediction API
 
-## 2. Student Performance Predictor
+### 2. Student Performance Predictor
 
 **Difficulty:** Beginner
 
 Predict an academic outcome from factors such as study time, attendance, previous scores, and other available features.
 
-### Skills
+#### Skills
 
 - regression
 - data visualization
 - feature analysis
 - model evaluation
 
-### Better version
+#### Better version
 
 Don't stop at prediction.
 
@@ -280,13 +279,13 @@ Add a simple dashboard showing:
 
 That turns a notebook into an application.
 
-## 3. Spam Email Classifier
+### 3. Spam Email Classifier
 
 **Difficulty:** Beginner
 
 Build a classifier that predicts whether a message is spam.
 
-### Skills
+#### Skills
 
 - text preprocessing
 - TF-IDF
@@ -295,29 +294,29 @@ Build a classifier that predicts whether a message is spam.
 - recall
 - confusion matrix
 
-### Why it's useful
+#### Why it's useful
 
 You get your first practical introduction to NLP without immediately needing a deep learning model.
 
-## 4. Sentiment Analysis
+### 4. Sentiment Analysis
 
 **Difficulty:** Beginner
 
 Classify reviews or comments as positive, negative, or another predefined sentiment category.
 
-### Start with
+#### Start with
 
 - TF-IDF
 - logistic regression
 - Naive Bayes
 
-### Then improve it
+#### Then improve it
 
 Compare the classical ML baseline with a pretrained transformer.
 
 This gives you a clean project showing the progression from classical NLP to modern deep learning.
 
-## 5. Image Classifier
+### 5. Image Classifier
 
 **Difficulty:** Beginner → Intermediate
 
@@ -335,7 +334,7 @@ Start with a simple model.
 
 Then move to transfer learning.
 
-### What it teaches
+#### What it teaches
 
 - image preprocessing
 - train/validation split
@@ -346,19 +345,19 @@ Then move to transfer learning.
 
 PyTorch's official beginner tutorials provide a practical path for building and training neural networks, which makes it a suitable framework for this kind of project. ([PyTorch — Learn the Basics](https://docs.pytorch.org/tutorials/beginner/basics/intro.html))
 
-# Intermediate AI Projects
+## Intermediate AI Projects
 
 Once you understand basic ML workflows, stop building projects that look like classroom exercises.
 
 Start solving more realistic problems.
 
-## 6. Customer Churn Prediction
+### 6. Customer Churn Prediction
 
 **Difficulty:** Intermediate
 
 Predict whether a customer is likely to leave a service.
 
-### Add real engineering
+#### Add real engineering
 
 Build:
 
@@ -374,7 +373,7 @@ FastAPI
 Web Interface
 ```
 
-### Measure
+#### Measure
 
 Don't report only accuracy.
 
@@ -388,7 +387,7 @@ Include:
 
 Then discuss the business trade-offs.
 
-## 7. Recommendation System
+### 7. Recommendation System
 
 **Difficulty:** Intermediate
 
@@ -404,13 +403,13 @@ Start with content-based recommendations.
 
 Then experiment with collaborative filtering.
 
-### Strong portfolio improvement
+#### Strong portfolio improvement
 
 Create a public demo where someone can choose an item and receive recommendations.
 
 Now the project demonstrates both ML and product engineering.
 
-## 8. Fraud Detection System
+### 8. Fraud Detection System
 
 **Difficulty:** Intermediate
 
@@ -428,7 +427,7 @@ You need to think about:
 
 This makes the project much more realistic than a balanced classroom dataset.
 
-## 9. Document Search Engine
+### 9. Document Search Engine
 
 **Difficulty:** Intermediate
 
@@ -454,7 +453,7 @@ Hybrid Search
 
 This is an excellent bridge into RAG.
 
-## 10. Resume Analyzer
+### 10. Resume Analyzer
 
 **Difficulty:** Intermediate
 
@@ -473,7 +472,7 @@ Relevant Experience:
 ...
 ```
 
-### Important
+#### Important
 
 Don't make unverified claims such as:
 
@@ -483,7 +482,7 @@ Instead, frame it as an analysis tool.
 
 Evaluate it using a labeled test set and clearly document limitations.
 
-## 11. OCR Document Pipeline
+### 11. OCR Document Pipeline
 
 **Difficulty:** Intermediate
 
@@ -512,11 +511,11 @@ Possible applications:
 
 This project introduces AI engineering beyond model training.
 
-# Advanced AI Projects
+## Advanced AI Projects
 
 Now you should start building systems that combine multiple components.
 
-## 12. RAG Document Assistant
+### 12. RAG Document Assistant
 
 **Difficulty:** Advanced
 
@@ -542,7 +541,7 @@ LLM
 Cited Answer
 ```
 
-### Make it genuinely good
+#### Make it genuinely good
 
 Add:
 
@@ -558,7 +557,7 @@ Don't just connect a PDF to a chatbot.
 
 The engineering work is what makes the project valuable.
 
-## 13. AI Research Assistant
+### 13. AI Research Assistant
 
 **Difficulty:** Advanced
 
@@ -589,7 +588,7 @@ Structured Answer + Sources
 
 This is a strong project because it forces you to solve retrieval and evaluation problems.
 
-## 14. Coding Assistant
+### 14. Coding Assistant
 
 **Difficulty:** Advanced
 
@@ -604,13 +603,13 @@ Useful capabilities:
 - generate patches
 - summarize changes
 
-### Don't stop at chat
+#### Don't stop at chat
 
 Connect it to a real repository and make the system understand project structure.
 
 Add permission boundaries before allowing write operations.
 
-## 15. Multimodal Document Assistant
+### 15. Multimodal Document Assistant
 
 **Difficulty:** Advanced
 
@@ -640,7 +639,7 @@ Answer
 
 This is a useful project for understanding where text-only RAG systems break down.
 
-## 16. AI Agent With Tools
+### 16. AI Agent With Tools
 
 **Difficulty:** Advanced
 
@@ -673,11 +672,11 @@ Add:
 
 A well-engineered small agent is more valuable than a giant "autonomous agent" demo that cannot be evaluated.
 
-# Production AI Projects
+## Production AI Projects
 
 Production projects demonstrate whether you can move beyond experimentation.
 
-## 17. Production RAG Platform
+### 17. Production RAG Platform
 
 Build a complete RAG platform with:
 
@@ -716,7 +715,7 @@ Add:
 
 This can become a serious portfolio project.
 
-## 18. Real-Time AI Monitoring System
+### 18. Real-Time AI Monitoring System
 
 Build a service that monitors an AI application's behavior.
 
@@ -736,7 +735,7 @@ This is less flashy than a chatbot.
 
 It is more useful for demonstrating engineering maturity.
 
-## 19. ML Model Serving Platform
+### 19. ML Model Serving Platform
 
 Build a small service that:
 
@@ -757,7 +756,7 @@ Use:
 
 This project connects machine learning with backend engineering.
 
-## 20. AI Evaluation Platform
+### 20. AI Evaluation Platform
 
 Build a tool that compares multiple AI systems against the same evaluation dataset.
 
@@ -785,7 +784,7 @@ Measure:
 
 This is a strong project because evaluation is becoming a core engineering problem in AI systems.
 
-# How to Choose Your Next AI Project
+## How to Choose Your Next AI Project
 
 Don't choose a project because someone called it "advanced."
 
@@ -805,37 +804,37 @@ Evidence of Improvement
 
 For example:
 
-### You know Python but not ML
+#### You know Python but not ML
 
 Build:
 
 **House Price Prediction**
 
-### You know classical ML
+#### You know classical ML
 
 Build:
 
 **Recommendation System**
 
-### You know deep learning
+#### You know deep learning
 
 Build:
 
 **Image Classification System**
 
-### You understand transformers
+#### You understand transformers
 
 Build:
 
 **Semantic Search / RAG**
 
-### You understand LLMs
+#### You understand LLMs
 
 Build:
 
 **Tool-Using AI Assistant**
 
-### You know AI and backend engineering
+#### You know AI and backend engineering
 
 Build:
 
@@ -843,7 +842,7 @@ Build:
 
 The project should force you to learn something you currently don't know.
 
-## How Many AI Projects Do You Need?
+### How Many AI Projects Do You Need?
 
 You do not need 50 projects.
 
@@ -863,7 +862,7 @@ Quality matters much more than quantity.
 
 A single well-designed production-style project can demonstrate more ability than ten copied tutorials.
 
-## What Employers Should See in Your Projects
+### What Employers Should See in Your Projects
 
 A good AI portfolio should show progression.
 
@@ -891,7 +890,7 @@ That tells a much better story than:
 
 The portfolio should make your development obvious.
 
-## How to Structure an AI Project on GitHub
+### How to Structure an AI Project on GitHub
 
 GitHub's documentation describes repositories as places where project files, history, collaboration, and related project information can be managed. ([GitHub — About repositories](https://docs.github.com/en/repositories/creating-and-managing-repositories/about-repositories))
 
@@ -920,7 +919,7 @@ You don't need every directory for every project.
 
 Use only what the project requires.
 
-## Write a Strong README
+### Write a Strong README
 
 Your README is part of your project.
 
@@ -960,7 +959,7 @@ A good structure is:
 
 A reviewer should understand the project within a few minutes.
 
-## Show the Architecture
+### Show the Architecture
 
 AI projects become much easier to understand when the architecture is visible.
 
@@ -981,7 +980,7 @@ Vector DB     └──→ Answer
 
 A simple diagram can communicate more than several paragraphs.
 
-## Measure Your Projects
+### Measure Your Projects
 
 A project becomes much stronger when you can prove that something improved.
 
@@ -1007,7 +1006,7 @@ measure:
 
 A measurable project is easier to trust.
 
-## Compare Against a Baseline
+### Compare Against a Baseline
 
 Always establish a baseline.
 
@@ -1039,7 +1038,7 @@ You aren't just saying that the final system works.
 
 You're showing how and why it improved.
 
-## Document Failure Cases
+### Document Failure Cases
 
 This is one of the easiest ways to make a portfolio project look more mature.
 
@@ -1063,7 +1062,7 @@ Changed chunking strategy and added reranking.
 
 That demonstrates actual engineering thinking.
 
-## Turn a Project Into a Product
+### Turn a Project Into a Product
 
 Once the prototype works, ask:
 
@@ -1084,7 +1083,7 @@ to:
 
 That is a much stronger portfolio story.
 
-# An AI Project Roadmap
+## An AI Project Roadmap
 
 A practical progression for building your portfolio is:
 
@@ -1127,7 +1126,7 @@ Production-Grade AI
 
 Each stage should build on the previous one.
 
-## What Not to Build
+### What Not to Build
 
 Some project ideas are so common that they add little value unless you add substantial depth.
 
@@ -1158,7 +1157,7 @@ Multi-user Document Intelligence System
 
 Now the project has engineering depth.
 
-## A Better Strategy Than Building Random Projects
+### A Better Strategy Than Building Random Projects
 
 Your projects should form a connected portfolio.
 
@@ -1196,21 +1195,21 @@ By the end, you're not just collecting repositories.
 
 You're building a technical narrative.
 
-## Frequently Asked Questions
+### Frequently Asked Questions
 
-### What is the best AI project for beginners?
+#### What is the best AI project for beginners?
 
 Start with a small problem that teaches the fundamentals.
 
 House-price prediction, spam classification, or a simple image classifier are good choices because the complete workflow is easy to inspect.
 
-### Which AI project is best for a resume?
+#### Which AI project is best for a resume?
 
 There is no single best project.
 
 A strong project should demonstrate relevant technical skills, real problem solving, measurable results, and good engineering practices.
 
-### Should AI projects use the latest LLM?
+#### Should AI projects use the latest LLM?
 
 No.
 
@@ -1218,7 +1217,7 @@ Use the simplest technology that solves the problem well.
 
 A project can be technically strong without using the newest model.
 
-### How do I make an AI project stand out?
+#### How do I make an AI project stand out?
 
 Add technical depth.
 
@@ -1233,13 +1232,13 @@ Good ways include:
 - security
 - meaningful UX
 
-### Do I need to deploy every AI project?
+#### Do I need to deploy every AI project?
 
 Not every experiment needs deployment.
 
 But at least some portfolio projects should be deployed because deployment demonstrates skills that notebooks cannot.
 
-### Are notebooks enough for an AI portfolio?
+#### Are notebooks enough for an AI portfolio?
 
 No.
 
@@ -1247,13 +1246,13 @@ Notebooks are useful for exploration and experiments.
 
 For serious portfolio projects, add application code, tests, documentation, and deployment where appropriate.
 
-### Should I build projects alone or follow tutorials?
+#### Should I build projects alone or follow tutorials?
 
 Use both.
 
 Tutorials can help you learn unfamiliar techniques, but after understanding the basic pattern, rebuild the project independently and modify the problem.
 
-## Final Thoughts
+### Final Thoughts
 
 AI projects are where your learning becomes evidence.
 
@@ -1292,7 +1291,7 @@ Over time, your portfolio becomes a record of increasing capability.
 
 That is much more valuable than a collection of tutorial clones.
 
-## Where to Go Next
+### Where to Go Next
 
 You have now reached the first section of the **BUILD** pillar.
 
@@ -1310,7 +1309,7 @@ And again.
 
 That's how AI skills become engineering ability.
 
-### Sources
+#### Sources
 
 - [PyTorch — Learn the Basics](https://docs.pytorch.org/tutorials/beginner/basics/intro.html)
 - [scikit-learn — Getting Started](https://scikit-learn.org/stable/getting_started.html)

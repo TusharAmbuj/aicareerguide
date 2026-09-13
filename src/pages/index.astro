@@ -50,10 +50,10 @@ const topicLinks = [
 ---
 
 <BaseLayout
-  title="AI Career Guide — Learn AI. Build Real Systems. Prove Your Skills."
+  title="AI Career Guide | Learn AI, Build Projects & Advance Your Career"
   description="A practical AI learning platform for students and builders: learn AI and ML, follow structured roadmaps, build real projects, and prepare for your technical career."
 >
-  <div class="home-page home-premium">
+  <div class="home-page home-premium home-v10">
     <section class="home-hero">
       <div class="home-hero-noise" aria-hidden="true"></div>
       <div class="content-container home-hero-grid">
@@ -80,29 +80,35 @@ const topicLinks = [
             <div><strong>{posts.length}+</strong><span>Guides</span></div>
             <div><strong>{roadmaps.length}+</strong><span>Roadmaps</span></div>
             <div><strong>{projects.length}+</strong><span>Projects</span></div>
-            <div><strong>100%</strong><span>Open learning</span></div>
           </div>
         </div>
-        <div class="home-hero-visual" aria-label="Explore AI topics">
-          <div class="hero-visual-glow"></div>
-          <div class="hero-visual-grid"></div>
-          <div class="hero-core-frame">
-            <div class="hero-core-cube"><span>AI</span></div>
+        <div class="home-hero-visual home-hero-network" aria-label="Explore AI topics">
+          <div class="hero-network-glow" aria-hidden="true"></div>
+          <div class="hero-network-grid" aria-hidden="true"></div>
+          <svg class="hero-network-lines" viewBox="0 0 520 520" aria-hidden="true" focusable="false">
+            <circle cx="260" cy="260" r="176" class="hero-network-ring hero-network-ring-a" />
+            <circle cx="260" cy="260" r="112" class="hero-network-ring hero-network-ring-b" />
+            <line x1="260" y1="260" x2="110" y2="130" class="hero-network-line" />
+            <line x1="260" y1="260" x2="408" y2="140" class="hero-network-line" />
+            <line x1="260" y1="260" x2="410" y2="385" class="hero-network-line" />
+            <line x1="260" y1="260" x2="108" y2="380" class="hero-network-line" />
+          </svg>
+          <div class="hero-network-core" aria-hidden="true">
+            <span class="hero-network-core-label">AI</span>
+            <span class="hero-network-core-dot"></span>
           </div>
-          <a class="hero-topic hero-topic-link t-a" href="/ai/machine-learning/"
-            >Machine Learning</a
-          >
-          <a class="hero-topic hero-topic-link t-b" href="/ai/deep-learning/"
-            >Deep Learning</a
-          >
-          <a class="hero-topic hero-topic-link t-c" href="/ai/llms/">LLMs</a>
-          <a class="hero-topic hero-topic-link t-d" href="/ai/ai-engineering/"
-            >AI Engineering</a
-          >
-          <a class="hero-topic hero-topic-link t-e" href="/ai/">Data Science</a>
-          <a class="hero-topic hero-topic-link t-f" href="/ai/ai-engineering/"
-            >MLOps</a
-          >
+          <a class="hero-network-node node-a" href="/ai/machine-learning/">
+            <span class="hero-network-node-kicker">01</span><strong>Machine Learning</strong><small>Models · evaluation</small>
+          </a>
+          <a class="hero-network-node node-b" href="/ai/deep-learning/">
+            <span class="hero-network-node-kicker">02</span><strong>Deep Learning</strong><small>Neural nets · PyTorch</small>
+          </a>
+          <a class="hero-network-node node-c" href="/ai/llms/">
+            <span class="hero-network-node-kicker">03</span><strong>LLMs & RAG</strong><small>Retrieval · agents</small>
+          </a>
+          <a class="hero-network-node node-d" href="/ai/ai-engineering/">
+            <span class="hero-network-node-kicker">04</span><strong>AI Engineering</strong><small>APIs · deployment</small>
+          </a>
         </div>
       </div>
     </section>
@@ -201,9 +207,7 @@ const topicLinks = [
                     <>
                       <p class="section-kicker">Featured content</p>
                       <h2 class="section-title">One guide worth your time.</h2>
-                      <p class="section-copy">
-                        A handpicked starting point for your learning journey.
-                      </p>
+
                     </>
                   </div>
                   <a class="section-link" href="/blog/">

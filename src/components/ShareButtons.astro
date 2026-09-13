@@ -4,7 +4,7 @@ const { url, title } = Astro.props as { url: string; title: string };
 const e = encodeURIComponent;
 ---
 
-<div class="article-share" data-share-root aria-label="Share this article">
+<div class="article-share" data-share-root role="group" aria-label="Share this article">
   <span class="article-share-label">Share</span>
   <div class="article-share-actions">
     <button
@@ -17,30 +17,30 @@ const e = encodeURIComponent;
       <Share2 class="h-4 w-4" aria-hidden="true" /><span>Share</span>
     </button>
     <a
-      class="article-share-button"
+      class="article-share-button article-share-x"
       href={`https://x.com/intent/post?url=${e(url)}&text=${e(title)}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Share on X"
-      title="Share on X">X</a
+      title="Share on X"><span aria-hidden="true" class="share-brand-x">𝕏</span><span class="share-text">X</span></a
     >
     <a
-      class="article-share-button"
+      class="article-share-button article-share-linkedin"
       href={`https://www.linkedin.com/sharing/share-offsite/?url=${e(url)}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Share on LinkedIn"
       title="Share on LinkedIn"
-      ><span aria-hidden="true" class="article-share-network-icon">in</span
-      ><span class="sr-only">LinkedIn</span></a
+      ><span aria-hidden="true" class="share-brand-in">in</span
+      ><span class="share-text">LinkedIn</span></a
     >
     <a
-      class="article-share-button"
+      class="article-share-button article-share-whatsapp"
       href={`https://api.whatsapp.com/send?text=${e(`${title} ${url}`)}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Share on WhatsApp"
-      title="Share on WhatsApp">WA</a
+      title="Share on WhatsApp"><span aria-hidden="true" class="share-brand-wa">◔</span><span class="share-text">WhatsApp</span></a
     >
     <button
       type="button"
@@ -49,9 +49,10 @@ const e = encodeURIComponent;
       aria-label="Copy article link"
       title="Copy link"
     >
-      <Link2 class="h-4 w-4" aria-hidden="true" /><span>Copy</span>
+      <Link2 class="h-4 w-4" aria-hidden="true" /><span class="share-copy-label">Copy link</span>
     </button>
   </div>
+<span class="article-share-status" data-share-status aria-live="polite"></span>
 </div>
 
 <script is:inline>
@@ -64,6 +65,7 @@ const e = encodeURIComponent;
         const copyBtn = root.querySelector("[data-share-copy]");
         const title = document.title;
         const url = window.location.href;
+        const status = root.querySelector("[data-share-status]");
         if (nativeBtn && !navigator.share) nativeBtn.remove();
         nativeBtn?.addEventListener("click", async () => {
           try {
@@ -86,14 +88,18 @@ const e = encodeURIComponent;
               ta.remove();
             }
             if (label) label.textContent = "Copied";
+            if (status) status.textContent = "Link copied";
             setTimeout(() => {
-              if (label) label.textContent = "Copy";
-            }, 1600);
+              if (label) label.textContent = "Copy link";
+              if (status) status.textContent = "";
+            }, 1800);
           } catch {
-            if (label) label.textContent = "Copy failed";
+            if (label) label.textContent = "Try again";
+            if (status) status.textContent = "Could not copy the link";
             setTimeout(() => {
-              if (label) label.textContent = "Copy";
-            }, 1600);
+              if (label) label.textContent = "Copy link";
+              if (status) status.textContent = "";
+            }, 1800);
           }
         });
       });

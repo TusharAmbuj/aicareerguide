@@ -50,15 +50,9 @@ const types = ["All", ...Array.from(new Set(r.map((x) => x.data.type)))];
     >
       <div class="resources-explore-head">
         <div class="resources-explore-intro">
-          <p class="section-kicker">Explore</p>
-          <h2 id="resources-explore-title" class="section-title">
-            Find the right resource for the next step.
-          </h2>
-          <p>
-            Filter by format or search by title, topic, or tag. Every card leads
-            to a page with context, strengths, limitations, and where it fits in
-            your learning path.
-          </p>
+          <p class="section-kicker">Library</p>
+          <h2 id="resources-explore-title" class="section-title">Resources</h2>
+          <p>Search by title, topic, or format.</p>
         </div>
         <span class="resources-result-count" data-filter-count
           >{r.length} resources</span
@@ -127,14 +121,7 @@ const types = ["All", ...Array.from(new Set(r.map((x) => x.data.type)))];
                 <p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
                   {x.data.description}
                 </p>
-                <div class="mt-5 flex flex-wrap gap-2">
-                  {x.data.tags.slice(0, 3).map((s) => (
-                    <span class="tag">{s}</span>
-                  ))}
-                </div>
-                <div class="mt-6 border-t border-[var(--color-border)] pt-4 text-sm font-bold text-[var(--color-accent)]">
-                  View resource details →
-                </div>
+                <div class="mt-5 text-sm font-semibold text-[var(--color-accent)]">View resource →</div>
               </>
             </a>
           ))

@@ -34,7 +34,6 @@ keyTakeaways:
 image: "../../assets/blog/what-is-an-ai-engineer.webp"
 ---
 
-# What Is an AI Engineer?
 
 Artificial intelligence has moved beyond research labs and isolated machine learning experiments. Companies are building AI features into search, customer support, software development, analytics, healthcare, finance, education, and countless other products.
 
@@ -185,7 +184,7 @@ In fact, software engineering becomes more important as AI systems become more c
 
 ---
 
-# What Skills Does an AI Engineer Need?
+## What Skills Does an AI Engineer Need?
 
 You do not need to master everything at the same level.
 
@@ -204,7 +203,7 @@ The deeper the foundation, the more confidently you can work with the layers abo
 
 ---
 
-## 1. Programming
+### 1. Programming
 
 Python is one of the most important languages for AI engineering because of its ecosystem around machine learning, data processing, APIs, and AI tooling.
 
@@ -230,7 +229,7 @@ For a broader foundation, see the [Software Engineer career roadmap](/careers/so
 
 ---
 
-## 2. Data Structures and Algorithms
+### 2. Data Structures and Algorithms
 
 AI engineers still need problem-solving ability.
 
@@ -258,7 +257,7 @@ This becomes particularly useful when AI applications need efficient retrieval, 
 
 ---
 
-## 3. Software Engineering
+### 3. Software Engineering
 
 This is one of the most underestimated parts of AI engineering.
 
@@ -304,7 +303,7 @@ The AI model is only one component.
 
 ---
 
-## 4. Mathematics and Statistics
+### 4. Mathematics and Statistics
 
 You don't need to become a mathematician before building AI applications.
 
@@ -312,7 +311,7 @@ But understanding the fundamentals will make advanced topics much easier.
 
 Focus on:
 
-### Linear Algebra
+#### Linear Algebra
 
 - vectors
 - matrices
@@ -321,7 +320,7 @@ Focus on:
 - norms
 - transformations
 
-### Probability
+#### Probability
 
 - probability distributions
 - conditional probability
@@ -329,7 +328,7 @@ Focus on:
 - variance
 - Bayes' theorem
 
-### Statistics
+#### Statistics
 
 - sampling
 - distributions
@@ -338,7 +337,7 @@ Focus on:
 - confidence intervals
 - experiment design
 
-### Calculus
+#### Calculus
 
 - derivatives
 - gradients
@@ -349,7 +348,7 @@ The purpose is understanding how models and optimization work, not memorizing fo
 
 ---
 
-# Machine Learning Fundamentals
+## Machine Learning Fundamentals
 
 Before jumping directly into LLM applications, understand the foundations of machine learning.
 
@@ -385,7 +384,7 @@ Start with the [Machine Learning guide](/blog/machine-learning-guide/) and the [
 
 ---
 
-# Deep Learning
+## Deep Learning
 
 Many modern AI systems depend on deep learning.
 
@@ -417,7 +416,7 @@ The [Deep Learning guide](/blog/deep-learning-guide/) is the next step after cla
 
 ---
 
-# Large Language Models
+## Large Language Models
 
 LLMs have expanded the practical scope of AI engineering.
 
@@ -450,7 +449,7 @@ See the [LLMs guide](/blog/llms-guide/) for the language-model fundamentals.
 
 ---
 
-# Retrieval-Augmented Generation
+## Retrieval-Augmented Generation
 
 One of the most useful AI engineering patterns is retrieval-augmented generation, or RAG.
 
@@ -505,7 +504,7 @@ This is where AI engineering becomes real engineering.
 
 ---
 
-# AI Evaluation
+## AI Evaluation
 
 One of the biggest differences between a demo and a serious AI system is evaluation.
 
@@ -551,7 +550,7 @@ Critical AI systems should have explicit failure handling rather than assuming t
 
 ---
 
-# AI Agents and Tool Use
+## AI Agents and Tool Use
 
 Some AI applications need to do more than generate text.
 
@@ -592,7 +591,7 @@ Start with deterministic workflows before building highly autonomous agents.
 
 ---
 
-# Deployment and Production Engineering
+## Deployment and Production Engineering
 
 An AI engineer must eventually answer:
 
@@ -647,39 +646,39 @@ Good engineering means using the simplest architecture that meets the requiremen
 
 ---
 
-# What Does an AI Engineer Build?
+## What Does an AI Engineer Build?
 
 The role becomes easier to understand when you look at the systems themselves.
 
-### AI Assistants
+#### AI Assistants
 
 Applications that use models to answer questions, summarize information, or help users complete tasks.
 
-### RAG Systems
+#### RAG Systems
 
 Applications that retrieve relevant external information before generating an answer.
 
-### AI Search
+#### AI Search
 
 Systems that use embeddings, semantic retrieval, ranking, or language models to improve search.
 
-### Document Intelligence
+#### Document Intelligence
 
 Systems that extract, classify, summarize, or reason over documents.
 
-### Recommendation Systems
+#### Recommendation Systems
 
 Applications that use data and machine learning to personalize content or products.
 
-### AI Automation
+#### AI Automation
 
 Workflows where models interpret information and trigger approved actions.
 
-### Model APIs
+#### Model APIs
 
 Services that expose trained models or AI workflows through application interfaces.
 
-### AI SaaS Products
+#### AI SaaS Products
 
 Complete software products where AI is a central part of the user experience.
 
@@ -687,7 +686,7 @@ You can see examples of the type of systems to build in the [AI Projects](/proje
 
 ---
 
-# AI Engineer vs ML Engineer vs Software Engineer
+## AI Engineer vs ML Engineer vs Software Engineer
 
 These roles overlap enough that job titles can be misleading.
 
@@ -722,7 +721,7 @@ For many people, AI engineering is attractive because it combines software engin
 
 ---
 
-# How to Become an AI Engineer
+## How to Become an AI Engineer
 
 There is no single required path.
 
@@ -788,7 +787,7 @@ The second path gives you a much stronger understanding when combined with the f
 
 ---
 
-# How Long Does It Take?
+## How Long Does It Take?
 
 There is no honest universal timeline.
 
@@ -802,15 +801,15 @@ Instead of measuring progress by months, measure capability.
 
 For example:
 
-### Early stage
+#### Early stage
 
 You can use Python and train basic models.
 
-### Developing
+#### Developing
 
 You can build and deploy an ML or AI application.
 
-### Strong
+#### Strong
 
 You can design, evaluate, deploy, monitor, and improve an AI system independently.
 
@@ -818,11 +817,11 @@ That progression matters more than an arbitrary deadline.
 
 ---
 
-# What Should You Learn First?
+## What Should You Learn First?
 
 If you're starting from a programming background, a sensible order is:
 
-### First
+#### First
 
 Learn:
 
@@ -833,7 +832,7 @@ Learn:
 - Linux
 - SQL
 
-### Then
+#### Then
 
 Learn:
 
@@ -842,7 +841,7 @@ Learn:
 - statistics
 - machine learning
 
-### Then
+#### Then
 
 Learn:
 
@@ -851,7 +850,7 @@ Learn:
 - transformers
 - LLMs
 
-### Then
+#### Then
 
 Build:
 
@@ -861,7 +860,7 @@ Build:
 - AI APIs
 - production AI applications
 
-### Finally
+#### Finally
 
 Deepen:
 
@@ -875,7 +874,7 @@ The [AI Engineer Roadmap](/careers/ai-engineer/) provides a more detailed progre
 
 ---
 
-# What Should You Avoid?
+## What Should You Avoid?
 
 AI engineering changes quickly, which creates a temptation to constantly switch technologies.
 
@@ -894,7 +893,7 @@ You need to understand the underlying systems well enough to learn new tools qui
 
 ---
 
-# What Makes a Strong AI Engineer?
+## What Makes a Strong AI Engineer?
 
 A strong AI engineer can answer questions such as:
 
@@ -926,7 +925,7 @@ Knowing how to call an LLM API is only one small part of the job.
 
 ---
 
-# Building Your AI Engineer Portfolio
+## Building Your AI Engineer Portfolio
 
 A useful portfolio should show progression.
 
@@ -944,7 +943,7 @@ Start with:
 
 For example:
 
-### Project 1 — House Price Prediction
+#### Project 1 — House Price Prediction
 
 Learn:
 
@@ -953,7 +952,7 @@ Learn:
 - evaluation
 - model comparison
 
-### Project 2 — Image Classifier
+#### Project 2 — Image Classifier
 
 Learn:
 
@@ -961,7 +960,7 @@ Learn:
 - neural networks
 - model training
 
-### Project 3 — RAG Document Assistant
+#### Project 3 — RAG Document Assistant
 
 Learn:
 
@@ -970,7 +969,7 @@ Learn:
 - LLM integration
 - citations
 
-### Project 4 — AI Research Assistant
+#### Project 4 — AI Research Assistant
 
 Learn:
 
@@ -986,7 +985,7 @@ Your [AI Projects](/projects/) section is designed for this progression.
 
 ---
 
-# How AI Engineers Get Job-Ready
+## How AI Engineers Get Job-Ready
 
 A good baseline is:
 
@@ -1036,7 +1035,7 @@ For internship preparation, see the [Internships roadmap](/careers/internships/)
 
 ---
 
-# Is a Degree Required?
+## Is a Degree Required?
 
 There is no single universal requirement across AI engineering roles.
 
@@ -1066,7 +1065,7 @@ Use your degree to strengthen fundamentals while using projects to prove that yo
 
 ---
 
-# The Most Important Skill: Engineering Judgment
+## The Most Important Skill: Engineering Judgment
 
 Frameworks will change.
 
@@ -1096,7 +1095,7 @@ It is about using AI when it provides real value and engineering the surrounding
 
 ---
 
-# A Practical AI Engineer Learning Path
+## A Practical AI Engineer Learning Path
 
 If you're starting today, use this sequence:
 
@@ -1146,7 +1145,7 @@ That loop is more important than completing a particular course list.
 
 ---
 
-# Final Answer: What Is an AI Engineer?
+## Final Answer: What Is an AI Engineer?
 
 An AI engineer is a software engineer who specializes in **building useful systems powered by artificial intelligence**.
 

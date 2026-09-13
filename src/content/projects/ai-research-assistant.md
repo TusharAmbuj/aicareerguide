@@ -1,6 +1,6 @@
 ---
 title: "AI Research Assistant"
-description: "Build an LLM-powered research assistant that searches documents, retrieves relevant evidence, summarizes findings, compares sources, and returns grounded answers with citations."
+description: "Build an LLM research assistant with document search, evidence retrieval, grounded summaries, source comparison, and citations."
 category: "LLM"
 difficulty: "Advanced"
 timeToBuild: "2–4 weeks"

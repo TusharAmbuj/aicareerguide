@@ -12727,3 +12727,5 @@ html:not(.dark) .brand-name {
 html:not(.dark) .brand-subtitle {
   color: var(--color-text-muted) !important;
 }
+
+@import "./page-upgrade.css";

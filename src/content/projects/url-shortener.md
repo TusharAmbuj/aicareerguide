@@ -1,6 +1,6 @@
 ---
-title: "Production-Ready URL Shortener"
-description: "Build a production-style URL shortener API that creates short links, redirects users, tracks analytics, and introduces databases, caching, authentication, testing, and deployment."
+title: "Production-Ready URL Shortener with FastAPI"
+description: "Build a production-style URL shortener with redirects, analytics, databases, caching, authentication, testing, and deployment."
 category: "Software"
 difficulty: "Intermediate"
 timeToBuild: "1–2 weeks"

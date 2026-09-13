@@ -17,15 +17,14 @@ export async function getStaticPaths() {
 
 const { roadmap } = Astro.props;
 const visual = getRoadmapVisual(roadmap.id);
-if (!visual)
-  throw new Error(`Missing visual roadmap definition for ${roadmap.id}`);
+if (!visual) throw new Error(`Missing visual roadmap definition for ${roadmap.id}`);
 const { Content } = await render(roadmap);
 const breadcrumbs = [
   { label: "Home", url: "/" },
   { label: "Roadmaps", url: "/careers" },
-  { label: roadmap.data.title, url: `/careers/${roadmap.id}` },
+  { label: roadmap.data.title.replace(" Roadmap", ""), url: `/careers/${roadmap.id}` },
 ];
-const allNodes = visual?.phases.flatMap((phase) => phase.nodes) ?? [];
+const allNodes = visual.phases.flatMap((phase) => phase.nodes);
 ---
 
 <BaseLayout
@@ -34,475 +33,193 @@ const allNodes = visual?.phases.flatMap((phase) => phase.nodes) ?? [];
   image={roadmap.data.image}
   breadcrumbs={breadcrumbs}
 >
-  <div
-    class="roadmap-detail-page roadmap-detail-shell max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10"
+  <main
+    class="roadmap-v8-page roadmap-detail-shell"
     data-roadmap-slug={roadmap.id}
   >
-    <Breadcrumbs items={breadcrumbs} />
+    <div class="roadmap-v8-wrap">
+      <Breadcrumbs items={breadcrumbs} />
 
-    <section class="roadmap-v2-hero" aria-labelledby="roadmap-title">
-      <div class="roadmap-v2-hero-glow" aria-hidden="true"></div>
-      <div class="roadmap-v2-hero-main">
-        <div class="roadmap-v2-kicker-row">
-          <span class="roadmap-v2-eyebrow"
-            >AI CAREER GUIDE · INTERACTIVE ROADMAP</span
-          >
-          <span class="roadmap-v2-status"
-            ><span aria-hidden="true">●</span> Saved on this device</span
-          >
-        </div>
-        <div class="roadmap-v2-title-wrap">
-          <div class="roadmap-v2-index">
-            {roadmap.data.category?.slice(0, 1) || "R"}
+      <header class="roadmap-v8-header" aria-labelledby="roadmap-title">
+        <div class="roadmap-v8-header-copy">
+          <div class="roadmap-v8-meta">
+            <span>{roadmap.data.category}</span>
+            <span>{roadmap.data.difficulty}</span>
+            <span>{roadmap.data.estimatedTime}</span>
           </div>
-          <div>
-            <div class="roadmap-v2-pills">
-              <span class="pill">{roadmap.data.category}</span>
-              <span class="pill">{roadmap.data.difficulty}</span>
-              <span class="pill">{roadmap.data.estimatedTime}</span>
+          <h1 id="roadmap-title">{roadmap.data.title.replace(" Roadmap", "")}</h1>
+          <p>{visual.tagline}</p>
+          <div class="roadmap-v8-actions">
+            <button id="continue-btn" class="button-primary" type="button">
+              Continue <span aria-hidden="true">→</span>
+            </button>
+            <a href="/projects/" class="button-secondary">Projects <span aria-hidden="true">↗</span></a>
+            <button id="reset-progress" class="roadmap-v8-reset" type="button">Reset</button>
+          </div>
+        </div>
+
+        <section class="roadmap-v8-progress" aria-label="Your roadmap progress">
+          <div class="roadmap-v8-progress-head">
+            <div>
+              <span>Progress</span>
+              <strong id="progress-percent">0%</strong>
             </div>
-            <h1 id="roadmap-title" class="roadmap-v2-title">
-              {roadmap.data.title.replace(" Roadmap", "")}
-            </h1>
-            <p class="roadmap-v2-tagline">
-              {visual?.tagline ?? roadmap.data.description}
-            </p>
+            <div
+              class="roadmap-v2-ring roadmap-v8-ring"
+              role="progressbar"
+              aria-label="Roadmap completion"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+            >
+              <span id="progress-ring-value">0%</span>
+            </div>
           </div>
-        </div>
-        <div class="roadmap-v2-outcome">
-          <span class="roadmap-v2-outcome-label">Target outcome</span>
-          <p>{visual?.outcome ?? roadmap.data.description}</p>
-        </div>
-        <div class="roadmap-v2-hero-actions">
-          <button id="continue-btn" type="button" class="button-primary"
-            >Continue roadmap <span aria-hidden="true">→</span></button
-          >
-          <a href="/projects/" class="button-secondary"
-            >Build with projects <span aria-hidden="true">↗</span></a
-          >
-          <button
-            id="reset-progress"
-            type="button"
-            class="roadmap-v2-quiet-action">Reset progress</button
-          >
-        </div>
-      </div>
-      <div class="roadmap-v2-progress-card">
-        <div class="roadmap-v2-progress-top">
-          <div>
-            <p class="roadmap-v2-progress-label">Your journey</p>
-            <p class="roadmap-v2-progress-percent" id="progress-percent">0%</p>
+          <div class="roadmap-v8-progress-track">
+            <div id="progress-bar" class="roadmap-v8-progress-fill" style="width:0%"></div>
           </div>
-          <div class="roadmap-v2-ring" aria-hidden="true">
-            <span id="progress-ring-value">0%</span>
+          <div class="roadmap-v8-progress-meta">
+            <span id="progress-count">0 / {allNodes.length}</span>
+            <span>{visual.phases.length} phases</span>
           </div>
-        </div>
-        <div class="roadmap-v2-progress-track" aria-hidden="true">
-          <div
-            id="progress-bar"
-            class="roadmap-v2-progress-fill"
-            style="width:0%"
-          >
-          </div>
-        </div>
-        <div class="roadmap-v2-progress-meta">
-          <span id="progress-count">0 / {allNodes.length}</span>
-          <span>{visual?.phases.length ?? 0} phases</span>
-          <span>{allNodes.length} checkpoints</span>
-        </div>
-        <p id="progress-message" class="roadmap-v2-progress-message">
-          Start with Phase 01. Your progress is saved on this device.
-        </p>
-      </div>
-    </section>
+          <p id="progress-message">Start with Phase 01.</p>
+        </section>
+      </header>
 
-    <section class="roadmap-v2-journey-strip" aria-label="Roadmap journey">
-      {
-        visual?.phases.map((phase, index) => (
-          <a
-            href={`#${phase.id}`}
-            class="roadmap-v2-journey-step"
-            data-journey-phase={phase.id}
-          >
-            <span class="roadmap-v2-journey-number">{phase.number}</span>
-            <span class="roadmap-v2-journey-copy">
-              <>
-                <strong>{phase.title}</strong>
-                <small>{phase.nodes.length} checkpoints</small>
-              </>
-            </span>
-            {index < (visual?.phases.length ?? 0) - 1 && (
-              <span class="roadmap-v2-journey-line" aria-hidden="true" />
-            )}
+      <nav class="roadmap-v8-phase-nav" id="phase-nav" aria-label="Roadmap phases">
+        {visual.phases.map((phase) => (
+          <a href={`#${phase.id}`} class="roadmap-v8-phase-link phase-nav-item">
+            <span>{phase.number}</span>
+            <strong>{phase.title}</strong>
           </a>
-        ))
-      }
-    </section>
-    <div
-      class="roadmap-mobile-controls lg:hidden mt-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] p-3"
-    >
-      <div class="flex items-center justify-between gap-3">
+        ))}
+      </nav>
+
+      <section class="roadmap-v8-toolbar" aria-label="Roadmap controls">
         <div>
-          <p
-            class="text-[0.68rem] font-black uppercase tracking-[0.16em] text-[var(--color-text-muted)]"
-          >
-            Roadmap navigation
-          </p>
-          <p
-            id="roadmap-current-label"
-            class="mt-1 text-sm font-bold text-[var(--color-text-primary)]"
-          >
-            Foundations
-          </p>
+          <span class="roadmap-v8-toolbar-label">Learn in order</span>
+          <strong id="roadmap-mode-label">All topics</strong>
         </div>
-        <select
-          id="mobile-phase-jump"
-          class="min-w-0 max-w-[58%] rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)]"
-        >
-          <option value="">Jump to phase…</option>
-          {
-            visual?.phases.map((phase) => (
-              <option value={phase.id}>
-                {phase.number} · {phase.title}
-              </option>
-            ))
-          }
-        </select>
-      </div>
-    </div>
-
-    <div class="roadmap-v2-workspace">
-      <aside class="roadmap-v2-sidebar">
-        <div class="roadmap-v2-sidebar-card roadmap-v2-sidebar-sticky">
-          <div class="roadmap-v2-sidebar-heading">
-            <div>
-              <span class="roadmap-v2-sidebar-kicker">Navigate</span><strong
-                >Your roadmap</strong>
-            </div>
-            <span class="roadmap-v2-sidebar-count"
-              >{visual?.phases.length ?? 0}</span
-            >
+        <div class="roadmap-v8-toolbar-controls">
+          <div class="roadmap-v8-segmented" role="group" aria-label="Filter checkpoints">
+            <button type="button" class="roadmap-view-btn active-filter" data-view="all" aria-pressed="true">All</button>
+            <button type="button" class="roadmap-view-btn" data-view="core" aria-pressed="false">Core</button>
+            <button type="button" class="roadmap-view-btn" data-view="project" aria-pressed="false">Build</button>
+            <button type="button" class="roadmap-view-btn" data-view="career" aria-pressed="false">Career</button>
           </div>
-          <nav
-            id="phase-nav"
-            class="roadmap-v2-phase-nav"
-            aria-label="Roadmap phases"
-          >
-            {
-              visual?.phases.map((phase) => (
-                <a
-                  href={`#${phase.id}`}
-                  class="phase-nav-item roadmap-v2-phase-link"
+          <label class="roadmap-v8-jump" for="phase-jump">
+            <span>Jump to</span>
+            <select id="phase-jump">
+              <option value="">Phase…</option>
+              {visual.phases.map((phase) => (
+                <option value={phase.id}>{phase.number} · {phase.title}</option>
+              ))}
+            </select>
+          </label>
+          <button type="button" id="focus-toggle" class="roadmap-v8-focus" aria-pressed="false">Focus</button>
+        </div>
+      </section>
+
+      <section class="roadmap-v8-map" aria-label={`${roadmap.data.title} interactive roadmap`}>
+        <div class="roadmap-v8-spine" aria-hidden="true"></div>
+        {visual.phases.map((phase, phaseIndex) => (
+          <article id={phase.id} class="roadmap-phase roadmap-v8-phase" data-phase-index={phaseIndex}>
+            <header class="roadmap-v8-phase-head">
+              <div class="roadmap-v8-phase-marker" aria-hidden="true">{phase.number}</div>
+              <div class="roadmap-v8-phase-title">
+                <span>Phase {phase.number}</span>
+                <h2>{phase.title}</h2>
+                <p>{phase.subtitle}</p>
+              </div>
+              <div class="roadmap-v8-phase-goal">
+                <span>Goal</span>
+                <p>{phase.goal}</p>
+                <div class="roadmap-phase-progress" aria-label={`${phase.title} progress`}>
+                  <div class="roadmap-phase-progress-track"><span class="roadmap-phase-progress-fill"></span></div>
+                  <span class="roadmap-phase-progress-label">0%</span>
+                </div>
+              </div>
+            </header>
+
+            <div class="roadmap-v8-node-grid roadmap-node-grid">
+              {phase.nodes.map((node, nodeIndex) => (
+                <button
+                  type="button"
+                  class:list={[
+                    "roadmap-node",
+                    "roadmap-v8-node",
+                    node.type === "project" && "is-project",
+                    node.type === "career" && "is-career",
+                    node.type === "optional" && "is-optional",
+                  ]}
+                  aria-pressed="false"
+                  aria-label={`Open roadmap checkpoint: ${node.title}`}
+                  data-node-id={node.id}
+                  data-node-type={node.type ?? "core"}
+                  data-node-title={node.title}
+                  data-node-description={node.description}
+                  data-node-tags={JSON.stringify(node.tags ?? [])}
+                  data-node-links={JSON.stringify(node.links ?? [])}
+                  data-node-prereqs={JSON.stringify(node.prerequisites ?? [])}
                 >
-                  <span class="roadmap-v2-phase-dot">{phase.number}</span>
-                  <span class="roadmap-v2-phase-link-copy">
-                    <>
-                      <strong>{phase.title}</strong>
-                      <small>{phase.subtitle}</small>
-                    </>
+                  <span class="roadmap-v8-node-top">
+                    <span class="roadmap-v8-node-number">{String(nodeIndex + 1).padStart(2, "0")}</span>
+                    <span class="roadmap-v8-node-type">
+                      {node.type === "project" ? "Build" : node.type === "career" ? "Career" : node.type === "optional" ? "Optional" : "Core"}
+                    </span>
                   </span>
-                  <span class="roadmap-v2-phase-arrow" aria-hidden="true">
-                    →
+                  <span class="roadmap-v8-node-title">{node.title}</span>
+                  {node.short && <span class="roadmap-v8-node-short">{node.short}</span>}
+                  <span class="roadmap-v8-node-footer">
+                    <span>Open checkpoint</span>
+                    <span class="roadmap-v8-node-arrow" aria-hidden="true">↗</span>
                   </span>
-                </a>
-              ))
-            }
-          </nav>
-          <a href="#guide" class="roadmap-v2-guide-link"
-            >Read the reasoning behind this roadmap <span>↓</span></a
-          >
+                  <span class="roadmap-v8-complete" aria-hidden="true">✓</span>
+                </button>
+              ))}
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section class="roadmap-v8-how" id="guide">
+        <div>
+          <span>How to use it</span>
+          <h2>Learn → build → prove.</h2>
         </div>
-      </aside>
-
-      <div class="roadmap-detail-main">
-        <div
-          class="roadmap-v2-toolbar"
-          role="toolbar"
-          aria-label="Roadmap controls"
-        >
-          <div class="roadmap-v2-toolbar-top">
-            <div>
-              <span class="roadmap-v2-toolbar-kicker">Explore the journey</span>
-              <strong id="roadmap-mode-label">All topics</strong>
-            </div>
-            <span id="roadmap-result-count" class="roadmap-v2-result-count"
-              >{allNodes.length} of {allNodes.length} checkpoints</span
-            >
-          </div>
-          <div class="roadmap-v2-toolbar-controls">
-            <div class="roadmap-v2-segmented" aria-label="View roadmap topics">
-              <button
-                type="button"
-                class="roadmap-view-btn active-filter"
-                data-view="all"
-                aria-pressed="true">All</button
-              >
-              <button
-                type="button"
-                class="roadmap-view-btn"
-                data-view="core"
-                aria-pressed="false">Core</button
-              >
-              <button
-                type="button"
-                class="roadmap-view-btn"
-                data-view="project"
-                aria-pressed="false">Build</button
-              >
-              <button
-                type="button"
-                class="roadmap-view-btn"
-                data-view="career"
-                aria-pressed="false">Career</button
-              >
-            </div>
-            <div class="roadmap-v2-toolbar-actions">
-              <label class="roadmap-v2-select-wrap" for="phase-jump"
-                ><span>Jump to</span><select id="phase-jump"
-                  ><option value="">Phase…</option>{
-                    visual?.phases.map((phase) => (
-                      <option value={phase.id}>
-                        {phase.number} · {phase.title}
-                      </option>
-                    ))
-                  }</select
-                ></label
-              >
-              <button
-                type="button"
-                id="focus-toggle"
-                class="roadmap-v2-focus-btn"
-                aria-pressed="false"
-                ><span aria-hidden="true">◉</span> Focus</button
-              >
-            </div>
-          </div>
+        <div class="roadmap-v8-how-grid">
+          <div><strong>01</strong><p>Follow the phases in order. Open a checkpoint when you're ready to dive deeper.</p></div>
+          <div><strong>02</strong><p>Use the build checkpoints to turn concepts into working projects.</p></div>
+          <div><strong>03</strong><p>Mark progress locally and use the final phase to turn learning into evidence.</p></div>
         </div>
+      </section>
 
-        <section
-          class="roadmap-map mt-6"
-          aria-label={`${roadmap.data.title} visual roadmap`}
-        >
-          {
-            visual?.phases.map((phase, index) => (
-              <article
-                id={phase.id}
-                class="roadmap-phase roadmap-v2-phase"
-                data-phase-index={index}
-              >
-                <div class="roadmap-phase-marker roadmap-v2-phase-marker">
-                  <span>{phase.number}</span>
-                </div>
-                <div class="roadmap-phase-header roadmap-v2-phase-header">
-                  <>
-                    <div>
-                      <>
-                        <p class="text-xs font-bold uppercase tracking-wider text-[var(--color-accent)]">
-                          Phase {phase.number}
-                        </p>
-                        <h2 class="mt-1 text-2xl sm:text-3xl font-black">
-                          {phase.title}
-                        </h2>
-                        <p class="mt-1 text-sm text-[var(--color-text-muted)]">
-                          {phase.subtitle}
-                        </p>
-                      </>
-                    </div>
-                    <div class="hidden sm:block max-w-sm text-right">
-                      <>
-                        <p class="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
-                          Goal
-                        </p>
-                        <p class="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">
-                          {phase.goal}
-                        </p>
-                      </>
-                    </div>
-                  </>
-                </div>
-                <div class="roadmap-node-grid roadmap-v2-node-grid">
-                  {phase.nodes.map((node, nodeIndex) => (
-                    <button
-                      type="button"
-                      aria-pressed="false"
-                      aria-label={`Open roadmap checkpoint: ${node.title}`}
-                      class:list={[
-                        "roadmap-node",
-                        node.type === "project" && "is-project",
-                        node.type === "career" && "is-career",
-                        node.type === "optional" && "is-optional",
-                      ]}
-                      data-node-id={node.id}
-                      data-node-type={node.type ?? "core"}
-                      data-node-title={node.title}
-                      data-node-description={node.description}
-                      data-node-tags={JSON.stringify(node.tags ?? [])}
-                      data-node-links={JSON.stringify(node.links ?? [])}
-                      data-node-prereqs={JSON.stringify(
-                        node.prerequisites ?? [],
-                      )}
-                    >
-                      <span class="roadmap-v2-node-index">
-                        {String(nodeIndex + 1).padStart(2, "0")}
-                      </span>
-                      <span class="roadmap-node-kicker">
-                        {node.type === "project"
-                          ? "Build"
-                          : node.type === "career"
-                            ? "Career"
-                            : node.type === "optional"
-                              ? "Optional"
-                              : `Checkpoint ${String(nodeIndex + 1).padStart(2, "0")}`}
-                      </span>
-                      <span class="roadmap-node-title">{node.title}</span>
-                      {node.short && (
-                        <span class="roadmap-node-short">{node.short}</span>
-                      )}
-                      {node.tags && (
-                        <span class="roadmap-node-tags">
-                          {node.tags.slice(0, 3).map((tag) => (
-                            <span>{tag}</span>
-                          ))}
-                        </span>
-                      )}
-                      <span class="roadmap-node-action">
-                        Explore checkpoint <span aria-hidden="true">→</span>
-                      </span>
-                      <span class="roadmap-node-complete" aria-hidden="true">
-                        ✓
-                      </span>
-                    </button>
-                  ))}
-                </div>
-                {index < (visual?.phases.length ?? 0) - 1 && (
-                  <div class="roadmap-phase-connector" aria-hidden="true">
-                    <span />
-                  </div>
-                )}
-              </article>
-            ))
-          }
-        </section>
-
-        <section id="guide" class="roadmap-v2-guide mt-14">
-          <div
-            class="flex flex-col gap-3 border-b border-[var(--color-border)] pb-5 sm:flex-row sm:items-end sm:justify-between"
-          >
-            <div>
-              <p
-                class="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]"
-              >
-                Detailed guide
-              </p>
-              <h2 class="mt-1 text-2xl sm:text-3xl font-black">
-                How to use this roadmap
-              </h2>
-            </div>
-            <p
-              class="max-w-lg text-sm leading-6 text-[var(--color-text-secondary)]"
-            >
-              Use the visual map to navigate. The written guide below explains
-              the reasoning behind the sequence.
-            </p>
-          </div>
-          <div
-            class="mt-8 prose prose-lg max-w-article text-[var(--color-text-secondary)] prose-headings:text-[var(--color-text-primary)] prose-headings:font-bold prose-a:text-[var(--color-accent)] prose-a:no-underline hover:prose-a:underline prose-strong:text-[var(--color-text-primary)]"
-          >
-            <Content />
-          </div>
-        </section>
-      </div>
-
-      <aside class="roadmap-v2-rightbar">
-        <div
-          class="roadmap-v2-sidebar-card roadmap-v2-sidebar-sticky roadmap-v2-rightbar-stack"
-        >
-          <div class="roadmap-v2-rightbar-section">
-            <span class="roadmap-v2-sidebar-kicker">Skills you'll build</span>
-            <div class="mt-3 flex flex-wrap gap-2">
-              {
-                roadmap.data.skills
-                  .slice(0, 18)
-                  .map((skill) => (
-                    <span class="roadmap-v2-skill-tag">{skill}</span>
-                  ))
-              }
-            </div>
-          </div>
-          <div class="roadmap-v2-rightbar-section">
-            <span class="roadmap-v2-sidebar-kicker">Build as you learn</span>
-            <p>
-              Use projects as checkpoints, not as a final exam. Build something
-              after each major cluster.
-            </p>
-            <a href="/projects/" class="roadmap-v2-inline-link"
-              >Browse projects <span>↗</span></a
-            >
-          </div>
-          <div class="roadmap-v2-rightbar-section roadmap-v2-rightbar-cta">
-            <span class="roadmap-v2-sidebar-kicker">Ready to prove it?</span>
-            <p>
-              Turn completed checkpoints into visible evidence for your
-              portfolio and interviews.
-            </p>
-            <a href="/projects/" class="button-primary"
-              >Find a project <span>↗</span></a
-            >
-          </div>
+      <details class="roadmap-v8-notes">
+        <summary>Roadmap notes <span>Read the reasoning behind the sequence</span></summary>
+        <div class="roadmap-v8-notes-content prose">
+          <Content />
         </div>
-      </aside>
+      </details>
     </div>
-  </div>
+  </main>
 
-  <div
-    id="roadmap-modal"
-    class="roadmap-modal hidden"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="roadmap-modal-title"
-  >
+  <div id="roadmap-modal" class="roadmap-modal" role="dialog" aria-modal="true" aria-labelledby="roadmap-modal-title" hidden>
     <div class="roadmap-modal-backdrop" data-close-modal></div>
-    <div class="roadmap-modal-panel roadmap-v2-modal-panel">
-      <div class="roadmap-v2-modal-head">
-        <div class="roadmap-v2-modal-title-wrap">
-          <div class="roadmap-v2-modal-kicker-wrap">
-            <span class="roadmap-v2-modal-icon" aria-hidden="true">✓</span>
-            <p
-              id="roadmap-modal-kicker"
-              class="text-xs font-bold uppercase tracking-wider text-[var(--color-accent)]"
-            >
-              Checkpoint
-            </p>
-          </div>
-          <h2
-            id="roadmap-modal-title"
-            class="mt-2 text-2xl sm:text-3xl font-black"
-          >
-            Topic
-          </h2>
+    <div class="roadmap-modal-panel roadmap-v8-modal-panel">
+      <div class="roadmap-v8-modal-head">
+        <div>
+          <span id="roadmap-modal-kicker" class="roadmap-v8-modal-kicker">Checkpoint</span>
+          <h2 id="roadmap-modal-title">Topic</h2>
         </div>
-        <button
-          type="button"
-          id="roadmap-modal-close"
-          class="min-h-11 min-w-11 rounded-xl border border-[var(--color-border)] text-xl"
-          aria-label="Close">×</button
-        >
+        <button type="button" id="roadmap-modal-close" class="roadmap-v8-close" aria-label="Close">×</button>
       </div>
-      <p
-        id="roadmap-modal-description"
-        class="mt-4 text-base leading-7 text-[var(--color-text-secondary)]"
-      >
-      </p>
-      <div id="roadmap-modal-tags" class="mt-5 flex flex-wrap gap-2"></div>
-      <div id="roadmap-modal-prereqs" class="mt-5"></div>
-      <div id="roadmap-modal-links" class="mt-6 grid gap-2 sm:grid-cols-2">
-      </div>
-      <div class="roadmap-v2-modal-actions">
-        <button type="button" id="roadmap-complete-btn" class="button-primary"
-          >Mark complete</button
-        ><button type="button" class="button-secondary" data-close-modal
-          >Back to roadmap</button
-        >
+      <p id="roadmap-modal-description" class="roadmap-v8-modal-description"></p>
+      <div id="roadmap-modal-tags" class="roadmap-v8-modal-tags"></div>
+      <div id="roadmap-modal-prereqs"></div>
+      <div id="roadmap-modal-links" class="roadmap-v8-modal-links"></div>
+      <div class="roadmap-v8-modal-actions">
+        <button type="button" id="roadmap-complete-btn" class="button-primary">Mark complete</button>
+        <button type="button" data-close-modal class="button-secondary">Close</button>
       </div>
     </div>
   </div>

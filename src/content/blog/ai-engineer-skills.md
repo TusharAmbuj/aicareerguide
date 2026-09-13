@@ -36,7 +36,6 @@ keyTakeaways:
 image: "../../assets/blog/ai-engineer-skills.webp"
 ---
 
-# AI Engineer Skills: What You Actually Need to Learn
 
 The AI engineering field looks crowded from the outside.
 
@@ -124,13 +123,13 @@ This skill compounds across everything else you learn.
 
 ---
 
-# 1. Python
+## 1. Python
 
 Python is one of the most important practical skills for AI engineering because it connects data work, machine learning, deep learning, APIs, automation, and experimentation.
 
 You should be comfortable writing real Python programs, not only notebooks.
 
-### Core Python
+#### Core Python
 
 Learn:
 
@@ -166,7 +165,7 @@ For AI work, Python also becomes the language through which you connect models, 
 
 ---
 
-# 2. Data Structures and Algorithms
+## 2. Data Structures and Algorithms
 
 AI engineers still need strong programming fundamentals.
 
@@ -208,7 +207,7 @@ For dedicated interview preparation, use the [Interviews roadmap](/careers/inter
 
 ---
 
-# 3. Software Engineering
+## 3. Software Engineering
 
 This is probably the most valuable skill that people underestimate when entering AI.
 
@@ -257,7 +256,7 @@ The [Software Engineer roadmap](/careers/software-engineer/) covers this foundat
 
 ---
 
-# 4. SQL and Databases
+## 4. SQL and Databases
 
 Modern AI systems work with far more than model weights.
 
@@ -303,7 +302,7 @@ PostgreSQL is a useful system to become comfortable with because it can support 
 
 ---
 
-# 5. Linux and Developer Tools
+## 5. Linux and Developer Tools
 
 You do not need to become a Linux administrator.
 
@@ -339,7 +338,7 @@ Strong engineers spend a lot of time figuring things out from documentation rath
 
 ---
 
-# 6. Mathematics
+## 6. Mathematics
 
 The amount of math you need depends on the role.
 
@@ -347,7 +346,7 @@ An AI application engineer does not need the same mathematical depth as someone 
 
 Still, a solid foundation is valuable.
 
-### Linear Algebra
+#### Linear Algebra
 
 Understand:
 
@@ -366,7 +365,7 @@ These ideas appear in:
 - dimensionality reduction
 - attention
 
-### Probability and Statistics
+#### Probability and Statistics
 
 Understand:
 
@@ -379,7 +378,7 @@ Understand:
 - confidence intervals
 - hypothesis testing
 
-### Calculus and Optimization
+#### Calculus and Optimization
 
 Understand:
 
@@ -396,7 +395,7 @@ You need to understand what the mathematics is doing.
 
 ---
 
-# 7. Machine Learning
+## 7. Machine Learning
 
 You should understand classical machine learning even if your main interest is LLMs.
 
@@ -431,13 +430,13 @@ See [Machine Learning](/ai/machine-learning/) and the [ML Engineer roadmap](/car
 
 ---
 
-# 8. Model Evaluation
+## 8. Model Evaluation
 
 Knowing how to evaluate a model is a core engineering skill.
 
 For classical machine learning, understand metrics such as:
 
-### Classification
+#### Classification
 
 - accuracy
 - precision
@@ -446,7 +445,7 @@ For classical machine learning, understand metrics such as:
 - ROC-AUC
 - confusion matrix
 
-### Regression
+#### Regression
 
 - MAE
 - MSE
@@ -465,7 +464,7 @@ Evaluation is the bridge between "the model runs" and "the system works."
 
 ---
 
-# 9. Deep Learning
+## 9. Deep Learning
 
 Once your machine learning foundation is solid, develop a working understanding of neural networks.
 
@@ -504,7 +503,7 @@ See the [Deep Learning guide](/blog/deep-learning-guide/).
 
 ---
 
-# 10. Transformers and LLMs
+## 10. Transformers and LLMs
 
 Modern AI engineering increasingly involves foundation models.
 
@@ -542,7 +541,7 @@ See the [LLMs guide](/blog/llms-guide/).
 
 ---
 
-# 11. Prompt Engineering
+## 11. Prompt Engineering
 
 Prompting matters, but it should not become your entire AI skill set.
 
@@ -562,7 +561,7 @@ If the system retrieves the wrong information, has bad source data, or uses the 
 
 ---
 
-# 12. Embeddings and Semantic Search
+## 12. Embeddings and Semantic Search
 
 Embeddings are fundamental to many AI systems.
 
@@ -601,7 +600,7 @@ This knowledge leads directly into retrieval-augmented generation.
 
 ---
 
-# 13. Retrieval-Augmented Generation
+## 13. Retrieval-Augmented Generation
 
 RAG is one of the most useful patterns in practical LLM applications.
 
@@ -648,7 +647,7 @@ The [AI Research Assistant](/projects/ai-research-assistant/) is a good example 
 
 ---
 
-# 14. AI Agents and Tool Use
+## 14. AI Agents and Tool Use
 
 Some applications need models to take actions instead of simply generating text.
 
@@ -695,7 +694,7 @@ The model should never be the authorization layer.
 
 ---
 
-# 15. AI Evaluation
+## 15. AI Evaluation
 
 Generative systems introduce a new challenge: outputs are often not deterministic labels.
 
@@ -736,7 +735,7 @@ This gives you a regression test for AI behavior.
 
 ---
 
-# 16. APIs and Backend Development
+## 16. APIs and Backend Development
 
 AI features usually need an application layer.
 
@@ -778,7 +777,7 @@ PostgreSQL / Storage
 
 ---
 
-# 17. Docker and Deployment
+## 17. Docker and Deployment
 
 Your project should not stop at localhost.
 
@@ -809,7 +808,7 @@ You don't need Kubernetes for a student project unless the project genuinely req
 
 ---
 
-# 18. MLOps and LLMOps
+## 18. MLOps and LLMOps
 
 As AI systems become more complicated, you need operational discipline.
 
@@ -838,7 +837,7 @@ An AI system is easier to maintain when you know exactly what changed between tw
 
 ---
 
-# 19. Observability
+## 19. Observability
 
 You should be able to answer:
 
@@ -874,7 +873,7 @@ It is about collecting enough to understand what the system is doing.
 
 ---
 
-# 20. Security
+## 20. Security
 
 Security becomes especially important when an AI system can access private information or perform actions.
 
@@ -910,7 +909,7 @@ Security must be enforced by software.
 
 ---
 
-# 21. System Design
+## 21. System Design
 
 As an AI engineer, you eventually need to think beyond individual models.
 
@@ -957,7 +956,7 @@ That is AI system design.
 
 ---
 
-# 22. Communication
+## 22. Communication
 
 Technical ability is not enough.
 
@@ -981,7 +980,7 @@ Clear technical communication becomes more important as you work with other engi
 
 ---
 
-# 23. Product Thinking
+## 23. Product Thinking
 
 A surprisingly important AI engineering skill is knowing **when not to use AI**.
 
@@ -1000,7 +999,7 @@ They add it because it provides measurable value.
 
 ---
 
-# 24. What Level Do You Need in Each Skill?
+## 24. What Level Do You Need in Each Skill?
 
 You don't need research-level depth in every area.
 
@@ -1032,7 +1031,7 @@ An AI product engineer may need more backend, APIs, infrastructure, and product 
 
 ---
 
-# 25. The Skills That Matter Most
+## 25. The Skills That Matter Most
 
 For long-term value, prioritize:
 
@@ -1059,45 +1058,45 @@ Strong engineering judgment compounds for years.
 
 ---
 
-# 26. How to Prove You Have These Skills
+## 26. How to Prove You Have These Skills
 
 Don't just put skills on a resume.
 
 Prove them through projects.
 
-### Programming
+#### Programming
 
 Build a real Python application.
 
-### Machine Learning
+#### Machine Learning
 
 Build and evaluate an ML model.
 
-### Deep Learning
+#### Deep Learning
 
 Train a PyTorch model and document the experiment.
 
-### LLMs
+#### LLMs
 
 Build an LLM application.
 
-### RAG
+#### RAG
 
 Build a document assistant with retrieval and citations.
 
-### Evaluation
+#### Evaluation
 
 Create an evaluation dataset and measure failures.
 
-### Backend
+#### Backend
 
 Expose the system through an API.
 
-### Deployment
+#### Deployment
 
 Containerize and deploy it.
 
-### System Design
+#### System Design
 
 Document the architecture and explain trade-offs.
 
@@ -1117,11 +1116,11 @@ Improved system
 
 ---
 
-# 27. A Practical Skill-Building Strategy
+## 27. A Practical Skill-Building Strategy
 
 Don't study every skill at once.
 
-### Foundation
+#### Foundation
 
 ```text
 Python
@@ -1131,7 +1130,7 @@ Linux
 SQL
 ```
 
-### AI Core
+#### AI Core
 
 ```text
 Math
@@ -1140,7 +1139,7 @@ ML
 Deep Learning
 ```
 
-### Modern AI
+#### Modern AI
 
 ```text
 Transformers
@@ -1151,7 +1150,7 @@ Tools
 Agents
 ```
 
-### Production
+#### Production
 
 ```text
 APIs
@@ -1163,7 +1162,7 @@ Monitoring
 Security
 ```
 
-### Advanced
+#### Advanced
 
 ```text
 System Design
@@ -1175,19 +1174,19 @@ Build projects between these layers. Do not wait to "finish" the entire stack.
 
 ---
 
-# 28. A Simple Test for Every Skill
+## 28. A Simple Test for Every Skill
 
 For each skill, ask three questions:
 
-### Can I explain it?
+#### Can I explain it?
 
 If not, your understanding is weak.
 
-### Can I implement it?
+#### Can I implement it?
 
 If not, your practical skill is weak.
 
-### Can I debug it?
+#### Can I debug it?
 
 If not, your engineering skill is weak.
 
@@ -1203,7 +1202,7 @@ Real Skill
 
 ---
 
-# Final Thoughts
+## Final Thoughts
 
 AI engineering is often presented as a list of exciting technologies.
 
@@ -1247,7 +1246,7 @@ The difference between knowing AI and being an AI engineer is the ability to tak
 
 ---
 
-## What to Learn Next
+### What to Learn Next
 
 Your progression should now be:
 

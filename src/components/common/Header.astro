@@ -3,19 +3,17 @@ import ThemeToggle from "./ThemeToggle.astro";
 import Search from "@/components/Search.astro";
 import { Search as SearchIcon, Menu, X } from "@lucide/astro";
 
-const nav = [
+const primaryNav = [
   { label: "Learn", href: "/ai/" },
   { label: "Roadmaps", href: "/careers/" },
   { label: "Projects", href: "/projects/" },
+  { label: "Blog", href: "/blog/" },
   { label: "Resources", href: "/resources/" },
   { label: "Tools", href: "/tools/" },
-  { label: "Blog", href: "/blog/" },
-];
-
-const secondaryNav = [
-  { label: "News", href: "/news/" },
   { label: "About", href: "/about/" },
 ];
+
+const moreNav: typeof primaryNav = [];
 
 const active = (href: string) => {
   const pathname = Astro.url.pathname.replace(/\/+$/, "") || "/";
@@ -48,7 +46,7 @@ const active = (href: string) => {
       class="site-primary-nav hidden xl:flex min-w-0 flex-1 items-center justify-end gap-0.5"
     >
       {
-        nav.map((item) => (
+        primaryNav.map((item) => (
           <a
             href={item.href}
             aria-current={active(item.href) ? "page" : undefined}
@@ -99,7 +97,7 @@ const active = (href: string) => {
       <div class="mobile-search-wrap"><Search instance="mobile" /></div>
       <nav aria-label="Mobile" class="grid gap-1">
         {
-          nav.map((item) => (
+          [...primaryNav, ...moreNav].map((item) => (
             <a
               href={item.href}
               aria-current={active(item.href) ? "page" : undefined}
@@ -114,19 +112,6 @@ const active = (href: string) => {
         }
       </nav>
       <div class="mobile-more-links">
-        {
-          secondaryNav.map((item) => (
-            <a
-              href={item.href}
-              class:list={[
-                "mobile-nav-link",
-                active(item.href) && "mobile-nav-link-active",
-              ]}
-            >
-              {item.label}
-            </a>
-          ))
-        }
       </div>
       <a href="/careers/ai-engineer/" class="mobile-nav-cta"
         >Start your journey <span aria-hidden="true">→</span></a

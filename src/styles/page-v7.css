@@ -1,0 +1,124 @@
+/* AI Career Guide — UI v7: editorial publishing system
+   Goals: eliminate competing chrome, protect image geometry, improve reading comfort,
+   reduce duplicate metadata, and make every page feel like one product.
+*/
+:root {
+  --v7-reading: 720px;
+  --v7-content: 1180px;
+  --v7-radius: 10px;
+  --v7-radius-sm: 7px;
+  --v7-rule: color-mix(in srgb, var(--color-border) 88%, transparent);
+  --v7-surface: color-mix(in srgb, var(--color-bg) 98%, var(--color-bg-secondary));
+  --v7-muted-surface: color-mix(in srgb, var(--color-bg-secondary) 88%, var(--color-bg));
+}
+
+html { scroll-behavior: smooth; }
+body { text-rendering: optimizeLegibility; }
+
+/* The header should disappear as an obstacle, not become another content card. */
+.site-header { backdrop-filter: blur(14px); }
+.site-header-inner { max-width: var(--v7-content); padding-inline: .75rem; }
+.nav-link { letter-spacing: -.01em; }
+.header-actions { gap: .2rem; }
+.header-start-cta { padding-inline: .8rem; }
+
+/* Collections: title first, utilities second. */
+.collection-hero { border: 0 !important; }
+.collection-hero-inner { min-height: 0 !important; padding-block: clamp(3rem, 7vw, 5rem) !important; }
+.collection-hero-panel { display: none; }
+.collection-hero-copy { max-width: 820px; }
+.collection-hero-copy h1 { max-width: 16ch !important; }
+.collection-hero-copy > p { max-width: 68ch !important; }
+.collection-hero-actions { margin-top: 1.5rem; }
+
+/* Blog: one primary task and one visual hierarchy. */
+.blog-page-shell .collection-hero { background: transparent !important; }
+.blog-page-shell .collection-hero-inner { padding-bottom: 1rem !important; }
+.blog-page-shell .blog-feature-card {
+  grid-template-columns: minmax(0, 1fr) minmax(340px, .88fr);
+  border: 1px solid var(--v7-rule);
+  background: var(--v7-surface);
+}
+.blog-page-shell .blog-feature-image { overflow: hidden; }
+.blog-page-shell .blog-feature-image img { display:block; width:100%; height:100%; object-fit:cover; object-position:center; }
+.blog-page-shell .blog-filter-bar { border: 1px solid var(--v7-rule); padding: .65rem; }
+.blog-page-shell .blog-filter-row { align-items: center; }
+.blog-page-shell .blog-search-wrap { min-width: 0; }
+.blog-page-shell .blog-filter-row > .filter-scroll { min-width: 0; }
+.blog-page-shell .article-card-premium { border-color: var(--v7-rule); }
+.blog-page-shell .article-card-image { display:block; background: var(--color-bg-secondary); }
+
+/* Article header: eliminate duplicate status surfaces and keep the content dominant. */
+.article-page-premium .article-shell { width: min(calc(100% - 2rem), var(--v7-content)); }
+.article-page-premium .article-header-premium { width: min(920px, 100%); margin-inline:auto; padding-bottom: 2.1rem; }
+.article-page-premium .article-header-copy { width:100%; }
+.article-page-premium .article-meta-top { margin-bottom: .35rem; }
+.article-page-premium .article-header-premium h1 {
+  max-width: 18ch;
+  font-size: clamp(2.4rem, 5.1vw, 4.1rem);
+  line-height: 1.04;
+  letter-spacing: -.055em;
+  text-wrap: balance;
+}
+.article-page-premium .article-dek { max-width: 720px; margin-top: 1rem; font-size: 1.08rem; line-height: 1.76; }
+.article-page-premium .article-byline { flex-wrap:wrap; }
+.article-page-premium .article-review-line { margin-top:.55rem; min-height:1rem; }
+.article-page-premium .article-reading-start {
+  width: min(100%, var(--v7-reading));
+  margin: 2.6rem auto .9rem;
+  color: var(--color-accent);
+  font-size: .68rem;
+  font-weight: 820;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+/* Hero image modes now control the browser box, not the Astro transform.
+   This prevents natural/contain images from being pre-cropped to 1200x630. */
+.article-page-premium .article-hero-media { width:min(920px,100%); margin:.4rem auto 0; border-radius:var(--v7-radius); overflow:hidden; background:var(--color-bg-secondary); }
+.article-page-premium .article-hero-media img { display:block; width:100% !important; height:auto !important; max-width:100% !important; max-height:none !important; object-position:center; background:var(--color-bg-secondary); cursor:zoom-in; }
+.article-page-premium .article-hero-media-cover { aspect-ratio:16/9; }
+.article-page-premium .article-hero-media-cover img { height:100% !important; object-fit:cover !important; }
+.article-page-premium .article-hero-media-contain { padding: .75rem; }
+.article-page-premium .article-hero-media-contain img { max-height:68vh !important; object-fit:contain !important; }
+.article-page-premium .article-hero-media-natural img { object-fit:contain !important; }
+
+/* Reading width: avoid a second column that consumes too much horizontal space. */
+.article-page-premium .article-content-layout { width:min(940px,100%); grid-template-columns: 170px minmax(0,var(--v7-reading)); gap:2rem; margin-top:2.25rem; }
+.article-page-premium .article-prose.prose { max-width:var(--v7-reading) !important; font-size:1.07rem !important; line-height:1.86 !important; }
+.article-page-premium .article-prose.prose p { margin-block:1.05em; }
+.article-page-premium .article-prose.prose h2 { scroll-margin-top:6rem; }
+.article-page-premium .article-prose.prose h3 { scroll-margin-top:6rem; }
+.article-page-premium .article-prose.prose a { text-decoration-thickness:1px; text-underline-offset:2px; }
+.article-page-premium .article-prose.prose img { cursor:zoom-in; }
+
+/* Hide inactive lightbox image from assistive technology until it has a source. */
+.article-lightbox-image[aria-hidden="true"] { visibility:hidden; }
+.image-lightbox-open { overflow:hidden; }
+
+/* Mobile: make reading chrome disappear and preserve content width. */
+@media (max-width: 1023px) {
+  .article-page-premium .article-content-layout { grid-template-columns:1fr; width:min(100%,var(--v7-reading)); }
+  .article-page-premium .article-sidebar { display:none; }
+}
+@media (max-width: 767px) {
+  .site-header-inner { padding-inline:.7rem; }
+  .blog-page-shell .blog-feature-card { grid-template-columns:1fr; }
+  .blog-page-shell .blog-feature-image { aspect-ratio:16/9; }
+  .blog-page-shell .blog-feature-image img { height:100%; }
+  .blog-page-shell .blog-filter-row { gap:.5rem; }
+  .blog-page-shell .filter-scroll { padding-bottom: .1rem; }
+  .article-page-premium .article-shell { width: min(calc(100% - 1rem), var(--v7-content)); }
+  .article-page-premium .article-header-premium h1 { max-width:none; font-size:clamp(2.15rem,11vw,3.3rem); }
+  .article-page-premium .article-dek { font-size:1rem; }
+  .article-page-premium .article-hero-media-contain { padding:.5rem; }
+  .article-page-premium .article-reading-start { margin-top:2rem; }
+  .article-lightbox-bar { padding-top:calc(.65rem + env(safe-area-inset-top)); }
+  .article-lightbox-controls { padding-bottom:calc(.7rem + env(safe-area-inset-bottom)); }
+}
+
+/* Motion: keep interactions readable and respectful. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior:auto; }
+  *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+}
