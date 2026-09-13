@@ -6,7 +6,10 @@ import mdxPlugin from '@astrojs/mdx';
 
 export default defineConfig({
   site: 'https://aicareerguide.xyz',
-  integrations: [mdxPlugin(), sitemap()],
+  integrations: [mdxPlugin(), sitemap({
+    filter: (page) => !page.endsWith('/search/') && !page.endsWith('/404/'),
+    namespaces: { news: false, xhtml: false, image: false, video: false },
+  })],
   vite: {
     plugins: [tailwindcss()],
   },

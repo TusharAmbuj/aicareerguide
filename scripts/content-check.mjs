@@ -34,7 +34,7 @@ function frontmatter(file) {
 const routePatterns = [
   /^\/$/, /^\/ai(?:\/.*)?\/?$/, /^\/blog(?:\/.*)?\/?$/, /^\/careers(?:\/.*)?\/?$/,
   /^\/projects(?:\/.*)?\/?$/, /^\/tools(?:\/.*)?\/?$/, /^\/resources(?:\/.*)?\/?$/,
-  /^\/search\/?$/, /^\/about\/?$/, /^\/contact\/?$/, /^\/privacy\/?$/, /^\/terms\/?$/, /^\/disclaimer\/?$/, /^\/editorial-policy\/?$/,
+  /^\/authors(?:\/.*)?\/?$/, /^\/search\/?$/, /^\/about\/?$/, /^\/contact\/?$/, /^\/privacy\/?$/, /^\/terms\/?$/, /^\/disclaimer\/?$/, /^\/editorial-policy\/?$/,
 ];
 
 for (const collection of collections) {
@@ -46,6 +46,10 @@ for (const collection of collections) {
     const { raw, data } = frontmatter(file);
     if (!data.title && collection !== 'tools') errors.push(`${file}: missing title`);
     if (!data.description) errors.push(`${file}: missing description`);
+    if (data.description) {
+      const descriptionText = data.description.replace(/^['"]|['"]$/g, '').trim();
+      if (descriptionText.length > 170) reminders.push(`${file}: description is ${descriptionText.length} characters; consider tightening it for search snippets`);
+    }
     if (collection === 'blog') {
       if (!data.pubDate) errors.push(`${file}: missing pubDate`);
       if (!data.category) errors.push(`${file}: missing category`);
@@ -61,11 +65,13 @@ for (const collection of collections) {
         for (const url of sourceUrls) if (!/^https?:\/\//.test(url) || /example\.com/i.test(url)) errors.push(`${file}: invalid or placeholder source URL ${url}`);
       }
       if (/example\.com|placeholder/i.test(stripCodeBlocks(raw))) errors.push(`${file}: placeholder/example text found outside code blocks`);
+      if (/^#\s+/m.test(stripCodeBlocks(raw.replace(/^---[\s\S]*?---\s*/m, '')))) errors.push(`${file}: article body must not contain a Markdown H1; ArticleLayout provides the page H1`);
       if (!data.difficulty) reminders.push(`${file}: difficulty will use the schema default`);
       if (data.updatedDate && data.pubDate && new Date(data.updatedDate) < new Date(data.pubDate)) errors.push(`${file}: updatedDate is earlier than pubDate`);
     }
     if (collection === 'projects' && (!data.difficulty || !data.techStack)) errors.push(`${file}: project requires difficulty and techStack`);
     if ((collection === 'tools' || collection === 'resources') && !data.url) errors.push(`${file}: missing url`);
+    if ((collection === 'tools' || collection === 'resources') && data.url && !/^https?:\/\//.test(data.url.replaceAll('\"', ''))) errors.push(`${file}: external url must use http(s): ${data.url}`);
     if ((collection === 'tools' || collection === 'resources') && !data.lastVerified) reminders.push(`${file}: add lastVerified after checking the URL/pricing`);
     if (data.draft === 'true' && (data.status === 'published' || data.status === 'review')) errors.push(`${file}: draft=true conflicts with status=${data.status}`);
 
